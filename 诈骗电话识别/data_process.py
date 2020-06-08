@@ -49,12 +49,33 @@ def split_data(origin_file, num_train, num_dev, num_test, replace=True):
 
     return None
 
-# get model usable data from csv
-def get_usable_data(file, method='idcard_cnt-avg_arpu'):
-    """extract labels and features from given file"""
+# get voc information by given header
+def get_voc_info(file_voc, column='call_dur'):
+    """get information from *_voc.csv file"""
+    with open(file_voc, newline='', encoding='utf-8') as voc_file:
+        vocreader = csv.reader(voc_file, delimiter=',', quotechar='|')
+        output_dict = {}
+        for line in vocreader:
+            if line[0] == 'phone_no_m':
+                pass
+            elif column == 'call_dur':
+                x_phone_no_m = line[0]
+                if x_phone_no_m not in output_dict.keys():
+                    output_dict[str(x_phone_no_m)] = []
+                output_dict[str(x_phone_no_m)] += [float(line[4])]
 
-    with open(file, newline='', encoding='utf-8') as csv_file:
-        spamreader = csv.reader(csv_file, delimiter=',', quotechar='|')
+    return output_dict
+
+
+# get model usable data from csv
+def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
+    """extract labels and features from given file"""
+    # extract infor from train_voc.csv
+    if 'call_dur' in method:
+        call_dur_dict = get_voc_info(file_voc)
+
+    with open(file_user, newline='', encoding='utf-8') as user_file:
+        spamreader = csv.reader(user_file, delimiter=',', quotechar='|')
         label = []
         X = []
         for line in spamreader:
@@ -62,6 +83,7 @@ def get_usable_data(file, method='idcard_cnt-avg_arpu'):
                 pass
             else:
                 # extract features: count of id cards + average arpu
+                x_phone_no_m = line[0]
                 x_idcar_cnt = float(line[3])
                 x_avg_arpu = np.mean([float(num) for num in line[4:-1] if len(num) > 0])
                 x_std_arpu = np.std([float(num) for num in line[4:-1] if len(num) > 0])
@@ -70,6 +92,14 @@ def get_usable_data(file, method='idcard_cnt-avg_arpu'):
                     X.append([x_idcar_cnt, x_avg_arpu])
                 elif method == 'idcard_cnt-avg_arpu-std_arpu':
                     X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu-call_dur':
+                    if x_phone_no_m not in call_dur_dict.keys():
+                        x_med_call_dur = 10 # if not found call_dur
+                        x_std_call_dur = 1
+                    else:
+                        x_med_call_dur = np.median(call_dur_dict[x_phone_no_m])
+                        x_std_call_dur = np.std(call_dur_dict[x_phone_no_m])
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_med_call_dur, x_std_call_dur])
 
     label = np.array(label)
     X = np.array(X)
