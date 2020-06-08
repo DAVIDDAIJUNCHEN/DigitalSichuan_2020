@@ -77,5 +77,3 @@ evaluate(label_dev, pred_dev, model='Ridge Classification')
 # evaluate toy model on (X_test, label_test)
 pred_test = clf_ridgeClassifier.predict(X_test).tolist()
 evaluate(label_test, pred_test, model='Ridge Classification')
-
-#
