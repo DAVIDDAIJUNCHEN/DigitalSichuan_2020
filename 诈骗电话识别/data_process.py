@@ -50,7 +50,7 @@ def split_data(origin_file, num_train, num_dev, num_test, replace=True):
     return None
 
 # get model usable data from csv
-def get_usable_data(file):
+def get_usable_data(file, method='idcard_cnt-avg_arpu'):
     """extract labels and features from given file"""
 
     with open(file, newline='', encoding='utf-8') as csv_file:
@@ -64,8 +64,12 @@ def get_usable_data(file):
                 # extract features: count of id cards + average arpu
                 x_idcar_cnt = float(line[3])
                 x_avg_arpu = np.mean([float(num) for num in line[4:-1] if len(num) > 0])
+                x_std_arpu = np.std([float(num) for num in line[4:-1] if len(num) > 0])
                 label.append(int(line[-1]))
-                X.append([x_idcar_cnt, x_avg_arpu])
+                if method == 'idcard_cnt-avg_arpu':
+                    X.append([x_idcar_cnt, x_avg_arpu])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu':
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu])
 
     label = np.array(label)
     X = np.array(X)
