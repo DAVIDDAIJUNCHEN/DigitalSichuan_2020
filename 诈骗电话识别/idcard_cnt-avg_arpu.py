@@ -22,7 +22,7 @@ num_test = num_total - num_train - num_dev
 # split data to train/dev/test (only for train_user.csv)
 split_data(origin_file, num_train, num_dev, num_test, replace=False)
 
-# features I: x_idcar_cnt + average arpu
+# Features I: x_idcar_cnt + average arpu
 X_train, label_train = get_usable_data(train_file)
 X_dev, label_dev = get_usable_data(dev_file)
 X_test, label_test = get_usable_data(test_file)
@@ -39,3 +39,4 @@ evaluate(label_dev, pred_dev)
 label_test = label_test.tolist()
 pred_test = clf.predict(X_test).tolist()
 evaluate(label_test, pred_test)
+
