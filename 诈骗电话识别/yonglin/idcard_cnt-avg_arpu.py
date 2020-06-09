@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 # import generic modules
+import sys
+sys.path.append('../')
 from data_process import split_data, get_usable_data
 from utils import evaluate
 
@@ -9,12 +11,11 @@ from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
 
 # csv files
-origin_file = 'data/train/train_user.csv'
-train_voc = 'data/train/train_voc.csv'
-
-train_file = 'data/train/split/train_user.csv'
-dev_file = 'data/train/split/dev_user.csv'
-test_file = 'data/train/split/test_user.csv'
+origin_file = '../data/train/train_user.csv'
+train_voc = '../data/train/train_voc.csv'
+train_file = '../data/train/split/train_user.csv'
+dev_file = '../data/train/split/dev_user.csv'
+test_file = '../data/train/split/test_user.csv'
 
 # set the data file parameters
 num_total = 6106
@@ -80,82 +81,4 @@ evaluate(label_dev, pred_dev, model='Ridge Classification')
 pred_test = clf_ridgeClassifier.predict(X_test).tolist()
 evaluate(label_test, pred_test, model='Ridge Classification')
 
-# Model V: AdaBoostClassifier
-from sklearn.ensemble import AdaBoostClassifier
-clf_AdaBoost = AdaBoostClassifier(n_estimators=100, random_state=0)
-clf_AdaBoost.fit(X_train, label_train)
-
-# evaluate toy model on (X_dev, label_dev)
-pred_dev = clf_AdaBoost.predict(X_dev).tolist()
-evaluate(label_dev, pred_dev, model='Adaboost')
-
-# evaluate toy model on (X_test, label_test)
-pred_test = clf_AdaBoost.predict(X_test).tolist()
-evaluate(label_test, pred_test, model='Adaboost')
-
-# Model VI: AdaBoostClassifier
-from sklearn.ensemble import BaggingClassifier
-from sklearn.svm import SVC
-clf_Bagging = BaggingClassifier(base_estimator=SVC(), n_estimators=10, random_state=0)
-clf_Bagging.fit(X_train, label_train)
-
-# evaluate toy model on (X_dev, label_dev)
-pred_dev = clf_Bagging.predict(X_dev).tolist()
-evaluate(label_dev, pred_dev, model='Bagging_SVC')
-
-# evaluate toy model on (X_test, label_test)
-pred_test = clf_Bagging.predict(X_test).tolist()
-evaluate(label_test, pred_test, model='Bagging_SVC')
-
-from sklearn.ensemble import RandomForestClassifier
-clf_randforest = RandomForestClassifier(max_depth=2, random_state=0)
-clf_randforest.fit(X_train, label_train)
-
-# evaluate toy model on (X_dev, label_dev)
-pred_dev = clf_randforest.predict(X_dev).tolist()
-evaluate(label_dev, pred_dev, model='Random forest')
-
-# evaluate toy model on (X_test, label_test)
-pred_test = clf_randforest.predict(X_test).tolist()
-evaluate(label_test, pred_test, model='Random forest')
-
-# Model VIII: Gradientboosting
-from sklearn.ensemble import GradientBoostingClassifier
-clf_gradboost = GradientBoostingClassifier(max_depth=2, random_state=0)
-clf_gradboost.fit(X_train, label_train)
-
-# evaluate toy model on (X_dev, label_dev)
-pred_dev = clf_gradboost.predict(X_dev).tolist()
-evaluate(label_dev, pred_dev, model='Gradient boosting')
-
-# evaluate toy model on (X_test, label_test)
-pred_test = clf_gradboost.predict(X_test).tolist()
-evaluate(label_test, pred_test, model='Gradient boosting')
-
-# Model IX: MLP Classifier
-from sklearn.neural_network import MLPClassifier
-clf_mlp = MLPClassifier(random_state=1, max_iter=300).fit(X_train, label_train)
-
-# evaluate toy model on (X_dev, label_dev)
-pred_dev = clf_mlp.predict(X_dev).tolist()
-evaluate(label_dev, pred_dev, model='MLP')
-
-# evaluate toy model on (X_test, label_test)
-pred_test = clf_mlp.predict(X_test).tolist()
-evaluate(label_test, pred_test, model='MLP')
-
-# SVM
-from sklearn.svm import LinearSVC
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-
-clf_svm = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
-clf_svm.fit(X_train, label_train)
-
-# evaluate toy model on (X_dev, label_dev)
-pred_dev = clf_svm.predict(X_dev).tolist()
-evaluate(label_dev, pred_dev, model='SVM')
-
-# evaluate toy model on (X_test, label_test)
-pred_test = clf_svm.predict(X_test).tolist()
-evaluate(label_test, pred_test, model='SVM')
+#
