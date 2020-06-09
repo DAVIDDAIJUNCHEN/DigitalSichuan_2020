@@ -93,7 +93,7 @@ evaluate(label_dev, pred_dev, model='Adaboost')
 pred_test = clf_AdaBoost.predict(X_test).tolist()
 evaluate(label_test, pred_test, model='Adaboost')
 
-# Model VI: AdaBoostClassifier
+# Model VI: BaggingClassifier
 from sklearn.ensemble import BaggingClassifier
 from sklearn.svm import SVC
 clf_Bagging = BaggingClassifier(base_estimator=SVC(), n_estimators=10, random_state=0)
