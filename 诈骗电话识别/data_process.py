@@ -128,4 +128,3 @@ def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
     X = np.array(X)
 
     return X, label
-
