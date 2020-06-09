@@ -63,7 +63,11 @@ def get_voc_info(file_voc, column='call_dur'):
                 if x_phone_no_m not in output_dict.keys():
                     output_dict[str(x_phone_no_m)] = []
                 output_dict[str(x_phone_no_m)] += [float(line[4])]
-
+            elif column == 'called_people':
+                x_phone_no_m = line[0]
+                if x_phone_no_m not in output_dict.keys():
+                    output_dict[str(x_phone_no_m)] = []
+                output_dict[str(x_phone_no_m)] += [line[1]]
     return output_dict
 
 
@@ -72,7 +76,10 @@ def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
     """extract labels and features from given file"""
     # extract infor from train_voc.csv
     if 'call_dur' in method:
-        call_dur_dict = get_voc_info(file_voc)
+        call_dur_dict = get_voc_info(file_voc, column='call_dur')
+
+    if 'called_people' in method:
+        called_people_dict = get_voc_info(file_voc, column='called_people')
 
     with open(file_user, newline='', encoding='utf-8') as user_file:
         spamreader = csv.reader(user_file, delimiter=',', quotechar='|')
@@ -100,8 +107,25 @@ def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
                         x_med_call_dur = np.median(call_dur_dict[x_phone_no_m])
                         x_std_call_dur = np.std(call_dur_dict[x_phone_no_m])
                     X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_med_call_dur, x_std_call_dur])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu-called_people':
+                    if x_phone_no_m not in called_people_dict.keys():
+                        x_num_called_people = 0
+                    else:
+                        x_num_called_people = len(set(called_people_dict[x_phone_no_m]))
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_num_called_people])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu-call_dur-called_people':
+                    if x_phone_no_m not in call_dur_dict.keys():
+                        x_med_call_dur = 10 # if not found call_dur
+                        x_std_call_dur = 1
+                        x_num_called_people = 0
+                    else:
+                        x_med_call_dur = np.median(call_dur_dict[x_phone_no_m])
+                        x_std_call_dur = np.std(call_dur_dict[x_phone_no_m])
+                        x_num_called_people = len(set(called_people_dict[x_phone_no_m]))
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_med_call_dur, x_std_call_dur, x_num_called_people])
 
     label = np.array(label)
     X = np.array(X)
 
     return X, label
+
