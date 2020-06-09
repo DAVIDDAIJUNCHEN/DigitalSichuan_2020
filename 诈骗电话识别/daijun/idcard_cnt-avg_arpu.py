@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 # import generic modules
+import sys
+sys.path.append('../')
 from data_process import split_data, get_usable_data
 from utils import evaluate
 
@@ -9,10 +11,11 @@ from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
 
 # csv files
-origin_file = 'data/train/train_user.csv'
-train_file = 'data/train/split/train_user.csv'
-dev_file = 'data/train/split/dev_user.csv'
-test_file = 'data/train/split/test_user.csv'
+origin_file = '../data/train/train_user.csv'
+train_voc = '../data/train/train_voc.csv'
+train_file = '../data/train/split/train_user.csv'
+dev_file = '../data/train/split/dev_user.csv'
+test_file = '../data/train/split/test_user.csv'
 
 # set the data file parameters
 num_total = 6106
@@ -24,9 +27,9 @@ num_test = num_total - num_train - num_dev
 split_data(origin_file, num_train, num_dev, num_test, replace=False)
 
 # Features I: x_idcard_cnt + average_arpu
-X_train, label_train = get_usable_data(train_file, method='idcard_cnt-avg_arpu')
-X_dev, label_dev = get_usable_data(dev_file, method='idcard_cnt-avg_arpu')
-X_test, label_test = get_usable_data(test_file, method='idcard_cnt-avg_arpu')
+X_train, label_train = get_usable_data(train_file, train_voc, method='idcard_cnt-avg_arpu')
+X_dev, label_dev = get_usable_data(dev_file, train_voc, method='idcard_cnt-avg_arpu')
+X_test, label_test = get_usable_data(test_file, train_voc, method='idcard_cnt-avg_arpu')
 
 
 # Model I: Logistic regression
