@@ -150,6 +150,24 @@ def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
                         x_num_callin = float(len([1 for i in call_type_dict[x_phone_no_m] if i=='2']))
                         x_num_calltrans = float(len([1 for i in call_type_dict[x_phone_no_m] if i=='3']))
                     X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_avg_call_dur, x_std_call_dur, x_num_callout, x_num_callin, x_num_calltrans])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu-call_dur-called_people-call_type':
+                    if x_phone_no_m not in call_dur_dict.keys():
+                        #x_med_call_dur = 0 # if not found call_dur
+                        x_avg_call_dur = 0.0
+                        x_std_call_dur = 1.0
+                        x_num_called_people = 0.0
+                        x_num_callout = 0.0
+                        x_num_callin = 0.0
+                        x_num_calltrans = 0.0
+                    else:
+                        #x_med_call_dur = np.median(call_dur_dict[x_phone_no_m])
+                        x_avg_call_dur = np.mean(call_dur_dict[x_phone_no_m])
+                        x_std_call_dur = np.std(call_dur_dict[x_phone_no_m])
+                        x_num_called_people = float(len(set(called_people_dict[x_phone_no_m])))
+                        x_num_callout = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '1']))
+                        x_num_callin = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '2']))
+                        x_num_calltrans = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '3']))
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_avg_call_dur, x_std_call_dur, x_num_called_people, x_num_callout, x_num_callin, x_num_calltrans])
 
     label = np.array(label)
     X = np.array(X)
