@@ -5,6 +5,7 @@ import sys
 sys.path.append('../')
 from data_process import split_data, get_usable_data
 from utils import evaluate
+from sklearn.preprocessing import normalize
 
 # import model modules
 from models.LogisticRegression import LogisticRegression
@@ -32,6 +33,9 @@ X_train, label_train = get_usable_data(train_file, train_voc, method='idcard_cnt
 X_dev, label_dev = get_usable_data(dev_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu-call_dur')
 X_test, label_test = get_usable_data(test_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu-call_dur')
 
+X_train = normalize(X_train)
+X_dev = normalize(X_dev)
+X_test = normalize(X_test)
 
 # Model I: Logistic regression
 clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)

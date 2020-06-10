@@ -9,6 +9,7 @@ from utils import evaluate
 # import model modules
 from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
+from sklearn.preprocessing import normalize
 
 # csv files
 origin_file = '../data/train/train_user.csv'
@@ -31,6 +32,10 @@ split_data(origin_file, num_train, num_dev, num_test, replace=False)
 X_train, label_train = get_usable_data(train_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu')
 X_dev, label_dev = get_usable_data(dev_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu')
 X_test, label_test = get_usable_data(test_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu')
+
+X_train = normalize(X_train)
+X_dev = normalize(X_dev)
+X_test = normalize(X_test)
 
 
 # Model I: Logistic regression
