@@ -4,12 +4,11 @@
 import csv
 import os
 import numpy as np
-from utils import evaluate
+import pickle
 
 # split the data into train/dev/test
 def split_data(origin_file, num_train, num_dev, num_test, replace=True):
     """split data into train/dev/test"""
-
     num_origin = num_train + num_dev + num_test
     ids_origin = np.arange(num_origin)
     np.random.shuffle(ids_origin)
@@ -51,7 +50,7 @@ def split_data(origin_file, num_train, num_dev, num_test, replace=True):
 
 # get voc information by given header
 def get_voc_info(file_voc, column='call_dur'):
-    """get information from *_voc.csv file"""
+    """get raw information from *_voc.csv file accroding to column"""
     with open(file_voc, newline='', encoding='utf-8') as voc_file:
         vocreader = csv.reader(voc_file, delimiter=',', quotechar='|')
         output_dict = {}
@@ -76,19 +75,91 @@ def get_voc_info(file_voc, column='call_dur'):
 
     return output_dict
 
+# get sms information by given header
+def get_sms_info(file_sms, column='sms_people'):
+    """get raw information from *_sms.csv file according to column"""
+    with open(file_sms, newline='', encoding='utf-8') as sms_file:
+        smsreader = csv.reader(sms_file, delimiter=',', quotechar="|")
+        output_dict = {}
+        for line in smsreader:
+            if line[0] == 'phone_no_m':
+                pass
+            elif column == 'sms_people':
+                x_phone_no_m = line[0]
+                if x_phone_no_m not in output_dict.keys():
+                    output_dict[str(x_phone_no_m)] = []
+                output_dict[str(x_phone_no_m)] += [line[1]]
+            elif column == 'sms_type':
+                x_phone_no_m = line[0]
+                if x_phone_no_m not in output_dict.keys():
+                    output_dict[str(x_phone_no_m)] = []
+                output_dict[str(x_phone_no_m)] += [line[2]]
+            elif column == 'sms_datetime':
+                x_phone_no_m = line[0]
+                if x_phone_no_m not in output_dict.keys():
+                    output_dict[str(x_phone_no_m)] = []
+                output_dict[str(x_phone_no_m)] + [line[3]]
+    return output_dict
 
-# get model usable data from csv
-def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
+# get model usable features from csv
+def get_usable_data(file_user, file_voc, file_sms, method='idcard_cnt-avg_arpu'):
     """extract labels and features from given file"""
-    # extract infor from train_voc.csv
+    # extract information from *_voc.csv
     if 'call_dur' in method:
-        call_dur_dict = get_voc_info(file_voc, column='call_dur')
+        file_call_dur_dict = '../data/features/call_dur_dict.txt'
+        # load or create dict (pickle)
+        if not os.path.isfile(file_call_dur_dict):
+            call_dur_dict = get_voc_info(file_voc, column='call_dur')
+            with open(file_call_dur_dict, 'wb') as fout:
+                pickle.dump(call_dur_dict, fout)
+        else:
+            with open(file_call_dur_dict, 'rb') as fin:
+                call_dur_dict = pickle.load(fin)
 
     if 'called_people' in method:
-        called_people_dict = get_voc_info(file_voc, column='called_people')
+        file_called_people_dict = '../data/features/called_people_dict.txt'
+        # load or create dict (pickle)
+        if not os.path.isfile(file_called_people_dict):
+            called_people_dict = get_voc_info(file_voc, column='called_people')
+            with open(file_called_people_dict, 'wb') as fout:
+                pickle.dump(called_people_dict, fout)
+        else:
+            with open(file_called_people_dict, 'rb') as fin:
+                called_people_dict = pickle.load(fin)
 
     if 'call_type' in method:
-        call_type_dict = get_voc_info(file_voc, column='call_type')
+        file_call_type_dict = '../data/features/call_type_dict.txt'
+        # load or create dict (pickle)
+        if not os.path.isfile(file_call_type_dict):
+            call_type_dict = get_voc_info(file_voc, column='call_type')
+            with open(file_call_type_dict, 'wb') as fout:
+                pickle.dump(call_type_dict, fout)
+        else:
+            with open(file_call_type_dict, 'rb') as fin:
+                call_type_dict = pickle.load(fin)
+
+    # extract information from *_sms.csv
+    if 'sms_people' in method:
+        file_sms_people_dict = '../data/features/sms_people_dict.txt'
+        # load or create dict (pickle)
+        if not os.path.isfile(file_sms_people_dict):
+            sms_people_dict = get_sms_info(file_sms, column='sms_people')
+            with open(file_sms_people_dict, 'wb') as fout:
+                pickle.dump(sms_people_dict, fout)
+        else:
+            with open(file_sms_people_dict, 'rb') as fin:
+                sms_people_dict = pickle.load(fin)
+
+    if 'sms_type' in method:
+        file_sms_type_dict = '../data/features/sms_type_dict.txt'
+        # load or create dict (pickle)
+        if not os.path.isfile(file_sms_type_dict):
+            sms_type_dict = get_sms_info(file_sms, column='sms_type')
+            with open(file_sms_type_dict, 'wb') as fout:
+                pickle.dump(sms_type_dict, fout)
+        else:
+            with open(file_sms_type_dict, 'rb') as fin:
+                sms_type_dict = pickle.load(fin)
 
     with open(file_user, newline='', encoding='utf-8') as user_file:
         spamreader = csv.reader(user_file, delimiter=',', quotechar='|')
@@ -168,7 +239,61 @@ def get_usable_data(file_user, file_voc, method='idcard_cnt-avg_arpu'):
                         x_num_callin = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '2']))
                         x_num_calltrans = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '3']))
                     X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_avg_call_dur, x_std_call_dur, x_num_called_people, x_num_callout, x_num_callin, x_num_calltrans])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu-call_dur-called_people-call_type-sms_people':
+                    if x_phone_no_m not in call_dur_dict.keys():
+                        #x_med_call_dur = 0 # if not found call_dur
+                        x_avg_call_dur = 0.0
+                        x_std_call_dur = 1.0
+                        x_num_called_people = 0.0
+                        x_num_callout = 0.0
+                        x_num_callin = 0.0
+                        x_num_calltrans = 0.0
+                    else:
+                        #x_med_call_dur = np.median(call_dur_dict[x_phone_no_m])
+                        x_avg_call_dur = np.mean(call_dur_dict[x_phone_no_m])
+                        x_std_call_dur = np.std(call_dur_dict[x_phone_no_m])
+                        x_num_called_people = float(len(set(called_people_dict[x_phone_no_m])))
+                        x_num_callout = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '1']))
+                        x_num_callin = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '2']))
+                        x_num_calltrans = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '3']))
 
+                    if x_phone_no_m not in sms_people_dict.keys():
+                        x_num_sms_people = 0.0
+                    else:
+                        x_num_sms_people = float(len(set(sms_people_dict[x_phone_no_m])))
+
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_avg_call_dur, x_std_call_dur, x_num_called_people,
+                              x_num_callout, x_num_callin, x_num_calltrans, x_num_sms_people])
+                elif method == 'idcard_cnt-avg_arpu-std_arpu-call_dur-called_people-call_type-sms_people-sms_type':
+                    if x_phone_no_m not in call_dur_dict.keys():
+                        # x_med_call_dur = 0 # if not found call_dur
+                        x_avg_call_dur = 0.0
+                        x_std_call_dur = 1.0
+                        x_num_called_people = 0.0
+                        x_num_callout = 0.0
+                        x_num_callin = 0.0
+                        x_num_calltrans = 0.0
+                    else:
+                        # x_med_call_dur = np.median(call_dur_dict[x_phone_no_m])
+                        x_avg_call_dur = np.mean(call_dur_dict[x_phone_no_m])
+                        x_std_call_dur = np.std(call_dur_dict[x_phone_no_m])
+                        x_num_called_people = float(len(set(called_people_dict[x_phone_no_m])))
+                        x_num_callout = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '1']))
+                        x_num_callin = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '2']))
+                        x_num_calltrans = float(len([1 for i in call_type_dict[x_phone_no_m] if i == '3']))
+
+                    if x_phone_no_m not in sms_people_dict.keys():
+                        x_num_smsout = 0.0
+                        x_num_smsin = 0.0
+                        x_num_sms_people = 0.0
+                    else:
+                        x_num_sms_people = float(len(set(sms_people_dict[x_phone_no_m])))
+                        x_num_smsout = float(len([1 for i in sms_type_dict[x_phone_no_m] if i == '1']))
+                        x_num_smsin = float(len([1 for i in sms_type_dict[x_phone_no_m] if i == '2']))
+                    print(x_num_smsout, x_num_callout, x_num_smsin, x_num_smsin)
+
+                    X.append([x_idcar_cnt, x_avg_arpu, x_std_arpu, x_avg_call_dur, x_std_call_dur, x_num_called_people,
+                              x_num_callout, x_num_callin, x_num_calltrans, x_num_sms_people, x_num_smsout, x_num_smsin])
     label = np.array(label)
     X = np.array(X)
 
