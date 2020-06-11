@@ -94,6 +94,11 @@ def get_sms_info(file_sms, column='sms_people'):
                 if x_phone_no_m not in output_dict.keys():
                     output_dict[str(x_phone_no_m)] = []
                 output_dict[str(x_phone_no_m)] += [line[2]]
+            elif column == 'sms_datetime':
+                x_phone_no_m = line[0]
+                if x_phone_no_m not in output_dict.keys():
+                    output_dict[str(x_phone_no_m)] = []
+                output_dict[str(x_phone_no_m)] + [line[3]]
     return output_dict
 
 # get model usable features from csv
