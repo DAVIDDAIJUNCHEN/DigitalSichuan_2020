@@ -33,7 +33,7 @@ X_train, label_train = get_usable_data(train_file, train_voc, train_sms, method=
 X_dev, label_dev = get_usable_data(dev_file, train_voc, train_sms, method='idcard_cnt-call_dur-called_people-call_type-sms_people-sms_type-sms_datetime')
 X_test, label_test = get_usable_data(test_file, train_voc, train_sms, method='idcard_cnt-call_dur-called_people-call_type-sms_people-sms_type-sms_datetime')
 
-print(X_train[0])
+
 # Model I: Logistic regression
 clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)
 

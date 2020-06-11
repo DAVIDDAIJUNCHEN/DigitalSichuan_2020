@@ -14,6 +14,7 @@ from models.LogisticRegressionCV import LogisticRegressionCV
 # csv files
 origin_file = '../data/train/train_user.csv'
 train_voc = '../data/train/train_voc.csv'
+train_sms = '../data/train/train_sms.csv'
 
 train_file = '../data/train/split/train_user.csv'
 dev_file = '../data/train/split/dev_user.csv'
@@ -29,9 +30,9 @@ num_test = num_total - num_train - num_dev
 split_data(origin_file, num_train, num_dev, num_test, replace=False)
 
 # Features I: x_idcard_cnt + average_arpu + std_arpu
-X_train, label_train = get_usable_data(train_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu-call_dur-called_people')
-X_dev, label_dev = get_usable_data(dev_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu-call_dur-called_people')
-X_test, label_test = get_usable_data(test_file, train_voc, method='idcard_cnt-avg_arpu-std_arpu-call_dur-called_people')
+X_train, label_train = get_usable_data(train_file, train_voc, train_sms, method='idcard_cnt-avg_arpu-std_arpu-call_dur-called_people')
+X_dev, label_dev = get_usable_data(dev_file, train_voc, train_sms, method='idcard_cnt-avg_arpu-std_arpu-call_dur-called_people')
+X_test, label_test = get_usable_data(test_file, train_voc, train_sms, method='idcard_cnt-avg_arpu-std_arpu-call_dur-called_people')
 
 # Model I: Logistic regression
 clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)
