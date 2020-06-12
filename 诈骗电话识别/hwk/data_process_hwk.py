@@ -5,7 +5,7 @@ import csv
 import os
 import numpy as np
 from utils import evaluate
-
+aa=3;
 # split the data into train/dev/test
 def split_data(origin_file, num_train, num_dev, num_test, replace=True):
     """split data into train/dev/test"""
