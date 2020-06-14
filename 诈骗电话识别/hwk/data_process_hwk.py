@@ -7,6 +7,32 @@ import numpy as np
 from utils import evaluate
 aa=3;
 # split the data into train/dev/test
+
+def get_user_data(user_data_path):
+    idcardMon_userInfo_dict = {};
+    with open(user_data_path, encoding='utf-8') as file_orig:
+        lines = []
+
+        for line in file_orig:
+            if line.startswith('phone_no_m'):
+                header = line[:-1]
+                header=line.split(',')
+            else:
+                line=line[:-1]
+                line=line.split(',')
+                for ii in range(4,12):
+                    mon=header[ii]
+                    mon=mon[5:]
+                    key=(line[0],mon)
+                    value=[line[ii],line[-1]]
+                    idcardMon_userInfo_dict[key]=value
+    return idcardMon_userInfo_dict
+
+
+
+
+
+
 def split_data(origin_file, num_train, num_dev, num_test, replace=True):
     """split data into train/dev/test"""
 
