@@ -257,6 +257,7 @@ def get_label(file_user):
     """get labels from file_user"""
     user_csv = pd.read_csv(file_user)
     label = user_csv['label'].tolist()
+
     return label
 
 # Debug Part
