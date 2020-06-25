@@ -8,6 +8,7 @@ import yaml
 import pandas as pd
 import pickle
 import time
+import sys
 from itertools import groupby
 
 # split the data into train/dev/test
@@ -17,8 +18,8 @@ def split_data(origin_file, num_train, num_dev, num_test, replace=True):
     ids_origin = np.arange(num_origin)
     np.random.shuffle(ids_origin)
     ids_train = ids_origin[:num_train]
-    ids_dev   = ids_origin[num_train:num_dev+num_train]
-    ids_test   = ids_origin[num_train+num_dev:num_origin]
+    ids_dev = ids_origin[num_train:num_dev+num_train]
+    ids_test = ids_origin[num_train+num_dev:num_origin]
 
     with open(origin_file, encoding='utf-8') as file_orig:
         lines = []
@@ -75,7 +76,7 @@ def get_columns_by_idphone(file_voc_sms_app, columns=['call_dur']):
     return output_dict
 
 # get user dictionary (run it each time)
-def get_dict_user(file_user, file_user_dict, columns_user):
+def get_dict_user(file_user, columns_user):
     user_csv = pd.read_csv(file_user)
     phone_no_m = user_csv['phone_no_m']
     dict_user = {}
@@ -90,7 +91,7 @@ def get_dict_user(file_user, file_user_dict, columns_user):
     return dict_user
 
 # get voc dictionary
-def get_dict_voc(file_voc, file_voc_dict, columns_user):
+def get_dict_voc(file_voc, file_voc_dict, columns_voc):
 
     # load or create dict (pickle)
     if not os.path.isfile(file_voc_dict):
@@ -99,7 +100,7 @@ def get_dict_voc(file_voc, file_voc_dict, columns_user):
         phone_no_m_uniq = set(phone_no_m.tolist())
         dict_voc = {}
         for phone in phone_no_m_uniq:
-            if len(columns_user) == 0:
+            if len(columns_voc) == 0:
                 dict_voc[phone] = pd.DataFrame([], columns=[])
             else:
                 dict_voc[phone] = voc_csv[voc_csv['phone_no_m'] == phone][columns_voc]
@@ -179,53 +180,95 @@ def get_features(file_user, file_voc, file_sms, file_app, config_yml):
 
     # get the output directory
     if 'train' in file_voc:
-        output_dir = './data/features/train/'
+        output_dir = '../../data/features/train/'
     elif 'test' in file_voc:
-        output_dir = './data/features/test/'
+        output_dir = '../../data/features/test/'
 
     # take columns from *_user/_call/_sms/_app.csv to get dictionary
     ## from *_user.csv
-    print(time.time())
-    file_user_dict = output_dir + 'user_dict.txt'
-    dict_user = get_dict_user(file_user, file_user_dict, columns_user)
-    print(time.time())
+    dict_user = get_dict_user(file_user, columns_user)
+
     ## from *_voc.csv
     file_voc_dict = output_dir + 'voc_dict.txt'
     dict_voc = get_dict_voc(file_voc, file_voc_dict, columns_voc)
-    print(time.time())
+
     ## from *_sms.csv
     file_sms_dict = output_dir + 'sms_dict.txt'
     dict_sms = get_dict_sms(file_sms, file_sms_dict, columns_sms)
-    print(time.time())
+
     ## from *_app.csv
     file_app_dict = output_dir + 'app_dict.txt'
     dict_app = get_dict_app(file_app, file_app_dict, columns_app)
-    print(time.time())
-    # generate features
-    X = []
+
     for user_phone_no in dict_user.keys():
-        for feature in features:
-            name_feature = feature['name']
-            columns_feature = feature['columns'][0]
-            columns_feature = dict([(key, [key+'_'+column for column in columns_feature[key]]) for key in columns_feature.keys()])
+        if user_phone_no not in dict_voc.keys():
+            dict_voc[user_phone_no] = pd.DataFrame([['NaN', 'NaN', 'NaN', 0.0, 'NaN', 'NaN', 'NaN']], columns=columns_voc)
+        if user_phone_no not in dict_sms.keys():
+            dict_sms[user_phone_no] = pd.DataFrame([['NaN', 'NaN', 'NaN']], columns=columns_sms)
+        if user_phone_no not in dict_app.keys():
+            dict_app[user_phone_no] = pd.DataFrame([['NaN', 0.0, 'NaN']], columns=columns_app)
 
-            ## take columns form dict
-            print(dict_app[user_phone_no])
+    # generate features
+    X_T = []
+
+    for feature in features:
+        X_T_feature = []
+        name_feature = feature['name']
+
+        ## get columns used in feature
+        columns_feature = feature['columns'][0]
+        columns_feature = dict([(key, [key+'_'+column for column in columns_feature[key]]) for key in columns_feature.keys()])
+
+        ## get module and path
+        module_path = feature['module']
+        module = module_path.split('/')[-1].split('.py')[0]
+        lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '/'.join(module_path.split('/')[:-1])))
+        sys.path.append(lib_path)
+
+        ## function (name + parameters)
+        function = feature['function'][0]
+        function_name = function['name']
+        function_parameters = function['para']
+
+        ## import modules
+        exec('from %s import %s' % (module, function_name))
+
+        ## run function on each phone_no_m
+        print(time.time())
+        for user_phone_no in dict_user.keys():
+            ### take columns form dict
+            dicts_phone_no = {}
             for key in columns_feature.keys():
-                exec('dict_%s_phone_no = dict_%s["%s"]' % (key, key, user_phone_no))
-                for col in columns_feature[key]:
-                    exec('%s = %s["%s"]' % (col, 'dict_'+key+'_phone_no', col.split(key+'_')[1]))
-                    print('%s = %s["%s"]' % (col, 'dict_'+key+'_phone_no', col.split(key+'_')[1]))
-    #     formulae = feature['formulae']
-    #     x_feature = exec(formulae)
-    #     X.features.append(x_feature)
+                exec('dicts_phone_no["%s"] = dict_%s["%s"]' % (key, key, user_phone_no))
 
+            exec('x_feature_phone_no = %s(dicts_phone_no, %s)' % (function_name, function_parameters))
+            exec('X_T_feature.append(x_feature_phone_no)')
+
+        print(time.time())
+        print(len(X_T_feature))
+
+        X_T.append(X_T_feature)
+    X = np.transpose(X_T).tolist()
+
+    return X
+
+# get label from csv
+def get_label(file_user):
+    """get labels from file_user"""
+    user_csv = pd.read_csv(file_user)
+    label = user_csv['label'].tolist()
+    return label
 
 # Debug Part
-file_user = './data/train/train_user.csv'
-file_voc = './data/train/train_voc.csv'
-file_sms = './data/train/train_sms.csv'
-file_app = './data/train/train_app.csv'
-config_yml = './daijun/configs/A1_B1_C1_config.yml'
+if __name__ == '__main__':
+    file_user = './data/train/train_user.csv'
+    file_voc = './data/train/train_voc.csv'
+    file_sms = './data/train/train_sms.csv'
+    file_app = './data/train/train_app.csv'
+    config_yml = './daijun/configs/A1_B1_C1_config.yml'
 
-get_features(file_user, file_voc, file_sms, file_app, config_yml)
+    ## get the design matrix
+    design_mat = get_features(file_user, file_voc, file_sms, file_app, config_yml)
+
+    ## get the label vector
+    label = get_label(file_user)

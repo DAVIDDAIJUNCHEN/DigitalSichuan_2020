@@ -14,7 +14,7 @@ features:
         module: './daijun/codes_feature/voc_feature.py'
         function:
           - name: 'called_people'
-          - para: {'months': ['2020-01']}
+            para: {'months': ['2020-01']}
   - f2:
       - name: 'sms_people'
         columns:
@@ -22,7 +22,7 @@ features:
         module: './daijun/codes_feature/sms_feature.py'
         function:
           - name: 'sms_people'
-          - para: {'months': ['2020-01']}
+            para: {'months': ['2020-01']}
   - f3:
       - name: 'num_apps'
         columns:
@@ -30,3 +30,4 @@ features:
         module: './daijun/codes_feature/app_feature.py'
         function:
           - name: 'num_app'
+            para: {}
