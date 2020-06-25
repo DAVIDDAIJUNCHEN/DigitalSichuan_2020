@@ -54,11 +54,11 @@ label_test = get_label(test_file)
 clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)
 
 # evaluate toy model on (X_dev, label_dev)
-label_dev = label_dev.tolist()
+#label_dev = label_dev.tolist()
 pred_dev = clf_logistReg.predict(X_dev).tolist()
 evaluate(label_dev, pred_dev, model='Logistic Regression')
 
 # evaluate toy model on (X_test, label_test)
-label_test = label_test.tolist()
+#label_test = label_test.tolist()
 pred_test = clf_logistReg.predict(X_test).tolist()
 evaluate(label_test, pred_test, model='Logistic Regression')
