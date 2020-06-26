@@ -164,7 +164,7 @@ evaluate(label_test, pred_test, model='Gradient boosting')
 pred_blindtest = clf_gradboost.predict(X_blindtest).tolist()
 
 month_train = '202002'
-with open('../test_results/' + features_name + '/' + 'GradientBoosting' + month_train + '.csv',
+with open('../test_results/' + features_name + '/' + 'GradientBoosting_' + month_train + '.csv',
           'w', newline='', encoding='utf-8') as fout:
     field_names = ['phone_no_m', 'label']
     writer = csv.DictWriter(fout, fieldnames=field_names)
