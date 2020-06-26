@@ -234,18 +234,16 @@ def get_features(file_user, file_voc, file_sms, file_app, config_yml):
         exec('from %s import %s' % (module, function_name))
 
         ## run function on each phone_no_m
-        print(time.time())
+        t1 = time.time()
         for user_phone_no in dict_user.keys():
             ### take columns form dict
             dicts_phone_no = {}
             for key in columns_feature.keys():
                 exec('dicts_phone_no["%s"] = dict_%s["%s"]' % (key, key, user_phone_no))
-
             exec('x_feature_phone_no = %s(dicts_phone_no, %s)' % (function_name, function_parameters))
             exec('X_T_feature.append(x_feature_phone_no)')
-
-        print(time.time())
-        print(len(X_T_feature))
+        print('time in feature:', time.time() - t1)
+        print('number of sample:', len(X_T_feature))
 
         X_T.append(X_T_feature)
     X = np.transpose(X_T).tolist()
