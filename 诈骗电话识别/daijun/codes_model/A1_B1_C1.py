@@ -40,7 +40,7 @@ num_test = num_total - num_train - num_dev
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 # define features in config_yml
-train_config_yml = '../configs/A1_B1_C1_config.yml'
+train_config_yml = '../configs/A1_B1_C1_config_train.yml'
 test_config_yml = '../configs/A1_B1_C1_config_test.yml'
 features_name = 'A1_B1_C1'
 
@@ -163,7 +163,7 @@ evaluate(label_test, pred_test, model='Gradient boosting')
 # evaluate toy model on (X_blindtest)
 pred_blindtest = clf_gradboost.predict(X_blindtest).tolist()
 
-month_train = '202002'
+month_train = '201911'
 with open('../test_results/' + features_name + '/' + 'GradientBoosting_' + month_train + '.csv',
           'w', newline='', encoding='utf-8') as fout:
     field_names = ['phone_no_m', 'label']
