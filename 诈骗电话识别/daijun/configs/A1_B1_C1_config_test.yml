@@ -1,0 +1,33 @@
+name: 'call_dur'
+
+columns:
+  - user: ['city_name', 'county_name', 'idcard_cnt', 'arpu_202004']
+    voc:  ['opposite_no_m', 'calltype_id', 'start_datetime', 'call_dur', 'city_name', 'county_name', 'imei_m']
+    sms:  ['opposite_no_m', 'calltype_id', 'request_datetime']
+    app:  ['busi_name', 'flow', 'month_id']
+
+features:
+  - f1:
+      - name: 'called_people'
+        columns:
+          - voc: ['opposite_no_m', 'start_datetime']
+        module: './daijun/codes_feature/voc_feature.py'
+        function:
+          - name: 'called_people'
+            para: {'months': ['2020-04']}
+  - f2:
+      - name: 'sms_people'
+        columns:
+          - sms: ['opposite_no_m', 'request_datetime']
+        module: './daijun/codes_feature/sms_feature.py'
+        function:
+          - name: 'sms_people'
+            para: {'months': ['2020-04']}
+  - f3:
+      - name: 'num_apps'
+        columns:
+          - app: ['app_busi_name']
+        module: './daijun/codes_feature/app_feature.py'
+        function:
+          - name: 'num_app'
+            para: {}

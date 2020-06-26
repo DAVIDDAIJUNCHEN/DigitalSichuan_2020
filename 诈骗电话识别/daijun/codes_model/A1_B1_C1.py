@@ -2,11 +2,13 @@
 
 # import global modules
 import sys
+import os
+import csv
 sys.path.append('../../')
 
 # import local modules
 from utils import evaluate
-from data_process_new import split_data, get_features, get_label
+from data_process_new import split_data, get_features, get_label, get_phone_no_m
 from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
 from sklearn.preprocessing import normalize
@@ -38,17 +40,25 @@ num_test = num_total - num_train - num_dev
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 # define features in config_yml
-config_yml = '../configs/A1_B1_C1_config.yml'
+train_config_yml = '../configs/A1_B1_C1_config.yml'
+test_config_yml = '../configs/A1_B1_C1_config_test.yml'
+features_name = 'A1_B1_C1'
 
 # get design matrix and label
-X_train = get_features(train_file, train_voc, train_sms, train_app, config_yml)
+X_train = get_features(train_file, train_voc, train_sms, train_app, train_config_yml)
 label_train = get_label(train_file)
 
-X_dev = get_features(dev_file, train_voc, train_sms, train_app, config_yml)
+X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
 label_dev = get_label(dev_file)
 
-X_test = get_features(test_file, train_voc, train_sms, train_app, config_yml)
+X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
 label_test = get_label(test_file)
+
+X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
+phone_no_m_blindtest = get_phone_no_m(test_user)
+
+if not os.path.exists('../test_results/'+features_name+'/'):
+    os.mkdir('../test_results/'+features_name+'/')
 
 # Model I: Logistic regression
 clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)
@@ -149,6 +159,18 @@ evaluate(label_dev, pred_dev, model='Gradient boosting')
 # evaluate toy model on (X_test, label_test)
 pred_test = clf_gradboost.predict(X_test).tolist()
 evaluate(label_test, pred_test, model='Gradient boosting')
+
+# evaluate toy model on (X_blindtest)
+pred_blindtest = clf_gradboost.predict(X_blindtest).tolist()
+
+month_train = '202002'
+with open('../test_results/' + features_name + '/' + 'GradientBoosting' + month_train + '.csv',
+          'w', newline='', encoding='utf-8') as fout:
+    field_names = ['phone_no_m', 'label']
+    writer = csv.DictWriter(fout, fieldnames=field_names)
+    writer.writeheader()
+    for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
+        writer.writerow({'phone_no_m': phone, 'label': pred})
 
 # Model IX: MLP Classifier
 from sklearn.neural_network import MLPClassifier

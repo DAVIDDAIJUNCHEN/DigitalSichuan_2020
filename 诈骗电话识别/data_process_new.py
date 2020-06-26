@@ -133,7 +133,7 @@ def get_dict_sms(file_sms, file_sms_dict, columns_sms):
     return dict_sms
 
 # get app dictionary
-def get_dict_app(file_sms, file_app_dict, columns_app):
+def get_dict_app(file_app, file_app_dict, columns_app):
     if not os.path.isfile(file_app_dict):
         app_csv = pd.read_csv(file_app)
         phone_no_m = app_csv['phone_no_m']
@@ -258,8 +258,13 @@ def get_label(file_user):
     """get labels from file_user"""
     user_csv = pd.read_csv(file_user)
     label = user_csv['label'].tolist()
-
     return label
+
+def get_phone_no_m(file_user):
+    """get phone_no_m from *_user.csv"""
+    user_csv = pd.read_csv(file_user)
+    phone_no_m = user_csv['phone_no_m'].tolist()
+    return phone_no_m
 
 # Debug Part
 if __name__ == '__main__':
