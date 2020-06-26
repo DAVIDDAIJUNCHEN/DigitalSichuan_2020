@@ -242,10 +242,13 @@ def get_features(file_user, file_voc, file_sms, file_app, config_yml):
                 exec('dicts_phone_no["%s"] = dict_%s["%s"]' % (key, key, user_phone_no))
             exec('x_feature_phone_no = %s(dicts_phone_no, %s)' % (function_name, function_parameters))
             exec('X_T_feature.append(x_feature_phone_no)')
-        print('time in feature:', time.time() - t1)
-        print('number of sample:', len(X_T_feature))
 
         X_T.append(X_T_feature)
+
+        print('time in creating %s feature: ' % name_feature, time.time() - t1)
+
+    print('number of samples:', len(X_T_feature))
+
     X = np.transpose(X_T).tolist()
 
     return X
