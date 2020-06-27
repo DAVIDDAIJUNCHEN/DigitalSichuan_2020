@@ -1,0 +1,71 @@
+name: 'call_dur'
+
+columns:
+  - user: ['city_name', 'county_name', 'idcard_cnt', 'arpu_201908', 'label']
+    voc:  ['opposite_no_m', 'calltype_id', 'start_datetime', 'call_dur', 'city_name', 'county_name', 'imei_m']
+    sms:  ['opposite_no_m', 'calltype_id', 'request_datetime']
+    app:  ['busi_name', 'flow', 'month_id']
+
+features:
+  - f1:
+      - name: 'called_people'
+        columns:
+          - voc: ['opposite_no_m', 'start_datetime']
+        module: './hwk/codes_feature/voc_feature.py'
+        function:
+          - name: 'called_people'
+            para: {'months': ['2020-01']}
+  - f2:
+      - name: 'sms_people'
+        columns:
+          - sms: ['opposite_no_m', 'request_datetime']
+        module: './hwk/codes_feature/sms_feature.py'
+        function:
+          - name: 'sms_people'
+            para: {'months': ['2020-01']}
+
+  - f4:
+      - name: 'video_audio_flow'
+        columns:
+          - app: ['busi_name','flow']
+        module: './hwk/codes_feature/app_feature.py'
+        function:
+          - name: 'video_audio_flow'
+            para: {'months': ['2020-01']}
+
+  - f5:
+      - name: 'social_flow'
+        columns:
+          - app: ['busi_name','flow']
+        module: './hwk/codes_feature/app_feature.py'
+        function:
+          - name: 'social_flow'
+            para: {'months': ['2020-01']}
+
+  - f6:
+      - name: 'total_flow'
+        columns:
+          - app: ['busi_name','flow']
+        module: './hwk/codes_feature/app_feature.py'
+        function:
+          - name: 'total_flow'
+            para: {'months': ['2020-01']}
+
+  - f7:
+      - name: 'tool_flow'
+        columns:
+          - app: ['busi_name','flow']
+        module: './hwk/codes_feature/app_feature.py'
+        function:
+          - name: 'tool_flow'
+            para: {'months': ['2020-01']}
+
+  - f8:
+      - name: 'surf_flow'
+        columns:
+          - app: ['busi_name','flow']
+        module: './hwk/codes_feature/app_feature.py'
+        function:
+          - name: 'surf_flow'
+            para: {'months': ['2020-01']}
+

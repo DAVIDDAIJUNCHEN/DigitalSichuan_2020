@@ -23,3 +23,12 @@ features:
         function:
           - name: 'sms_people'
             para: {'months': ['2020-01']}
+
+  - f3:
+      - name: 'long_call'
+        columns:
+          - voc: ['opposite_no_m', 'start_datetime','call_dur']
+        module: './hwk/codes_feature/voc_feature.py'
+        function:
+          - name: 'long_call'
+            para: {'months': ['2020-01']}
