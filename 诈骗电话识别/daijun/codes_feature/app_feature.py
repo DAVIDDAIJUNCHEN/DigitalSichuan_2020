@@ -6,7 +6,6 @@ def num_app(dataframe_phone_no, arguments):
     """return number of called people in given months"""
     # convert to datetime formatA
     app_dataframe = dataframe_phone_no['app']
-    app_dataframe['month_id'] = pd.to_datetime(app_dataframe['month_id'], format='%Y-%m')
     num_apps = set(app_dataframe['busi_name'])
 
     return len(num_apps)
