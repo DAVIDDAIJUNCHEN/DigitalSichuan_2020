@@ -11,6 +11,7 @@ from utils import evaluate
 from data_process_new import split_data, get_features, get_label, get_phone_no_m
 from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
+from models.ensemble_model import ensemble
 from sklearn.preprocessing import normalize
 
 
@@ -205,4 +206,23 @@ with open('../test_results/' + features_name + '/' + 'GradientBoosting_' + month
     writer.writeheader()
 
     for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
+        writer.writerow({'phone_no_m': phone, 'label': pred})
+
+# ensemble model
+dict_model_acc = {"gradboost": (clf_gradboost, 0.8491), "mlp": (clf_mlp, 0.7770), "svm": (clf_svm, 0.7475)}
+pred_vote_blindtest = ensemble(dict_model_acc, X_blindtest, method='vote')
+print('pred_gradboost: ', clf_gradboost.predict(X_blindtest))
+print('pred_mlp: ', clf_mlp.predict(X_blindtest))
+print('pred_svm: ', clf_svm.predict(X_blindtest))
+print("pred_vote: ", pred_vote_blindtest)
+
+month_train = '201911'    # month should be the same as in config_train.yml
+
+with open('../test_results/' + features_name + '/' + 'vote_gradboost_mlp_svm_' + month_train + '.csv',
+          'w', newline='', encoding='utf-8') as fout:
+    field_names = ['phone_no_m', 'label']
+    writer = csv.DictWriter(fout, fieldnames=field_names)
+    writer.writeheader()
+
+    for phone, pred in zip(phone_no_m_blindtest, pred_vote_blindtest):
         writer.writerow({'phone_no_m': phone, 'label': pred})
