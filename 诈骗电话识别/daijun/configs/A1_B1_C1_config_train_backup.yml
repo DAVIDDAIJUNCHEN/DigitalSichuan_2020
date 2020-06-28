@@ -11,7 +11,7 @@ features:
     function:
     - name: called_people
       para:
-        months: &id001 [2020-03]
+        months: &id001 [2020-01, 2020-02]
     module: ./daijun/codes_feature/voc_feature.py
     name: called_people
 - f2:
