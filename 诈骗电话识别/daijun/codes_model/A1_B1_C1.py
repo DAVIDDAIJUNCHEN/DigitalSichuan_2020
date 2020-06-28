@@ -197,7 +197,7 @@ evaluate(label_test, pred_test, model='SVM')
 # predict labels on blind test set and write to xlsx file for submitting
 pred_blindtest = clf_gradboost.predict(X_blindtest).tolist()
 
-month_train = '201911'    # month should be the same as in config_train.yml
+month_train = '201911-202003'    # month should be the same as in config_train.yml
 
 with open('../test_results/' + features_name + '/' + 'GradientBoosting_' + month_train + '.csv',
           'w', newline='', encoding='utf-8') as fout:
@@ -208,15 +208,17 @@ with open('../test_results/' + features_name + '/' + 'GradientBoosting_' + month
     for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
         writer.writerow({'phone_no_m': phone, 'label': pred})
 
-# ensemble model
-dict_model_acc = {"gradboost": (clf_gradboost, 0.8491), "mlp": (clf_mlp, 0.7770), "svm": (clf_svm, 0.7475)}
-pred_vote_blindtest = ensemble(dict_model_acc, X_blindtest, method='vote')
+# ensemble model (vote/avg_unif/avg_softmax)
+## vote
+dict_model_acc = {"adaboost": (clf_AdaBoost, 0.0), "mlp": (clf_mlp, 0.99), 'gradboost': (clf_gradboost, 0.0)}#, "svm": (clf_svm, 0.7475)}
+pred_vote_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_softmax')
+
 print('pred_gradboost: ', clf_gradboost.predict(X_blindtest))
 print('pred_mlp: ', clf_mlp.predict(X_blindtest))
-print('pred_svm: ', clf_svm.predict(X_blindtest))
-print("pred_vote: ", pred_vote_blindtest)
+print('pred_adaboost: ', clf_AdaBoost.predict(X_blindtest))
+print('pred_vote: ', pred_vote_blindtest)
 
-month_train = '201911'    # month should be the same as in config_train.yml
+month_train = '201911-202003'    # month should be the same as in config_train.yml
 
 with open('../test_results/' + features_name + '/' + 'vote_gradboost_mlp_svm_' + month_train + '.csv',
           'w', newline='', encoding='utf-8') as fout:
@@ -226,3 +228,4 @@ with open('../test_results/' + features_name + '/' + 'vote_gradboost_mlp_svm_' +
 
     for phone, pred in zip(phone_no_m_blindtest, pred_vote_blindtest):
         writer.writerow({'phone_no_m': phone, 'label': pred})
+

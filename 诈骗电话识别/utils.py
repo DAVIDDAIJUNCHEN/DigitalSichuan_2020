@@ -12,4 +12,5 @@ def evaluate(golden_truth, pred, model=None):
         assert type(model) == str
         print(model + ': F1 score is {}'.format(f1))
 
-#def plot_acc()
+def modify_date():
+    """modify date in the config yaml file"""
