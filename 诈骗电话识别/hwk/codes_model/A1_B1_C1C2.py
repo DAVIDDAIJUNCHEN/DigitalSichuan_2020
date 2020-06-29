@@ -38,7 +38,7 @@ num_test = num_total - num_train - num_dev
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 # define features in config_yml
-config_yml = '../configs/A1A7_B1_config.yml'
+config_yml = '../configs/A1A8_B1_config.yml'
 
 # get design matrix and label
 X_train = get_features(train_file, train_voc, train_sms, train_app, config_yml)

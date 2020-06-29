@@ -8,11 +8,49 @@ from utils import evaluate
 aa=3;
 # split the data into train/dev/test
 
+def get_voc_FrequentContactsNum(voc_value):
+    contact_num_dict={}
+    for v in voc_value:
+        if v[0] not in contact_num_dict:
+            contact_num_dict[v[0]]=0
+        contact_num_dict[v[0]] =contact_num_dict[v[0]] +1
+    num=0
+    for c in contact_num_dict.keys():
+        if contact_num_dict[c]>2:
+            num=num+1
+    return num
+
+def get_voc_ContactsNum(voc_value):
+    contact_num_dict={}
+    for v in voc_value:
+        if v[0] not in contact_num_dict:
+            contact_num_dict[v[0]]=0
+        contact_num_dict[v[0]] =contact_num_dict[v[0]] +1
+    return len(contact_num_dict)
+
+def get_voc_ShortCallNum(voc_value):
+    n=0
+    for v in voc_value:
+        if float(v[3])<20:
+            n=n+1
+    return n
+
+def get_voc_LongCallNum(voc_value):
+    n=0
+    for v in voc_value:
+        if float(v[3])>600:
+            n=n+1
+    return n
+
+
+
+def get_sms_SmsNum(sms_value):
+    return len(sms_value)
+
 def get_user_data(user_data_path):
     idcardMon_userInfo_dict = {};
     with open(user_data_path, encoding='utf-8') as file_orig:
         lines = []
-
         for line in file_orig:
             if line.startswith('phone_no_m'):
                 header = line[:-1]
@@ -21,16 +59,55 @@ def get_user_data(user_data_path):
                 line=line[:-1]
                 line=line.split(',')
                 for ii in range(4,12):
+                    if line[ii]=='':
+                        continue
                     mon=header[ii]
                     mon=mon[5:]
                     key=(line[0],mon)
-                    value=[line[ii],line[-1]]
+                    value=line[1:4]+[line[ii],line[-1]]
                     idcardMon_userInfo_dict[key]=value
     return idcardMon_userInfo_dict
 
 
+def get_voc_data(voc_data_path):
+    idcardMon_vocInfo_dict = {};
+    with open(voc_data_path, encoding='utf-8') as file_orig:
+        for line in file_orig:
+            if line.startswith('phone_no_m'):
+                header = line[:-1]
+                header=line.split(',')
+            else:
+                line=line[:-1]
+                line=line.split(',')
+                start_datetime=line[3]
+                mon=start_datetime[:4]+start_datetime[5:7];
+                value=line[1:]
+                key=(line[0],mon)
+                if key not in idcardMon_vocInfo_dict:
+                    idcardMon_vocInfo_dict[key]=[]
+                idcardMon_vocInfo_dict[key].append(value)
 
+    return idcardMon_vocInfo_dict
 
+def get_sms_data(sms_data_path):
+    idcardMon_smsInfo_dict = {};
+    with open(sms_data_path, encoding='utf-8') as file_orig:
+        for line in file_orig:
+            if line.startswith('phone_no_m'):
+                header = line[:-1]
+                header=line.split(',')
+            else:
+                line=line[:-1]
+                line=line.split(',')
+                start_datetime=line[3]
+                mon=start_datetime[:4]+start_datetime[5:7];
+                value=line[1:]
+                key=(line[0],mon)
+                if key not in idcardMon_smsInfo_dict:
+                    idcardMon_smsInfo_dict[key]=[]
+                idcardMon_smsInfo_dict[key].append(value)
+
+    return idcardMon_smsInfo_dict
 
 
 def split_data(origin_file, num_train, num_dev, num_test, replace=True):
