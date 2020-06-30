@@ -1,0 +1,35 @@
+columns:
+- app: [busi_name, flow, month_id]
+  sms: [opposite_no_m, calltype_id, request_datetime]
+  user: [city_name, county_name, idcard_cnt, arpu_202004]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
+    imei_m]
+features:
+- f1:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: called_people
+      para:
+        months: &id001 [2020-04]
+    module: ./daijun/codes_feature/voc_feature.py
+    name: called_people
+- f2:
+  - columns:
+    - voc: [call_dur, start_datetime]
+    function:
+    - name: called_people
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/short_call.py
+    name: short_call
+- f3:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: friends_n
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/friend_n.py
+    name: frequent_called_people
+name: call_dur
