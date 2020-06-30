@@ -46,8 +46,8 @@ def ensemble(dict_model_acc, test_design, method='vote'):
         return pred_avgunif_lst
 
     elif method == 'avg_softmax':
-        sum_acc = sum(acc_lst)
-        acc_softmax = [item / sum_acc for item in acc_lst]
+        sum_exp_acc = sum(np.exp(acc_lst))
+        acc_softmax = [np.exp(item) / sum_exp_acc for item in acc_lst]
         prob1_weighted_df = prob1_models_df.multiply(acc_softmax, axis='rows')
         prob1_softmax_lst = list(prob1_weighted_df.sum())
         pred_softmax_lst = [int(score > 0.5) for score in prob1_softmax_lst]
