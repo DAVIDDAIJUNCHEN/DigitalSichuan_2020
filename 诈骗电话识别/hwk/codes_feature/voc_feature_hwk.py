@@ -11,8 +11,6 @@ def called_people(dataframe_phone_no, arguments):
     called_people = set(voc_df_months['opposite_no_m'])
     return len(called_people)
 
-
-
 def long_call(dataframe_phone_no, arguments):
     """return number of long call in given months"""
     # convert to datetime format

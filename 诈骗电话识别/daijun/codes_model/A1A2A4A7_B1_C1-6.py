@@ -43,10 +43,9 @@ num_test = num_total - num_train - num_dev
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 ## define features in train_config_yml and test_config_yml
-train_config_yml = '../configs/A1A2A4_B1_C1-6_config_train.yml'
-test_config_yml = '../configs/A1A2A4_B1_C1-6_config_test.yml'
-features_name = 'A1A2A4_B1_C1-6'
-
+train_config_yml = '../configs/A1A2A4A7_B1_C1-6_config_train.yml'
+test_config_yml = '../configs/A1A2A4A7_B1_C1-6_config_test.yml'
+features_name = 'A1A2A4A7_B1_C1-6'
 
 # get design matrix and label according to months
 label_train = get_label(train_file)

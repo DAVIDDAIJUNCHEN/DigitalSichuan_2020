@@ -39,8 +39,6 @@ def video_audio_flow(dataframe_phone_no,arguments):
             flow+=row['flow']
     return flow
 
-
-
 def social_flow(dataframe_phone_no,arguments):
     """return number of video_audio_flow in given months"""
     # convert to datetime format
