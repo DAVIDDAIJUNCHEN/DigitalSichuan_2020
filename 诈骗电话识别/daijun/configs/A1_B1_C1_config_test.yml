@@ -11,7 +11,7 @@ features:
       - name: 'called_people'
         columns:
           - voc: ['opposite_no_m', 'start_datetime']
-        module: './daijun/codes_feature/voc_feature.py'
+        module: './daijun/codes_feature/voc_feature_daijun.py'
         function:
           - name: 'called_people'
             para: {'months': ['2020-04']}
@@ -19,7 +19,7 @@ features:
       - name: 'sms_people'
         columns:
           - sms: ['opposite_no_m', 'request_datetime']
-        module: './daijun/codes_feature/sms_feature.py'
+        module: './daijun/codes_feature/sms_feature_daijun.py'
         function:
           - name: 'sms_people'
             para: {'months': ['2020-04']}
@@ -27,7 +27,7 @@ features:
       - name: 'num_apps'
         columns:
           - app: ['app_busi_name']
-        module: './daijun/codes_feature/app_feature.py'
+        module: './daijun/codes_feature/app_feature_daijun.py'
         function:
           - name: 'num_app'
             para: {}

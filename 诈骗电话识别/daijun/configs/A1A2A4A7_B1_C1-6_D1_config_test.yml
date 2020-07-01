@@ -12,7 +12,7 @@ features:
     - name: called_people
       para:
         months: &id001 [2020-04]
-    module: ./daijun/codes_feature/voc_feature.py
+    module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
 - f2:
   - columns:
@@ -48,7 +48,7 @@ features:
     - name: sms_people
       para:
         months: *id001
-    module: ./daijun/codes_feature/sms_feature.py
+    module: ./daijun/codes_feature/sms_feature_daijun.py
     name: sms_people
 - f6:
   - columns:
@@ -56,7 +56,7 @@ features:
     function:
     - name: num_app
       para: {}
-    module: ./daijun/codes_feature/app_feature.py
+    module: ./daijun/codes_feature/app_feature_daijun.py
     name: num_apps
 - f7:
   - columns:
@@ -103,4 +103,12 @@ features:
         months: *id001
     module: ./hwk/codes_feature/app_feature_hwk.py
     name: total_flow
+- f12:
+  - columns:
+    - user: [idcard_cnt]
+    function:
+    - name: idcard_cnt
+      para: {}
+    module: ./daijun/codes_feature/user_feature_daijun.py
+    name: idcard_cnt
 name: call_dur
