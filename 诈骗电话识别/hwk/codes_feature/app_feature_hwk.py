@@ -33,10 +33,10 @@ def video_audio_flow(dataframe_phone_no,arguments):
     short_video_app_set=set(['快手','抖音','火山小视频','微视','斗鱼直播','虎牙直播','UC影音']);
     video_audio_app_set = video_app_set | audio_app_set | short_video_app_set;
 
-    for index, row in app_df_months.iterrows():
-        #print(row)
-        if row['busi_name'] in video_audio_app_set:
-            flow+=row['flow']
+    vv=app_df_months.values
+    for v in vv:
+        if v[0] in video_audio_app_set:
+            flow+=v[1]
     return flow
 
 def social_flow(dataframe_phone_no,arguments):
@@ -53,10 +53,10 @@ def social_flow(dataframe_phone_no,arguments):
 
     social_app_set = set(['QQ','微信','旺信','陌陌','钉钉','探探']);
 
-    for index, row in app_df_months.iterrows():
-        #print(row)
-        if row['busi_name'] in social_app_set:
-            flow+=row['flow']
+    vv=app_df_months.values
+    for v in vv:
+        if v[0] in social_app_set:
+            flow+=v[1]
     return flow
 
 def tool_flow(dataframe_phone_no,arguments):
@@ -75,10 +75,10 @@ def tool_flow(dataframe_phone_no,arguments):
                         '腾讯云','阿里云','华为云','滴滴出行','美团','百度网盘','微云','华为网盘',
                         '金山云','有道词典']);
 
-    for index, row in app_df_months.iterrows():
-        #print(row)
-        if row['busi_name'] in tool_app_set:
-            flow+=row['flow']
+    vv=app_df_months.values
+    for v in vv:
+        if v[0] in tool_app_set:
+            flow+=v[1]
     return flow
 
 def surf_flow(dataframe_phone_no,arguments):
@@ -97,11 +97,12 @@ def surf_flow(dataframe_phone_no,arguments):
                         '搜狗搜索','今日头条','百度新闻','QQ浏览器','网页浏览','UC浏览器','神马搜索','新浪网',
                         '新浪微博','百度百科','人民网','中华网']);
 
-    for index, row in app_df_months.iterrows():
-        #print(row)
-        if row['busi_name'] in surf_app_set:
-            flow+=row['flow']
+    vv=app_df_months.values
+    for v in vv:
+        if v[0] in surf_app_set:
+            flow+=v[1]
     return flow
+
 
 
 def total_flow(dataframe_phone_no,arguments):
@@ -115,10 +116,9 @@ def total_flow(dataframe_phone_no,arguments):
     except:
         return -1
     flow=0
-
-    for index, row in app_df_months.iterrows():
-
-        flow+=row['flow']
+    vv=app_df_months.values
+    for v in vv:
+        flow+=v[1]
     return flow
 
 # debug part: To be deleted

@@ -7,27 +7,114 @@ columns:
     app:  ['busi_name', 'flow', 'month_id']
 
 features:
-  - f1:
-      - name: 'called_people'
-        columns:
-          - voc: ['opposite_no_m', 'start_datetime']
-        module: './hwk/codes_feature/voc_feature.py'
-        function:
-          - name: 'called_people'
-            para: {'months': ['2020-04']}
-  - f2:
-      - name: 'sms_people'
-        columns:
-          - sms: ['opposite_no_m', 'request_datetime']
-        module: './hwk/codes_feature/sms_feature.py'
-        function:
-          - name: 'sms_people'
-            para: {'months': ['2020-04']}
-  - f3:
-      - name: 'num_apps'
-        columns:
-          - app: ['app_busi_name']
-        module: './hwk/codes_feature/app_feature.py'
-        function:
-          - name: 'num_app'
-            para: {}
+- f1:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+    function:
+    - name: called_people
+      para:
+        months: &id001
+        - 2019-08
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: called_people
+- f2:
+  - columns:
+    - sms:
+      - opposite_no_m
+      - request_datetime
+    function:
+    - name: sms_people
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/sms_feature_hwk.py
+    name: sms_people
+- f3:
+  - columns:
+    - app:
+      - app_busi_name
+    function:
+    - name: num_app
+      para: {}
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: num_apps
+- f4:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - call_dur
+    function:
+    - name: day_call_var
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: day_call_var
+- f5:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - call_dur
+    function:
+    - name: total_call_time
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: total_call_time
+- f6:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: total_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: total_flow
+- f7:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: surf_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: surf_flow
+- f8:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: video_audio_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: video_audio_flow
+- f9:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: social_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: social_flow
+- f10:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: tool_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: tool_flow

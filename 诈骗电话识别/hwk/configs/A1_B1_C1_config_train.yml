@@ -89,4 +89,49 @@ features:
         months: *id001
     module: ./hwk/codes_feature/app_feature_hwk.py
     name: total_flow
+- f7:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: surf_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: surf_flow
+- f8:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: video_audio_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: video_audio_flow
+- f9:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: social_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: social_flow
+- f10:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: tool_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: tool_flow
+
 name: call_dur
