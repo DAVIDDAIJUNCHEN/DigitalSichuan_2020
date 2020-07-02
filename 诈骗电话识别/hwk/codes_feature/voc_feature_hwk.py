@@ -33,14 +33,15 @@ def day_call_var(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     day_calls_dict={}
-    for index,row in voc_df_months.iterrows():
-        if row['start_datetime']=='NaN':
+    vv=voc_df_months.values
+    for v in vv:
+        if v[2]=='NaN':
             return -1
 
-        day=row['start_datetime'][:10]
+        day=v[2][:10]
         if day not in day_calls_dict:
             day_calls_dict[day]=[]
-        day_calls_dict[day].append(float(row['call_dur']))
+        day_calls_dict[day].append(float(v[3]))
     call_ed=[]
 
     for day in day_calls_dict.keys():
@@ -59,15 +60,14 @@ def total_call_time(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     t=0
-    for index,row in voc_df_months.iterrows():
-        if row['start_datetime']=='NaN':
-            return -1
-        t+=float(row['call_dur'])
+    vv=voc_df_months.values
+    for v in vv:
+        t+=float(v[3])
     return t
 
 # debug part: To be deleted
 def test():
-    data_voc = [['f0ebee98809cb1a9', 1, '2020-02-25 21:26:40', 742, '成都', '武侯区', '0a0a319fdb33f9538'],
+    data_voc = [['f0ebee98809cb1a9', 1, '2020-01-25 21:26:40', 742, '成都', '武侯区', '0a0a319fdb33f9538'],
                 ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538'],
                 ['dedd4a48c3a8f', 1, '2020-01-02 21:14:33', 11, '成都', '锦江区', '0a0a319fdb33f9538']]
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
