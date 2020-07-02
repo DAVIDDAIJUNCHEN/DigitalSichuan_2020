@@ -9,9 +9,9 @@ warnings.filterwarnings('ignore')
 
 sys.path.append('../../')
 
-# import local modules 
+# import local modules
 from utils import evaluate, modify_months_config
-from data_process_new import split_data, get_features, get_label, get_phone_no_m
+from hwk.data_process_hwk import split_data, get_features, get_label, get_phone_no_m
 from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
 from models.ensemble_model import ensemble

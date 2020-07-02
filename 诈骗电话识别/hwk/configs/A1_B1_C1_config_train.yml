@@ -31,8 +31,8 @@ features:
     - name: called_people
       para:
         months: &id001
-        - 2020-03
-    module: ./hwk/codes_feature/voc_feature.py
+        - 2019-09
+    module: ./hwk/codes_feature/voc_feature_hwk.py
     name: called_people
 - f2:
   - columns:
@@ -43,7 +43,7 @@ features:
     - name: sms_people
       para:
         months: *id001
-    module: ./hwk/codes_feature/sms_feature.py
+    module: ./hwk/codes_feature/sms_feature_hwk.py
     name: sms_people
 - f3:
   - columns:
@@ -52,6 +52,41 @@ features:
     function:
     - name: num_app
       para: {}
-    module: ./hwk/codes_feature/app_feature.py
+    module: ./hwk/codes_feature/app_feature_hwk.py
     name: num_apps
+- f4:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - call_dur
+    function:
+    - name: day_call_var
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: day_call_var
+- f5:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - call_dur
+    function:
+    - name: total_call_time
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: total_call_time
+- f6:
+  - columns:
+    - app:
+      - busi_name
+      - flow
+    function:
+    - name: total_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: total_flow
 name: call_dur
