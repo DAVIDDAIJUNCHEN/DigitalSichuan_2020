@@ -111,4 +111,40 @@ features:
       para: {}
     module: ./daijun/codes_feature/user_feature_daijun.py
     name: idcard_cnt
+- f13:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: mean_call_dur
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: avg_call_dur
+- f14:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: std_call_dur
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: std_call_dur
+- f15:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: entropy_called_people
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: entropy_called_people
+- f16:
+  - columns:
+    - voc: [call_dur]
+    function:
+    - name: ratio_zero_calldur
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: ratio_zero_calldur
 name: call_dur

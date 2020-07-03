@@ -244,7 +244,6 @@ def get_features(file_user, file_voc, file_sms, file_app, config_yml):
             exec('X_T_feature.append(x_feature_phone_no)')
 
         X_T.append(X_T_feature)
-
         print('time in creating %s feature: ' % name_feature, time.time() - t1)
 
     print('number of samples:', len(X_T_feature))

@@ -5,7 +5,7 @@
 import sys
 import os
 import csv
-
+import numpy as np
 sys.path.append('../../')
 
 # import local modules
@@ -44,9 +44,9 @@ num_test = num_total - num_train - num_dev
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 ## define features in train_config_yml and test_config_yml
-train_config_yml = '../configs/A1A2A4A7_B1_C1-6_D1_config_train.yml'
-test_config_yml = '../configs/A1A2A4A7_B1_C1-6_D1_config_test.yml'
-features_name = 'A1A2A4A7_B1_C1-6_D1'
+train_config_yml = '../configs/A1A2A4A12A14_config_train.yml'
+test_config_yml  = '../configs/A1A2A4A12A14_config_test.yml'
+features_name = 'A1A2A4A12A14'
 
 # get design matrix and label according to months
 label_train = get_label(train_file)
@@ -54,16 +54,17 @@ label_dev = get_label(dev_file)
 label_test = get_label(test_file)
 phone_no_m_blindtest = get_phone_no_m(test_user)
 
+
 X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
 
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
-months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
+months_lst = [['2019-11', '2019-12', '2020-02', '2020-03'], ['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
               ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
 
-gradboost_blindAcc = {'2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
+gradboost_blindAcc = {"2019-11_2019-12_2020-02_2020-03":0.9, '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
                  '2019-12': 0.78, '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
 
 clf_gradboostAcc_months = {}
@@ -264,3 +265,4 @@ with open('../test_results/' + features_name + '/' + 'avgsoftmax_gradboost_' + m
 
     for phone, pred in zip(phone_no_m_blindtest, pred_avgsoftmax_blindtest):
         writer.writerow({'phone_no_m': phone, 'label': pred})
+
