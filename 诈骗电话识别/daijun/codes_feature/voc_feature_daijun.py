@@ -70,18 +70,47 @@ def ratio_zero_calldur(dataframe_phone_no, arguments):
     else:
         return zerodur_df_months / num_call_months
 
+def num_callout(dataframe_phone_no, arguments):
+    """return number of callout"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    num_callout = len(voc_df_months[voc_df_months['calltype_id']==1])
+    print(num_callout)
+    return num_callout
+
+def num_callin(dataframe_phone_no, arguments):
+    """return number of callin"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    num_callin = len(voc_df_months[voc_df_months['calltype_id']==2])
+    print(num_callin)
+    return num_callin
+
+def num_calltrans(dataframe_phone_no, arguments):
+    """return number of callin"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    num_calltrans = len(voc_df_months[voc_df_months['calltype_id']==3])
+    print(num_calltrans)
+    return num_calltrans
+
+
 # debug part: To be deleted
 def test():
-    data_voc = [['f0ebee98809cb1a9', 1, '2019-12-25 21:26:40', 42, '成都', '武侯区', '0a0a319fdb33f9538'],
-                ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538']]#,
+    data_voc = [['f0ebee98809cb1a9', 2, '2019-12-25 21:26:40', 42, '成都', '武侯区', '0a0a319fdb33f9538'],
+                ['dedd4a48c3a8f', 3, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538']]#,
                 #['dedd4a48c3a8f', 1, '2020-01-02 20:14:33', 90, '成都', '锦江区', '0a0a319fdb33f9538']]
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
     arguments = {"months": ['2019-12', '2020-01']}
-    std_call_duration = entropy_called_people(dataframe_phone_no, arguments)#, '2020-01'])
-    print('input voc dataframe for given phone number:\n ', voc_df, '\n')
-    print('std of call duration:\n ', std_call_duration)
+    num_calltrans(dataframe_phone_no, arguments)
 
 if __name__ == '__main__':
     test()

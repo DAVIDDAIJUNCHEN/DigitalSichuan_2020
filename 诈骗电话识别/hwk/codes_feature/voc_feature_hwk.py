@@ -16,14 +16,12 @@ def long_call(dataframe_phone_no, arguments):
     # convert to datetime format
     months = arguments['months']
     months_regex = '|'.join(months)
+    thres_dur = arguments['threshold_duration']
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    long_call_num=0
-    for index,row in voc_df_months.iterrows():
-        call_dur=float(row['call_dur'])
-        if call_dur>=1500:
-            long_call_num+=1
-    return long_call_num
+    num_long_call = len(voc_df_months[voc_df_months['call_dur']>=thres_dur])
+    print(num_long_call)
+    return num_long_call
 
 def day_call_var(dataframe_phone_no, arguments):
     """return number of long call in given months"""
@@ -73,7 +71,7 @@ def test():
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
-    arguments = {"months": ['2020-01']}
+    arguments = {"months": ['2020-01'], 'threshold_duration': 1500}
     t=total_call_time(dataframe_phone_no, arguments)
     var = day_call_var(dataframe_phone_no, arguments)
     num_called_people = called_people(dataframe_phone_no, arguments)#, '2020-01'])
