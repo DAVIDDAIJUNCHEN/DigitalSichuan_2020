@@ -56,10 +56,9 @@ def getMax(datelist):
     return max
 
 
-def datetime(dataframe_phone_no, arguments):
-    print("")
-    print("-----------------------start")
+def first_call_time(dataframe_phone_no, arguments):
     months = arguments['months']
+    stats = arguments['statistics']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     # 对应该月份的数据
@@ -74,23 +73,46 @@ def datetime(dataframe_phone_no, arguments):
         else:
             datelist[timesp[0]] = [convertTostemp(timesp[1])]
     earlylist = get_early(datelist)
-    latelist = get_late(datelist)
-    print("最早通话时间", earlylist)
-    print("最晚通话时间", latelist)
 
-    print("每个月最早通话时间的最小值", getMin(earlylist))
-    print("每个月最早通话时间的最大值", getMax(earlylist))
-    print("每个月最早通话时间的均值", np.mean(list(earlylist.values())))
-    print("每个月最早通话时间的中位数", np.median(list(earlylist.values())))
+    if stats == 'min':
+        return getMin(earlylist)
+    elif stats == 'max':
+        return getMax(earlylist)
+    elif stats == 'mean':
+        return np.mean(list(earlylist.values()))
+    elif stats == 'median':
+        return np.median(list(earlylist.values()))
+    elif stats == 'std':
+        return np.std(list(earlylist.values()))
 
-    print("每个月最晚通话时间的最小值", getMin(latelist))
-    print("每个月最晚通话时间的最大值", getMax(latelist))
-    print("每个月最晚通话时间的均值", np.mean(list(latelist.values())))
-    print("每个月最晚通话时间的中位数", np.median(list(latelist.values())))
+def last_call_time(dataframe_phone_no, arguments):
+    months = arguments['months']
+    stats = arguments['statistics']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    # 对应该月份的数据
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
 
+    timelist = list(voc_df_months['start_datetime'])
+    datelist = {}
+    for time in timelist:
+        timesp = time.split(" ")
+        if timesp[0] in datelist.keys():
+            datelist.get(timesp[0]).append(convertTostemp(timesp[1]))
+        else:
+            datelist[timesp[0]] = [convertTostemp(timesp[1])]
+    lastlist = get_late(datelist)
 
-    print("-----------------------end")
-    return datelist
+    if stats == 'min':
+        return getMin(lastlist)
+    elif stats == 'max':
+        return getMax(lastlist)
+    elif stats == 'mean':
+        return np.mean(list(lastlist.values()))
+    elif stats == 'median':
+        return np.median(list(lastlist.values()))
+    elif stats == 'std':
+        return np.std(list(lastlist.values()))
 
 
 def calltype_per(dataframe_phone_no, arguments):
@@ -117,10 +139,9 @@ def test():
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                              'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
-    arguments = {"months": ['2019-12']}
-    num_called_people = datetime(dataframe_phone_no, arguments)  # , '2020-01'])
-    # print('input voc dataframe for given phone number:\n ', voc_df, '\n')
-    # print('number of called people:\n ', num_called_people)
+    arguments = {"months": ['2019-12'], 'statistics': 'min'}
+    num_called_people = last_call_time(dataframe_phone_no, arguments)  # , '2020-01'])
+    print(num_called_people)
 
 
 if __name__ == '__main__':
