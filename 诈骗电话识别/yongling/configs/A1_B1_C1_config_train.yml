@@ -1,33 +1,58 @@
-name: 'call_dur'
-
 columns:
-  - user: ['city_name', 'county_name', 'idcard_cnt', 'arpu_201908', 'label']
-    voc:  ['opposite_no_m', 'calltype_id', 'start_datetime', 'call_dur', 'city_name', 'county_name', 'imei_m']
-    sms:  ['opposite_no_m', 'calltype_id', 'request_datetime']
-    app:  ['busi_name', 'flow', 'month_id']
-
+- app:
+  - busi_name
+  - flow
+  - month_id
+  sms:
+  - opposite_no_m
+  - calltype_id
+  - request_datetime
+  user:
+  - city_name
+  - county_name
+  - idcard_cnt
+  - arpu_201908
+  - label
+  voc:
+  - opposite_no_m
+  - calltype_id
+  - start_datetime
+  - call_dur
+  - city_name
+  - county_name
+  - imei_m
 features:
-  - f1:
-      - name: 'calltype'
-        columns:
-          - voc: ['opposite_no_m','calltype_id', 'start_datetime']
-        module: './yongling/codes_feature/voc_feature.py'
-        function:
-          - name: 'calltype_per'
-            para: {'months': ['2019-11']}
-  - f2:
-      - name: 'sms_people'
-        columns:
-          - sms: ['opposite_no_m', 'request_datetime']
-        module: './yongling/codes_feature/sms_feature.py'
-        function:
-          - name: 'sms_people'
-            para: {'months': ['2019-11']}
-  - f3:
-      - name: 'num_apps'
-        columns:
-          - app: ['app_busi_name']
-        module: './yongling/codes_feature/app_feature.py'
-        function:
-          - name: 'num_app'
-            para: {}
+- f1:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - calltype_id
+      - start_datetime
+    function:
+    - name: calltype_per
+      para:
+        months: &id001
+        - 2020-03
+    module: ./yongling/codes_feature/voc_feature.py
+    name: calltype
+- f2:
+  - columns:
+    - sms:
+      - opposite_no_m
+      - request_datetime
+    function:
+    - name: sms_people
+      para:
+        months: *id001
+    module: ./yongling/codes_feature/sms_feature.py
+    name: sms_people
+- f3:
+  - columns:
+    - app:
+      - app_busi_name
+    function:
+    - name: num_app
+      para: {}
+    module: ./yongling/codes_feature/app_feature.py
+    name: num_apps
+name: call_dur
