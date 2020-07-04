@@ -115,7 +115,6 @@ def num_calltrans(dataframe_phone_no, arguments):
 
 def ratio_longcall(dataframe_phone_no, arguments):
     """return ratio of long call in given months"""
-    # convert to datetime format
     months = arguments['months']
     months_regex = '|'.join(months)
     thres_dur = arguments['threshold_duration']
@@ -125,20 +124,54 @@ def ratio_longcall(dataframe_phone_no, arguments):
     print(num_long_call / len(voc_df_months['call_dur']))
     return num_long_call / len(voc_df_months['call_dur'])
 
+def num_callback(dataframe_phone_no, arguments):
+    """return number of calling back"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    phone_no_callout_df = voc_df_months[voc_df_months['calltype_id']==1]
+    phone_no_callin_df = voc_df_months[voc_df_months['calltype_id']==2]
 
+    num_callback = 0
+    for _, row_out in phone_no_callout_df.iterrows():
+        datetime_out = row_out['start_datetime']
+        row_in_candidate = phone_no_callin_df[phone_no_callin_df['start_datetime'] > datetime_out]
+        if row_out['opposite_no_m'] in list(row_in_candidate['opposite_no_m']):
+            num_callback += 1
+    return num_callback
 
+def ratio_callback(dataframe_phone_no, arguments):
+    """return number of calling back"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    phone_no_callout_df = voc_df_months[voc_df_months['calltype_id']==1]
+    phone_no_callin_df = voc_df_months[voc_df_months['calltype_id']==2]
 
+    num_callback = 0
+    for _, row_out in phone_no_callout_df.iterrows():
+        datetime_out = row_out['start_datetime']
+        row_in_candidate = phone_no_callin_df[phone_no_callin_df['start_datetime'] > datetime_out]
+        if row_out['opposite_no_m'] in list(row_in_candidate['opposite_no_m']):
+            num_callback += 1
+    if len(phone_no_callout_df) == 0:
+        return 1.0
+    return num_callback / len(phone_no_callout_df)
 
 # debug part: To be deleted
 def test():
-    data_voc = [['f0ebee98809cb1a9', 2, '2019-12-25 21:26:40', 42, '成都', '武侯区', '0a0a319fdb33f9538'],
-                ['dedd4a48c3a8f', 3, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538']]#,
-                #['dedd4a48c3a8f', 1, '2020-01-02 20:14:33', 90, '成都', '锦江区', '0a0a319fdb33f9538']]
+    data_voc = [['f0ebee98809cb1a9', 1, '2019-12-25 21:26:40', 42, '成都', '武侯区', '0a0a319fdb33f9538'],
+                ['dedd4a48c3a8f', 2, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538'],
+                ['f0ebee98809cb1a9', 2, '2020-01-02 20:14:33', 90, '成都', '锦江区', '0a0a319fdb33f9538']]
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
     arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150}
-    ratio_longcall(dataframe_phone_no, arguments)
+    ratio_callback(dataframe_phone_no, arguments)
 
 if __name__ == '__main__':
     test()
