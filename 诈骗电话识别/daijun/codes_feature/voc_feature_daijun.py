@@ -63,12 +63,25 @@ def ratio_zero_calldur(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    zerodur_df_months = len(voc_df_months[voc_df_months['call_dur']==0])
+    num_zerodur_months = len(voc_df_months[voc_df_months['call_dur']==0])
     num_call_months = len(voc_df_months)
-    if num_call_months in [0, 1]:
+    if len(num_call_months) == 0.0:
         return 0.0
     else:
-        return zerodur_df_months / num_call_months
+        return num_zerodur_months / num_call_months
+
+def ratio_nonzero_calldur(dataframe_phone_no, arguments):
+    """return ratio of calls with non-zero call duration"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    num_nonzerodur_months = len(voc_df_months[voc_df_months['call_dur']>0])
+    num_call_months = len(voc_df_months)
+    if len(num_call_months) == 0:
+        return 1.0
+    else:
+        return num_nonzerodur_months / num_call_months
 
 def num_callout(dataframe_phone_no, arguments):
     """return number of callout"""
