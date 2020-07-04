@@ -46,6 +46,7 @@ split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 ## define features in train_config_yml and test_config_yml
 train_config_yml = '../configs/A1_B1_C1_config_train.yml'
+#train_config_yml = '../configs/A12_config.yml'
 test_config_yml = '../configs/A1_B1_C1_config_test.yml'
 features_name = 'A1_B1_C1'
 

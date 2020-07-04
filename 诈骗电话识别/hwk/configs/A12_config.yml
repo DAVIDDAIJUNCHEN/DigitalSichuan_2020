@@ -1,0 +1,36 @@
+columns:
+- app:
+  - busi_name
+  - flow
+  - month_id
+  sms:
+  - opposite_no_m
+  - calltype_id
+  - request_datetime
+  user:
+  - city_name
+  - county_name
+  - idcard_cnt
+  - arpu_201908
+  - label
+  voc:
+  - opposite_no_m
+  - calltype_id
+  - start_datetime
+  - call_dur
+  - city_name
+  - county_name
+  - imei_m
+features:
+- f12:
+  - columns:
+    - sms:
+      - opposite_no_m
+      - calltype_id
+      - request_datetime
+    function:
+    - name: sms_interval_meantime
+      para:
+        months:['2019-08']
+    module: ./hwk/codes_feature/sms_feature_hwk.py
+    name: sms_interval_meantime
