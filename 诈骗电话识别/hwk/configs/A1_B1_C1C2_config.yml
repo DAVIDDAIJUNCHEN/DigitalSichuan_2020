@@ -11,7 +11,7 @@ features:
       - name: 'called_people'
         columns:
           - voc: ['opposite_no_m', 'start_datetime']
-        module: './hwk/codes_feature/voc_feature.py'
+        module: './hwk/codes_feature/voc_feature_yongling.py'
         function:
           - name: 'called_people'
             para: {'months': ['2020-01']}
@@ -19,7 +19,7 @@ features:
       - name: 'sms_people'
         columns:
           - sms: ['opposite_no_m', 'request_datetime']
-        module: './hwk/codes_feature/sms_feature.py'
+        module: './hwk/codes_feature/sms_feature_yongling.py'
         function:
           - name: 'sms_people'
             para: {'months': ['2020-01']}
@@ -28,7 +28,7 @@ features:
       - name: 'video_audio_flow'
         columns:
           - app: ['busi_name','flow']
-        module: './hwk/codes_feature/app_feature.py'
+        module: './hwk/codes_feature/app_feature_yongling.py'
         function:
           - name: 'video_audio_flow'
             para: {'months': ['2020-01']}
@@ -37,7 +37,7 @@ features:
       - name: 'social_flow'
         columns:
           - app: ['busi_name','flow']
-        module: './hwk/codes_feature/app_feature.py'
+        module: './hwk/codes_feature/app_feature_yongling.py'
         function:
           - name: 'social_flow'
             para: {'months': ['2020-01']}
@@ -46,7 +46,7 @@ features:
       - name: 'total_flow'
         columns:
           - app: ['busi_name','flow']
-        module: './hwk/codes_feature/app_feature.py'
+        module: './hwk/codes_feature/app_feature_yongling.py'
         function:
           - name: 'total_flow'
             para: {'months': ['2020-01']}
@@ -55,7 +55,7 @@ features:
       - name: 'tool_flow'
         columns:
           - app: ['busi_name','flow']
-        module: './hwk/codes_feature/app_feature.py'
+        module: './hwk/codes_feature/app_feature_yongling.py'
         function:
           - name: 'tool_flow'
             para: {'months': ['2020-01']}
@@ -64,7 +64,7 @@ features:
       - name: 'surf_flow'
         columns:
           - app: ['busi_name','flow']
-        module: './hwk/codes_feature/app_feature.py'
+        module: './hwk/codes_feature/app_feature_yongling.py'
         function:
           - name: 'surf_flow'
             para: {'months': ['2020-01']}

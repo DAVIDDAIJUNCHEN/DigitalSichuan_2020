@@ -33,7 +33,7 @@ features:
       para:
         months: &id001
         - 2020-03
-    module: ./yongling/codes_feature/voc_feature.py
+    module: ./yongling/codes_feature/voc_feature_yongling.py
     name: calltype
 - f2:
   - columns:
@@ -44,7 +44,7 @@ features:
     - name: sms_people
       para:
         months: *id001
-    module: ./yongling/codes_feature/sms_feature.py
+    module: ./yongling/codes_feature/sms_feature_yongling.py
     name: sms_people
 - f3:
   - columns:
@@ -53,6 +53,6 @@ features:
     function:
     - name: num_app
       para: {}
-    module: ./yongling/codes_feature/app_feature.py
+    module: ./yongling/codes_feature/app_feature_yongling.py
     name: num_apps
 name: call_dur

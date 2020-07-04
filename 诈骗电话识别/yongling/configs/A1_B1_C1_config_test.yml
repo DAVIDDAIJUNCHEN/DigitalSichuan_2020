@@ -11,7 +11,7 @@ features:
       - name: 'calltype'
         columns:
           - voc: ['opposite_no_m','calltype_id', 'start_datetime']
-        module: './yongling/codes_feature/voc_feature.py'
+        module: './yongling/codes_feature/voc_feature_yongling.py'
         function:
           - name: 'calltype_per'
             para: {'months': ['2020-04']}
@@ -19,7 +19,7 @@ features:
       - name: 'sms_people'
         columns:
           - sms: ['opposite_no_m', 'request_datetime']
-        module: './yongling/codes_feature/sms_feature.py'
+        module: './yongling/codes_feature/sms_feature_yongling.py'
         function:
           - name: 'sms_people'
             para: {'months': ['2020-04']}
@@ -27,7 +27,7 @@ features:
       - name: 'num_apps'
         columns:
           - app: ['app_busi_name']
-        module: './yongling/codes_feature/app_feature.py'
+        module: './yongling/codes_feature/app_feature_yongling.py'
         function:
           - name: 'num_app'
             para: {}
