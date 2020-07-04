@@ -100,6 +100,21 @@ def num_calltrans(dataframe_phone_no, arguments):
     print(num_calltrans)
     return num_calltrans
 
+def ratio_longcall(dataframe_phone_no, arguments):
+    """return ratio of long call in given months"""
+    # convert to datetime format
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    thres_dur = arguments['threshold_duration']
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    num_long_call = len(voc_df_months[voc_df_months['call_dur']>=thres_dur])
+    print(num_long_call / len(voc_df_months['call_dur']))
+    return num_long_call / len(voc_df_months['call_dur'])
+
+
+
+
 
 # debug part: To be deleted
 def test():
@@ -109,8 +124,8 @@ def test():
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
-    arguments = {"months": ['2019-12', '2020-01']}
-    num_calltrans(dataframe_phone_no, arguments)
+    arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150}
+    ratio_longcall(dataframe_phone_no, arguments)
 
 if __name__ == '__main__':
     test()
