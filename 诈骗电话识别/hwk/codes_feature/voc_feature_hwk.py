@@ -63,6 +63,35 @@ def total_call_time(dataframe_phone_no, arguments):
         t+=float(v[3])
     return t
 
+def call_interval_meantime(dataframe_phone_no, arguments):
+    """return number of long call in given months"""
+    # convert to datetime format
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    day_startTimeList_dict={}
+    interavl_list=[]
+    vv=voc_df_months.values
+    for v in vv:
+        start_time=v[2]
+        day=start_time[0:10]
+        t=float(start_time[11:13])*3600+float(start_time[14:16])*60+float(start_time[17:19]);
+        if day not in day_startTimeList_dict:
+            day_startTimeList_dict[day]=[]
+        day_startTimeList_dict[day].append(t)
+
+    for day in day_startTimeList_dict:
+        startTimeList=day_startTimeList_dict[day]
+        startTimeList.sort(reverse=True)
+        if len(startTimeList)<2:
+            continue
+        for ii in range(len(startTimeList)-1):
+            interavl_list.append(startTimeList[ii]-startTimeList[ii+1])
+    if len(interavl_list)==0:
+        return -1
+    return np.mean(interavl_list)
+
 # debug part: To be deleted
 def test():
     data_voc = [['f0ebee98809cb1a9', 1, '2020-01-25 21:26:40', 742, '成都', '武侯区', '0a0a319fdb33f9538'],
@@ -72,7 +101,7 @@ def test():
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
     arguments = {"months": ['2020-01'], 'threshold_duration': 1500}
-    t=total_call_time(dataframe_phone_no, arguments)
+    t=call_interval_meantime(dataframe_phone_no, arguments)
     var = day_call_var(dataframe_phone_no, arguments)
     num_called_people = called_people(dataframe_phone_no, arguments)#, '2020-01'])
     long_call_num = long_call(dataframe_phone_no, arguments)

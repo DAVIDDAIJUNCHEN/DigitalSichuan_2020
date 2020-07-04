@@ -31,9 +31,21 @@ features:
     - name: called_people
       para:
         months: &id001
-        - 2019-09
+        - 2019-10
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: called_people
+- f11:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - call_dur
+    function:
+    - name: call_interval_meantime
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: call_interval_meantime
 - f2:
   - columns:
     - sms:
@@ -133,5 +145,4 @@ features:
         months: *id001
     module: ./hwk/codes_feature/app_feature_hwk.py
     name: tool_flow
-
 name: call_dur
