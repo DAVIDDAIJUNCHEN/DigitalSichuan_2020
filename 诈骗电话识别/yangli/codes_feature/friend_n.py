@@ -18,8 +18,10 @@ def ratio_friends(dataframe_phone_no, arguments):
     for opposite_phone, times in called_people_dict.items():
         if times >= thres_friend:
             num_friend += 1
-    if len(called_people_dict) == 0:
+    # if no called people in these months, assign 100%
+    if len(called_people) == 0:
         return 1.0
+
     return num_friend / len(called_people_dict)
 
 def test():

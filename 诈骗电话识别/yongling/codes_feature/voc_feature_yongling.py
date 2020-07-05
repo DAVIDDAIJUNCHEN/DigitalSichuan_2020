@@ -79,10 +79,17 @@ def first_call_time(dataframe_phone_no, arguments):
     elif stats == 'max':
         return getMax(earlylist)
     elif stats == 'mean':
+        if len(earlylist) == 0:
+            return 0.0
         return np.mean(list(earlylist.values()))
     elif stats == 'median':
+        if len(earlylist) == 0:
+            return 0.0
         return np.median(list(earlylist.values()))
     elif stats == 'std':
+        # if no call in months, assign std to 0.01
+        if len(earlylist) == 0:
+            return 0.01
         return np.std(list(earlylist.values()))
 
 def last_call_time(dataframe_phone_no, arguments):
@@ -108,10 +115,16 @@ def last_call_time(dataframe_phone_no, arguments):
     elif stats == 'max':
         return getMax(lastlist)
     elif stats == 'mean':
+        if len(lastlist) == 0:
+            return 0.0
         return np.mean(list(lastlist.values()))
     elif stats == 'median':
+        if len(lastlist) == 0:
+            return 0.0
         return np.median(list(lastlist.values()))
     elif stats == 'std':
+        if len(lastlist) == 0:
+            return 0.01
         return np.std(list(lastlist.values()))
 
 

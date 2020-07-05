@@ -11,6 +11,7 @@ def num_shortcall(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     short_call = [1 for each in voc_df_months['call_dur'] if each <= thres_calldur]
+
     return len(short_call)
 
 def ratio_shortcall(dataframe_phone_no, arguments):
@@ -21,10 +22,10 @@ def ratio_shortcall(dataframe_phone_no, arguments):
     thres_calldur = arguments['threshold_duration']
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    short_call = voc_df_months[voc_df_months['call_dur'] < thres_calldur]
+    num_short_call = len([1 for dur in voc_df_months['call_dur'] if dur < thres_calldur])
     if len(voc_df_months) == 0:
         return 0.0
-    return len(short_call) / len(voc_df_months)
+    return num_short_call / len(voc_df_months)
 
 # debug part: To be deleted
 def test():

@@ -19,8 +19,8 @@ def long_call(dataframe_phone_no, arguments):
     thres_dur = arguments['threshold_duration']
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_long_call = len(voc_df_months[voc_df_months['call_dur']>=thres_dur])
-    print(num_long_call)
+    num_long_call = len([1 for dur in voc_df_months['call_dur'] if dur >= thres_dur])
+
     return num_long_call
 
 def day_call_var(dataframe_phone_no, arguments):
@@ -51,44 +51,42 @@ def day_call_var(dataframe_phone_no, arguments):
     return call_ed_var
 
 def total_call_time(dataframe_phone_no, arguments):
-    """return number of long call in given months"""
+    """return total call time in given months"""
     # convert to datetime format
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    t=0
-    vv=voc_df_months.values
-    for v in vv:
-        t+=float(v[3])
-    return t
+
+    return float(voc_df_months['call_dur'].sum())
+
 
 def call_interval_meantime(dataframe_phone_no, arguments):
-    """return number of long call in given months"""
+    """return mean of time between two neighbor calls in given months"""
     # convert to datetime format
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    day_startTimeList_dict={}
-    interavl_list=[]
-    vv=voc_df_months.values
+    day_startTimeList_dict = {}
+    interavl_list = []
+    vv = voc_df_months.values
     for v in vv:
-        start_time=v[2]
-        day=start_time[0:10]
-        t=float(start_time[11:13])*3600+float(start_time[14:16])*60+float(start_time[17:19]);
+        start_time = v[2]
+        day = start_time[0:10]
+        t = float(start_time[11:13])*3600+float(start_time[14:16])*60+float(start_time[17:19]);
         if day not in day_startTimeList_dict:
-            day_startTimeList_dict[day]=[]
+            day_startTimeList_dict[day] = []
         day_startTimeList_dict[day].append(t)
 
     for day in day_startTimeList_dict:
-        startTimeList=day_startTimeList_dict[day]
+        startTimeList = day_startTimeList_dict[day]
         startTimeList.sort(reverse=True)
-        if len(startTimeList)<2:
+        if len(startTimeList) < 2:
             continue
-        for ii in range(len(startTimeList)-1):
-            interavl_list.append(startTimeList[ii]-startTimeList[ii+1])
-    if len(interavl_list)==0:
+        for ii in range(len(startTimeList) - 1):
+            interavl_list.append(startTimeList[ii] - startTimeList[ii+1])
+    if len(interavl_list) == 0:
         return -1
     return np.mean(interavl_list)
 
@@ -100,13 +98,13 @@ def test():
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
-    arguments = {"months": ['2020-01'], 'threshold_duration': 1500}
+    arguments = {"months": ['2020-01'], 'threshold_duration': 100}
     t=call_interval_meantime(dataframe_phone_no, arguments)
     var = day_call_var(dataframe_phone_no, arguments)
     num_called_people = called_people(dataframe_phone_no, arguments)#, '2020-01'])
-    long_call_num = long_call(dataframe_phone_no, arguments)
+    long_call_num = total_call_time(dataframe_phone_no, arguments)
     print('input voc dataframe for given phone number:\n ', voc_df, '\n')
-    print('number of called people:\n ', num_called_people)
+    print('number of called people:\n ', long_call_num)
 
 if __name__ == '__main__':
     test()

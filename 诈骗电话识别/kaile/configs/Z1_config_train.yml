@@ -1,0 +1,26 @@
+columns:
+- app: [busi_name, flow, month_id]
+  sms: [opposite_no_m, calltype_id, request_datetime]
+  user: [city_name, county_name, idcard_cnt, arpu_201908]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
+    imei_m]
+features:
+- f1:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: called_people
+      para:
+        months: &id001 [2019-08]
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: called_people
+- f2:
+  - columns:
+    - sms: [calltype_id, opposite_no_m, request_datetime]
+    function:
+    - name: entropy_smsed_people
+      para:
+        months: *id001
+    module: ./kaile/codes_features/sms_feature_zkl.py
+    name: entropy_smsed_people
+name: call_dur
