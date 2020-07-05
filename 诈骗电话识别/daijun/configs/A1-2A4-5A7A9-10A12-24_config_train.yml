@@ -1,9 +1,10 @@
 columns:
 - app: [busi_name, flow, month_id]
   sms: [opposite_no_m, calltype_id, request_datetime]
-  user: [city_name, county_name, idcard_cnt, arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
-         arpu_202002, arpu_202003]
-  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
+  user: [city_name, county_name, idcard_cnt, arpu_201908, arpu_201909, arpu_201910,
+    arpu_201911, arpu_201912, arpu_202001, arpu_202002, arpu_202003]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
+    imei_m]
 features:
 - A1:
   - columns:
@@ -11,7 +12,7 @@ features:
     function:
     - name: called_people
       para:
-        months: &id001 [2019-10]
+        months: &id001 [2019-11]
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
 - A2:
@@ -279,6 +280,7 @@ features:
     - name: ratio_sms_friends
       para:
         months: *id001
+        threshold_friend: 2
     module: ./yangli/codes_feature/ratio_sms_friend_liyang.py
     name: ratio_sms_friends
 - C1:
@@ -345,11 +347,20 @@ features:
     name: idcard_count
 - D2:
   - columns:
-    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001, arpu_202002, arpu_202003]
+    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
+        arpu_202002, arpu_202003]
     function:
     - name: arpu_mean
-      para:
-        months: *id001
+      para: {}
     module: ./hwm/codes_feature/user_feature_hwk.py
     name: arpu_mean
-name: all_voc_features
+- D3:
+  - columns:
+    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
+        arpu_202002, arpu_202003]
+    function:
+    - name: arpu_std
+      para: {}
+    module: ./hwm/codes_feature/user_feature_hwk.py
+    name: arpu_std
+name: all_features

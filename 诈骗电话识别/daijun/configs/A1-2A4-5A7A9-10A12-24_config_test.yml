@@ -2,8 +2,7 @@ columns:
 - app: [busi_name, flow, month_id]
   sms: [opposite_no_m, calltype_id, request_datetime]
   user: [city_name, county_name, idcard_cnt, arpu_202004]
-  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
-    imei_m]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
 features:
 - A1:
   - columns:
@@ -279,6 +278,7 @@ features:
     - name: ratio_sms_friends
       para:
         months: *id001
+        threshold_friend: 2
     module: ./yangli/codes_feature/ratio_sms_friend_liyang.py
     name: ratio_sms_friends
 - C1:
@@ -348,8 +348,15 @@ features:
     - user: [arpu_202004]
     function:
     - name: arpu_mean
-      para:
-        months: *id001
+      para: {}
     module: ./hwm/codes_feature/user_feature_hwk.py
     name: arpu_mean
-name: all_voc_features
+- D3:
+  - columns:
+    - user: [arpu_202004]
+    function:
+    - name: arpu_std
+      para: {}
+    module: ./hwm/codes_feature/user_feature_hwk.py
+    name: arpu_std
+name: all_features
