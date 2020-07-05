@@ -132,19 +132,19 @@ def num_callback(dataframe_phone_no, arguments):
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
-    voc_df_months = copy.deepcopy(voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)])
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+
     if len(voc_df_months) == 0:
         return 1.0
-    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    #voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
     phone_no_callout_df = voc_df_months[voc_df_months['calltype_id']==1]
     phone_no_callin_df = voc_df_months[voc_df_months['calltype_id']==2]
-
     num_callback = 0
     for _, row_out in phone_no_callout_df.iterrows():
-        t1 = time.time()
+        opposite_no_row = row_out['opposite_no_m']
         datetime_out = row_out['start_datetime']
-        row_in_candidate = phone_no_callin_df[phone_no_callin_df['start_datetime'] > datetime_out]
-        if row_out['opposite_no_m'] in list(row_in_candidate['opposite_no_m']):
+        row_in_candidate = phone_no_callin_df[phone_no_callin_df['opposite_no_m'] == opposite_no_row]
+        if any(row_in_candidate['start_datetime'] > datetime_out):
             num_callback += 1
     return num_callback
 
@@ -153,10 +153,10 @@ def ratio_callback(dataframe_phone_no, arguments):
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
-    voc_df_months = copy.deepcopy(voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)])
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     if len(voc_df_months) == 0:
         return 1.0
-    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    #voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
     phone_no_callout_df = voc_df_months[voc_df_months['calltype_id']==1]
     phone_no_callin_df = voc_df_months[voc_df_months['calltype_id']==2]
 
@@ -174,12 +174,12 @@ def ratio_callback(dataframe_phone_no, arguments):
 def test():
     data_voc = [['f0ebee98809cb1a9', 1, '2020-01-02 20:14:33', 9, '成都', '武侯区', '0a0a319fdb33f9538'],
                 ['dedd4a48c3a8f', 2, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538'],
-                ['f0ebee98809cb1a9', 2, '2020-01-02 20:14:33', 0, '成都', '锦江区', '0a0a319fdb33f9538']]
+                ['f0ebee98809cb1a9', 2, '2020-01-02 20:14:38', 0, '成都', '锦江区', '0a0a319fdb33f9538']]
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
     arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150}
-    print(mean_call_dur(dataframe_phone_no, arguments))
+    print(num_callback(dataframe_phone_no, arguments))
 
 if __name__ == '__main__':
     test()
