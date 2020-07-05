@@ -136,15 +136,15 @@ def num_callback(dataframe_phone_no, arguments):
 
     if len(voc_df_months) == 0:
         return 1.0
+
     #voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
     phone_no_callout_df = voc_df_months[voc_df_months['calltype_id']==1]
     phone_no_callin_df = voc_df_months[voc_df_months['calltype_id']==2]
     num_callback = 0
     for _, row_out in phone_no_callout_df.iterrows():
-        opposite_no_row = row_out['opposite_no_m']
         datetime_out = row_out['start_datetime']
-        row_in_candidate = phone_no_callin_df[phone_no_callin_df['opposite_no_m'] == opposite_no_row]
-        if any(row_in_candidate['start_datetime'] > datetime_out):
+        row_in_candidate = phone_no_callin_df[phone_no_callin_df['start_datetime'] > datetime_out]
+        if row_out['opposite_no_m'] in list(row_in_candidate['opposite_no_m']):
             num_callback += 1
     return num_callback
 

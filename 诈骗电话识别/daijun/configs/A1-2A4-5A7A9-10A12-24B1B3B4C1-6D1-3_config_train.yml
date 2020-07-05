@@ -12,7 +12,7 @@ features:
     function:
     - name: called_people
       para:
-        months: &id001 [2019-09]
+        months: &id001 [2019-11, 2019-12, 2020-02, 2020-03]
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
 - A2:
@@ -146,6 +146,24 @@ features:
         threshold_duration: 5
     module: ./yangli/codes_feature/short_call.py
     name: ratio_shortcall
+- A20:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: num_callback
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: num_callback
+- A23:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: ratio_callback
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: ratio_callback
 - A21:
   - columns:
     - voc: [opposite_no_m, start_datetime, call_dur]
