@@ -38,7 +38,7 @@ features:
     - name: called_people
       para:
         months: &id001
-        - 2020-03
+        - 2019-08
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: called_people
 - f13:

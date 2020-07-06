@@ -19,6 +19,33 @@ def arpu_mean(dataframe_phone_no, arguments):
         return 45.
     return mean_arpu
 
+def arpu_mean2(dataframe_phone_no, arguments):
+    user_dataframe = dataframe_phone_no['user']
+    kk=list(user_dataframe.keys());
+    vv=user_dataframe.values[0]
+
+    month_arpu_dict={}
+    for ii in range(len(kk)-3):
+        mm=kk[ii+3][5:]
+        month_arpu_dict[mm]=vv[ii+3]
+
+    months = arguments['months']
+    arpu_sum=0
+    month_count=0
+    for mm in months:
+        k=mm[:4]+mm[5:]
+        if k in month_arpu_dict:
+            if  not np.isnan(month_arpu_dict[k]):
+                month_count+=1
+                arpu_sum+=float(month_arpu_dict[k])
+
+    if month_count==0:
+        return -1
+    else:
+        if np.isnan(arpu_sum/month_count):
+            print(vv)
+        return arpu_sum/month_count
+
 def arpu_std(dataframe_phone_no, arguments):
     user_dataframe = dataframe_phone_no['user']
     user_columns = list(user_dataframe.keys())
