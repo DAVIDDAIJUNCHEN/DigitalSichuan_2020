@@ -40,6 +40,9 @@ num_train = int(num_total * 0.8)
 num_dev = int(num_total * 0.1)
 num_test = num_total - num_train - num_dev
 
+# ensemble top K models in each month
+num_ensemble = 5
+
 ## split data to train/dev/test (only for train_user.csv)
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
@@ -54,17 +57,16 @@ label_dev = get_label(dev_file)
 label_test = get_label(test_file)
 phone_no_m_blindtest = get_phone_no_m(test_user)
 
-
 X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
 
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
-months_lst = [['2019-11', '2019-12', '2020-02', '2020-03'], ['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
+months_lst = [['2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'], ['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
               ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
 
-gradboost_blindAcc = {"2019-11_2019-12_2020-02_2020-03":0.9, '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
+gradboost_blindAcc = {"2019-11_2019-12_2020-02_2020-03": 0.9, '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
                  '2019-12': 0.78, '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
 
 clf_gradboostAcc_months = {}
@@ -77,28 +79,31 @@ for months in months_lst:
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
     X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
 
+    dict_model_acc_dev = {}
+    dict_model_acc_test = {}
+
     # model training and inference
     ## Model I: Logistic regression
     clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_logistReg.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Logistic Regression')
+    dict_model_acc_dev['logistReg'] = (clf_logistReg, evaluate(label_dev, pred_dev, model='Logistic Regression'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_logistReg.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Logistic Regression')
+    dict_model_acc_test['logistReg'] = (clf_logistReg, evaluate(label_test, pred_test, model='Logistic Regression'))
 
     ## Model II: Logistic regression CV
     clf_logistRegCV = LogisticRegressionCV(cv=5, random_state=0).fit(X_train, label_train)
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_logistRegCV.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Logistic Regression CV=5')
+    dict_model_acc_dev['logistRegCV'] = (clf_logistRegCV, evaluate(label_dev, pred_dev, model='Logistic Regression CV=5'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_logistRegCV.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Logistic Regression CV=5')
+    dict_model_acc_test['logistRegCV'] = (clf_logistRegCV, evaluate(label_test, pred_test, model='Logistic Regression CV=5'))
 
     ## Model III: percepton
     #from sklearn.linear_model import Perceptron
@@ -119,12 +124,11 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_ridgeClassifier.predict(X_dev).tolist()
-
-    evaluate(label_dev, pred_dev, model='Ridge Classification')
+    dict_model_acc_dev['ridgeClassifier'] = (clf_ridgeClassifier, evaluate(label_dev, pred_dev, model='Ridge Classification'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_ridgeClassifier.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Ridge Classification')
+    dict_model_acc_test['ridgeClassifier'] = (clf_ridgeClassifier, evaluate(label_test, pred_test, model='Ridge Classification'))
 
     ## Model V: AdaBoostClassifier
     from sklearn.ensemble import AdaBoostClassifier
@@ -133,11 +137,11 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_AdaBoost.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Adaboost')
+    dict_model_acc_dev['Adaboost'] = (clf_AdaBoost, evaluate(label_dev, pred_dev, model='Adaboost'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_AdaBoost.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Adaboost')
+    dict_model_acc_test['Adaboost'] = (clf_AdaBoost, evaluate(label_test, pred_test, model='Adaboost'))
 
     ## Model VI: BaggingClassifier
     from sklearn.ensemble import BaggingClassifier
@@ -147,11 +151,11 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_Bagging.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Bagging_SVC')
+    dict_model_acc_dev['Bagging_SVC'] = (clf_Bagging, evaluate(label_dev, pred_dev, model='Bagging_SVC'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_Bagging.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Bagging_SVC')
+    dict_model_acc_test['Bagging_SVC'] = (clf_Bagging, evaluate(label_test, pred_test, model='Bagging_SVC'))
 
     ## Model VII: random forest
     from sklearn.ensemble import RandomForestClassifier
@@ -160,11 +164,11 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_randforest.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Random forest')
+    dict_model_acc_dev['Random_forest'] = (clf_randforest, evaluate(label_dev, pred_dev, model='Random forest'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_randforest.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Random forest')
+    dict_model_acc_test['Random_forest'] = (clf_randforest, evaluate(label_test, pred_test, model='Random forest'))
 
     ## Model VIII: Gradientboosting
     from sklearn.ensemble import GradientBoostingClassifier
@@ -173,11 +177,11 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_gradboost.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Gradient boosting')
+    dict_model_acc_dev['Gradient_boosting'] = (clf_gradboost, evaluate(label_dev, pred_dev, model='Gradient boosting'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_gradboost.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Gradient boosting')
+    dict_model_acc_test['Gradient_boosting'] = (clf_gradboost, evaluate(label_test, pred_test, model='Gradient boosting'))
 
     ### collect models in months
     clf_gradboostAcc_months['_'.join(months)] = (clf_gradboost, gradboost_blindAcc['_'.join(months)])
@@ -188,11 +192,11 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_mlp.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='MLP')
+    dict_model_acc_dev['MLP'] = (clf_mlp, evaluate(label_dev, pred_dev, model='MLP'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_mlp.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='MLP')
+    dict_model_acc_test['MLP'] = (clf_mlp, evaluate(label_test, pred_test, model='MLP'))
 
     ## Model X: SVM
     from sklearn.svm import LinearSVC
@@ -204,14 +208,90 @@ for months in months_lst:
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_svm.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='SVM')
+    dict_model_acc_dev['SVM'] = (clf_svm, evaluate(label_dev, pred_dev, model='SVM'))
 
     ### evaluate toy model on (X_test, label_test)
     pred_test = clf_svm.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='SVM')
+    dict_model_acc_test['SVM'] = (clf_svm, evaluate(label_test, pred_test, model='SVM'))
 
+    ## model ensemble (top K accuracy models ensemble)
+    ### construct dictionary with topK models: {'model1': accuracy1, ... , 'modelK': accuracyK}
+    dict_topK_model_acc_dev = dict(sorted(dict_model_acc_dev.items(), key=lambda x: x[1][1], reverse=True)[:num_ensemble])
+    dict_topK_model_acc_test = dict(sorted(dict_model_acc_test.items(), key=lambda x: x[1][1], reverse=True)[:num_ensemble])
+
+    ### evaluate ensemble model on (X_dev, label_dev)
+    pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='vote')
+    evaluate(label_dev, pred_dev, model='topK_vote')
+
+    ### evaluate ensemble model on (X_test, label_test)
+    pred_test = ensemble(dict_topK_model_acc_test, X_test, method='vote')
+    evaluate(label_test, pred_test, model='topK_vote')
+
+    ### evaluate ensemble model on (X_dev, label_dev)
+    if 'Bagging_SVC' in dict_topK_model_acc_dev.keys():
+        dict_topK_model_acc_dev.pop('Bagging_SVC')
+
+    if 'Bagging_SVC' in dict_topK_model_acc_test.keys():
+        dict_topK_model_acc_test.pop('Bagging_SVC')
+
+    if 'SVM' in dict_topK_model_acc_dev.keys():
+        dict_topK_model_acc_dev.pop('SVM')
+
+    if 'SVM' in dict_topK_model_acc_test.keys():
+        dict_topK_model_acc_test.pop('SVM')
+
+    pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_unif')
+    evaluate(label_dev, pred_dev, model='topK_avg_unif')
+
+    ### evaluate ensemble model on (X_test, label_test)
+    pred_test = ensemble(dict_topK_model_acc_test, X_test, method='avg_unif')
+    evaluate(label_test, pred_test, model='topK_avg_unif')
+
+    ### evaluate ensemble model on (X_dev, label_dev)
+    pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_softmax')
+    evaluate(label_dev, pred_dev, model='topK_avg_softmax')
+
+    ### evaluate ensemble model on (X_test, label_test)
+    pred_test = ensemble(dict_topK_model_acc_test, X_test, method='avg_softmax')
+    evaluate(label_test, pred_test, model='topK_avg_softmax')
 
     # predict labels on blind test set and write to xlsx file for submitting
+    ## ensemble classifier (topK_avg_softmax)
+    pred_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='avg_softmax')
+    month_train = '_'.join(months)
+    with open('../test_results/' + features_name + '/' + 'topK_avg_softmax_' + month_train + '.csv',
+              'w', newline='', encoding='utf-8') as fout:
+        field_names = ['phone_no_m', 'label']
+        writer = csv.DictWriter(fout, fieldnames=field_names)
+        writer.writeheader()
+
+        for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred})
+
+    ## ensemble classifier (topK_vote)
+    pred_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='vote')
+    month_train = '_'.join(months)
+    with open('../test_results/' + features_name + '/' + 'topK_vote_' + month_train + '.csv',
+              'w', newline='', encoding='utf-8') as fout:
+        field_names = ['phone_no_m', 'label']
+        writer = csv.DictWriter(fout, fieldnames=field_names)
+        writer.writeheader()
+
+        for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred})
+
+    ## ensemble classifier (topK_avg_unif)
+    pred_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='avg_unif')
+    month_train = '_'.join(months)
+    with open('../test_results/' + features_name + '/' + 'topK_avg_unif_' + month_train + '.csv',
+              'w', newline='', encoding='utf-8') as fout:
+        field_names = ['phone_no_m', 'label']
+        writer = csv.DictWriter(fout, fieldnames=field_names)
+        writer.writeheader()
+
+        for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred})
+
     ## gradboost classifier
     pred_blindtest = clf_gradboost.predict(X_blindtest).tolist()
 
@@ -265,4 +345,3 @@ with open('../test_results/' + features_name + '/' + 'avgsoftmax_gradboost_' + m
 
     for phone, pred in zip(phone_no_m_blindtest, pred_avgsoftmax_blindtest):
         writer.writerow({'phone_no_m': phone, 'label': pred})
-

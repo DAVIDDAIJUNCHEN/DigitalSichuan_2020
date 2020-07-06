@@ -9,9 +9,11 @@ def evaluate(golden_truth, pred, model=None):
     f1 = f1_score(golden_truth, pred, average='micro')
     if model == None:
         print('F1 score is {}'.format(f1))
+        return f1
     else:
         assert type(model) == str
         print(model + ': F1 score is {}'.format(f1))
+        return f1
 
 def modify_months_config(config_yml, new_months=['2020-01', '2020-02']):
     """modify date in the config yaml file"""

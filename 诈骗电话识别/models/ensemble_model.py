@@ -22,6 +22,22 @@ def ensemble(dict_model_acc, test_design, method='vote'):
         pred_models_dict[name_model] = pred_model
         pred_models_lst.append(pred_model)
 
+        acc_lst.append(acc)
+
+    pred_models_df = pd.DataFrame(pred_models_lst)
+
+    if method == 'vote':
+        pred_vote_df = pred_models_df.mode()
+        pred_vote_lst = list(pred_vote_df.loc[0, :])
+
+        return pred_vote_lst
+
+    prob_models_dict = {}
+    prob_models_lst = []
+    prob1_models_lst = []
+    acc_lst = []
+
+    for name_model, (model, acc) in dict_model_acc.items():
         prob_model = model.predict_proba(test_design)
         prob1_model = np.array(prob_model)[:, 1].tolist()
         prob_models_dict[name_model] = prob_model
@@ -30,21 +46,13 @@ def ensemble(dict_model_acc, test_design, method='vote'):
 
         acc_lst.append(acc)
 
-    pred_models_df = pd.DataFrame(pred_models_lst)
     prob1_models_df = pd.DataFrame(prob1_models_lst)
 
-    if method == 'vote':
-        pred_vote_df = pred_models_df.mode()
-        pred_vote_lst = list(pred_vote_df.loc[0, :])
-
-        return pred_vote_lst
-
-    elif method == 'avg_unif':
+    if method == 'avg_unif':
         prob1_avgunif_lst = list(prob1_models_df.mean())
         pred_avgunif_lst = [int(score > 0.5) for score in prob1_avgunif_lst]
 
         return pred_avgunif_lst
-
     elif method == 'avg_softmax':
         sum_exp_acc = sum(np.exp(acc_lst))
         acc_softmax = [np.exp(item) / sum_exp_acc for item in acc_lst]

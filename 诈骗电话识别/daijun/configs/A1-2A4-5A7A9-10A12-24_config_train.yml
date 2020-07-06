@@ -12,7 +12,7 @@ features:
     function:
     - name: called_people
       para:
-        months: &id001 [2019-09]
+        months: &id001 [2019-08]
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
 - A2:
