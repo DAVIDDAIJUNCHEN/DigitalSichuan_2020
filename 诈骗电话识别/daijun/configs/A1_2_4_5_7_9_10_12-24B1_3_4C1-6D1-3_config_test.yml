@@ -49,7 +49,7 @@ features:
     - name: long_call
       para:
         months: *id001
-        threshold_duration: 600
+        threshold_duration: 1000
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: num_long_call
 - A9:

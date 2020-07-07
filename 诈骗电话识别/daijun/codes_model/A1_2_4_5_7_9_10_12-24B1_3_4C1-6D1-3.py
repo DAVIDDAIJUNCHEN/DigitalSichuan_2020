@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 # import global modules
@@ -6,6 +5,10 @@ import sys
 import os
 import csv
 import numpy as np
+from sklearn import metrics
+import joblib
+from sklearn.grid_search import GridSearchCV
+# from sklearn.preprocessing import normalize
 sys.path.append('../../')
 
 # import local modules
@@ -14,8 +17,6 @@ from data_process_new import split_data, get_features, get_label, get_phone_no_m
 from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
 from models.ensemble_model import ensemble
-from sklearn.preprocessing import normalize
-
 
 # prepare data and parameter
 ## original csv files
@@ -41,7 +42,7 @@ num_dev = int(num_total * 0.1)
 num_test = num_total - num_train - num_dev
 
 # ensemble top K models in each month
-num_ensemble = 5
+num_ensemble = 4
 
 ## split data to train/dev/test (only for train_user.csv)
 split_data(train_user, num_train, num_dev, num_test, replace=False)
@@ -63,8 +64,10 @@ label_test = get_label(test_file)
 phone_no_m_blindtest = get_phone_no_m(test_user)
 
 X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
+X_blindtest = X_blindtest
 
 X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
+X_test = X_test
 
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
@@ -86,7 +89,9 @@ for months in months_lst:
     modify_months_config(train_config_yml, new_months=months)
 
     X_train = get_features(train_file, train_voc, train_sms, train_app, train_config_yml)
+    X_train = X_train
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
+    X_dev = X_dev
 
     dict_model_acc_dev = {}
     dict_model_acc_test = {}
@@ -168,8 +173,22 @@ for months in months_lst:
 
     ## Model VII: random forest
     from sklearn.ensemble import RandomForestClassifier
-    clf_randforest = RandomForestClassifier(max_depth=2, random_state=0)
+    # tune parameters for random forest
+    #para_test1 = {'min_samples_leaf': list(range(10, 60, 10)), 'max_features': list(range(2, 20, 2))}
+    #gsearch1 = GridSearchCV(estimator=RandomForestClassifier(n_estimators=60, max_depth=12, min_samples_split=50,
+    #                                                        random_state=10),
+    #                        param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
+
+    #gsearch1.fit(X_train, label_train)
+    #print(gsearch1.grid_scores_, gsearch1.best_params_, gsearch1.best_score_)
+
+    # fit random forest model
+    clf_randforest = RandomForestClassifier(n_estimators=60, max_features=16, min_samples_leaf=10, max_depth=12,
+                                            min_samples_split=50, random_state=10)
     clf_randforest.fit(X_train, label_train)
+
+    y_predprob = clf_randforest.predict_proba(X_train)[:, 1]
+    print('AUC score (Train) of random forest: %f' % metrics.roc_auc_score(label_train, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_randforest.predict(X_dev).tolist()
@@ -181,8 +200,20 @@ for months in months_lst:
 
     ## Model VIII: Gradientboosting
     from sklearn.ensemble import GradientBoostingClassifier
-    clf_gradboost = GradientBoostingClassifier(max_depth=2, random_state=0)
+    # tune parameters for gradient boosting
+    #para_test1 = {'min_samples_leaf': list(range(10, 60, 10)), 'max_features': list(range(2, 20, 2))}
+    #gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(n_estimators=60, max_depth=12, min_samples_split=50,
+    #                                                         random_state=10),
+    #                        param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
+
+    #gsearch1.fit(X_train, label_train)
+    #print(gsearch1.grid_scores_, gsearch1.best_params_, gsearch1.best_score_)
+
+    clf_gradboost = GradientBoostingClassifier(n_estimators=50, max_features=12, min_samples_leaf=50, max_depth=12,
+                                               min_samples_split=50, random_state=10)
     clf_gradboost.fit(X_train, label_train)
+    y_predprob = clf_gradboost.predict_proba(X_train)[:, 1]
+    print('AUC score (Train) of gradient boosting: %f' % metrics.roc_auc_score(label_train, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_gradboost.predict(X_dev).tolist()
