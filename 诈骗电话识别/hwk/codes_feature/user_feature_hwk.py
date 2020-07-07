@@ -56,13 +56,58 @@ def arpu_std(dataframe_phone_no, arguments):
         return 0.01
     return std_arpu
 
+def arpu_smallthan_8(dataframe_phone_no, arguments):
+    user_dataframe = dataframe_phone_no['user']
+    kk=list(user_dataframe.keys());
+    vv=user_dataframe.values[0]
+
+    month_arpu_dict={}
+    for ii in range(len(kk)-3):
+        mm=kk[ii+3][5:]
+        month_arpu_dict[mm]=vv[ii+3]
+
+    months = arguments['months']
+    for mm in months:
+        k=mm[:4]+mm[5:]
+        if k in month_arpu_dict:
+            if not np.isnan(month_arpu_dict[k]):
+                if float(month_arpu_dict[k])<8:
+                    return 1
+                else:
+                    return 0
+    return -1
+
+def arpu_stand(dataframe_phone_no, arguments):
+    user_dataframe = dataframe_phone_no['user']
+    kk=list(user_dataframe.keys());
+    vv=user_dataframe.values[0]
+
+    month_arpu_dict={}
+    for ii in range(len(kk)-3):
+        mm=kk[ii+3][5:]
+        month_arpu_dict[mm]=vv[ii+3]
+
+    months = arguments['months']
+    for mm in months:
+        k=mm[:4]+mm[5:]
+        if k in month_arpu_dict:
+            if  not np.isnan(month_arpu_dict[k]):
+                tt=float(month_arpu_dict[k])%10
+                if tt==9:
+                    return 1
+                else:
+                    return 0
+
+
+    return -1
+
 # debug part: To be deleted
 def test():
-    data_user = [['7bcf933547b6776b1','','45.0','45.0','45.0','45.0','45.0','45','45.0']]
-    user_df = pd.DataFrame(data_user, columns=['opposite_no_m', 'arpu_201908','arpu_201909','arpu_201910','arpu_201911','arpu_201912','arpu_202001','arpu_202002','arpu_202003'])
+    data_user = [['资','安岳分公司','2',69,45.0,45.0,45.0,45.0,45.0,45,45.0]]
+    user_df = pd.DataFrame(data_user, columns=['city_name', 'county_name', 'idcard_cnt', 'arpu_201908','arpu_201909','arpu_201910','arpu_201911','arpu_201912','arpu_202001','arpu_202002','arpu_202003'])
     dataframe_phone_no = {'user': user_df}
     arguments = {"months": ['2019-08']}
-    am = arpu_mean(dataframe_phone_no, arguments)
+    am = arpu_stand(dataframe_phone_no, arguments)
     print(am)
     print('input voc dataframe for given phone number:\n ', user_df, '\n')
 

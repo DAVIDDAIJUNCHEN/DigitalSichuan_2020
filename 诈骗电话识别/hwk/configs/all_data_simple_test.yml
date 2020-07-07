@@ -1,0 +1,54 @@
+columns:
+- app: [busi_name, flow, month_id]
+  sms: [opposite_no_m, calltype_id, request_datetime]
+  user: [city_name, county_name, idcard_cnt, arpu_202004]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
+features:
+
+- D22:
+  - columns:
+    - user:
+      - opposite_no_m
+      - arpu_202004
+    function:
+    - name: arpu_mean2
+      para:
+        months: &id001
+        - 2020-04
+    module: ./hwk/codes_feature/user_feature_hwk.py
+    name: arpu_mean2
+- A51:
+  - columns:
+    - voc:
+      - imei_m
+    function:
+    - name: imei_num
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: imei_num
+- A1:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+    function:
+    - name: called_people
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: called_people
+- A7:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - call_dur
+      - start_datetime
+    function:
+    - name: morning_call_time_rate
+      para:
+        months: *id001
+        threshold_duration: 1000
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: morning_call_time_rate
+name: all_features

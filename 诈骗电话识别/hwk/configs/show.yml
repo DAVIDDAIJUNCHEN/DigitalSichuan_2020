@@ -1,0 +1,43 @@
+columns:
+- app:
+  - busi_name
+  - flow
+  - month_id
+  sms:
+  - opposite_no_m
+  - calltype_id
+  - request_datetime
+  user:
+  - city_name
+  - county_name
+  - idcard_cnt
+  - arpu_201908
+  - arpu_201909
+  - arpu_201910
+  - arpu_201911
+  - arpu_201912
+  - arpu_202001
+  - arpu_202002
+  - arpu_202003
+  voc:
+  - opposite_no_m
+  - calltype_id
+  - start_datetime
+  - call_dur
+  - city_name
+  - county_name
+  - imei_m
+features:
+- A1:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+    function:
+    - name: called_people
+      para:
+        months: &id001
+        - 2020-03
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: called_people
+name: all_features
