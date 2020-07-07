@@ -39,6 +39,19 @@ features:
         months: *id001
     module: ./hwk/codes_feature/user_feature_hwk.py
     name: arpu_stand
+- A52:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - call_dur
+      - start_datetime
+    function:
+    - name: morning_call_time_rate
+      para:
+        months: *id001
+        threshold_duration: 1000
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: morning_call_time_rate
 - A1:
   - columns:
     - voc: [opposite_no_m, start_datetime]
@@ -466,5 +479,15 @@ features:
         months: *id001
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: day_call_var
-
+- A51:
+  - columns:
+    - voc:
+      - imei_m
+    function:
+    - name: imei_num
+      para:
+        months: *id001
+        threshold_duration: 600
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: imei_num
 name: all_features

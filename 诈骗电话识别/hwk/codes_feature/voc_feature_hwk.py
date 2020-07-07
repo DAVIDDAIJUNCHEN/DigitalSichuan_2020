@@ -60,6 +60,28 @@ def total_call_time(dataframe_phone_no, arguments):
 
     return float(voc_df_months['call_dur'].sum())
 
+def morning_call_time_rate(dataframe_phone_no, arguments):
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    total_time=0
+    morning_time=0
+    vv = voc_df_months.values
+    for v in vv:
+        start_time = v[2]
+        day = start_time[0:10]
+        t = float(start_time[11:13])*3600+float(start_time[14:16])*60+float(start_time[17:19]);
+        total_time+=float(v[3])
+        if 3600*8<t<3600*18:
+            morning_time+=float(v[3])
+    #return morning_time
+    if total_time==0:
+        return -1
+    else:
+        return morning_time
+
+
 
 def call_interval_meantime(dataframe_phone_no, arguments):
     """return mean of time between two neighbor calls in given months"""
@@ -89,6 +111,17 @@ def call_interval_meantime(dataframe_phone_no, arguments):
     if len(interavl_list) == 0:
         return -1
     return np.mean(interavl_list)
+
+def imei_num(dataframe_phone_no, arguments):
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    imei_set=set()
+    vv = voc_df_months.values
+    for v in vv:
+        imei_set.add(v[-1])
+    return len(imei_set)
 
 # debug part: To be deleted
 def test():
