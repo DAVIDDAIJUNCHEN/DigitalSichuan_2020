@@ -8,26 +8,34 @@ columns:
 
 features:
   - f1:
-      - name: 'calltype'
+      - name: 'last_call_time'
         columns:
-          - voc: ['opposite_no_m','calltype_id', 'start_datetime']
+          - voc: ['start_datetime']
         module: './yongling/codes_feature/voc_feature_yongling.py'
         function:
-          - name: 'calltype_per'
-            para: {'months': ['2020-04']}
+          - name: 'last_call_time'
+            para: {'months': ['2020-04'],'statistics': 'min'}
   - f2:
-      - name: 'sms_people'
+      - name: 'first_call_time'
         columns:
-          - sms: ['opposite_no_m', 'request_datetime']
+          - voc: ['start_datetime']
+        module: './yongling/codes_feature/voc_feature_yongling.py'
+        function:
+          - name: 'first_call_time'
+            para: {'months': ['2020-04'],'statistics': 'min'}
+  - f3:
+      - name: 'last_sms_time'
+        columns:
+          - sms: ['request_datetime']
         module: './yongling/codes_feature/sms_feature_yongling.py'
         function:
-          - name: 'sms_people'
-            para: {'months': ['2020-04']}
-  - f3:
-      - name: 'num_apps'
+          - name: 'last_sms_time'
+            para: {'months': ['2020-04'],'statistics': 'min'}
+  - f4:
+      - name: 'first_sms_time'
         columns:
-          - app: ['app_busi_name']
-        module: './yongling/codes_feature/app_feature_yongling.py'
+          - sms: ['request_datetime']
+        module: './yongling/codes_feature/sms_feature_yongling.py'
         function:
-          - name: 'num_app'
-            para: {}
+          - name: 'first_sms_time'
+            para: {'months': ['2020-04'],'statistics': 'min'}

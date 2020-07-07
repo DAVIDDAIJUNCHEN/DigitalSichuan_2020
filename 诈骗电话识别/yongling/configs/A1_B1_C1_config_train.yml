@@ -25,34 +25,45 @@ features:
 - f1:
   - columns:
     - voc:
-      - opposite_no_m
-      - calltype_id
       - start_datetime
     function:
-    - name: calltype_per
+    - name: last_call_time
       para:
         months: &id001
-        - 2020-03
+        - 2019-08
+        statistics: min
     module: ./yongling/codes_feature/voc_feature_yongling.py
-    name: calltype
+    name: last_call_time
 - f2:
   - columns:
-    - sms:
-      - opposite_no_m
-      - request_datetime
+    - voc:
+      - start_datetime
     function:
-    - name: sms_people
+    - name: first_call_time
       para:
         months: *id001
-    module: ./yongling/codes_feature/sms_feature_yongling.py
-    name: sms_people
+        statistics: min
+    module: ./yongling/codes_feature/voc_feature_yongling.py
+    name: first_call_time
 - f3:
   - columns:
-    - app:
-      - app_busi_name
+    - sms:
+      - request_datetime
     function:
-    - name: num_app
-      para: {}
-    module: ./yongling/codes_feature/app_feature_yongling.py
-    name: num_apps
-name: call_dur
+    - name: last_sms_time
+      para:
+        months: *id001
+        statistics: min
+    module: ./yongling/codes_feature/sms_feature_yongling.py
+    name: last_sms_time
+- f3:
+  - columns:
+    - sms:
+      - request_datetime
+    function:
+    - name: first_sms_time
+      para:
+        months: *id001
+        statistics: min
+    module: ./yongling/codes_feature/sms_feature_yongling.py
+    name: first_sms_time
