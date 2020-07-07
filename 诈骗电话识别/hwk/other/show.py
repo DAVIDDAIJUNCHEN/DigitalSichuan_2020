@@ -89,8 +89,13 @@ X_NZP_array=np.array(X_NZP)
 zp=X_ZP_array[:,0]
 nzp=X_NZP_array[:,0]
 plt.figure(1)
+
+ax1 = plt.subplot(221)
+#plt.hist(zp)
 plt.boxplot(zp)
-plt.figure(2)
+ax2 = plt.subplot(222,sharey=ax1,sharex=ax1)
+#plt.hist(nzp)
 plt.boxplot(nzp)
+
 plt.show()
 print(88)
