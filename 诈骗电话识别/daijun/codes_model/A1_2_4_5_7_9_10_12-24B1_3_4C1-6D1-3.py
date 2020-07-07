@@ -47,9 +47,14 @@ num_ensemble = 5
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 ## define features in train_config_yml and test_config_yml
-train_config_yml = '../configs/A1-2A4-5A7A9-10A12-24_config_train.yml'
-test_config_yml  = '../configs/A1-2A4-5A7A9-10A12-24_config_test.yml'
-features_name = 'A1-2A4-5A7A9-10A12-24'
+train_config_yml = '../configs/A1_2_4_5_7_9_10_12-24B1_3_4C1-6D1-3_config_train.yml'
+test_config_yml  = '../configs/A1_2_4_5_7_9_10_12-24B1_3_4C1-6D1-3_config_test.yml'
+
+# set months of test data
+test_months = ['2019-12']
+modify_months_config(train_config_yml, new_months=test_months)
+
+features_name = 'A1_2_4_5_7_9_10_12-24B1_3_4C1-6D1-3'
 
 # get design matrix and label according to months
 label_train = get_label(train_file)
@@ -59,15 +64,20 @@ phone_no_m_blindtest = get_phone_no_m(test_user)
 
 X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
 
+X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
+
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
-months_lst = [['2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'], ['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
-              ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
+months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'],
+              ['2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'], ['2019-08'], ['2019-09'],
+              ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
 
-gradboost_blindAcc = {"2019-11_2019-12_2020-02_2020-03": 0.9, '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
-                 '2019-12': 0.78, '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
+gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2019-12_2020-01_2020-02_2020-03": 0.9,
+                      "2019-10_2019-11_2019-12_2020-01_2020-02_2020-03": 0.9, '2019-08': 0.62,
+                      '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75, '2019-12': 0.78,
+                      '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
 
 clf_gradboostAcc_months = {}
 
@@ -77,7 +87,6 @@ for months in months_lst:
 
     X_train = get_features(train_file, train_voc, train_sms, train_app, train_config_yml)
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
-    X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
 
     dict_model_acc_dev = {}
     dict_model_acc_test = {}
@@ -239,6 +248,13 @@ for months in months_lst:
 
     if 'SVM' in dict_topK_model_acc_test.keys():
         dict_topK_model_acc_test.pop('SVM')
+
+    if 'ridgeClassifier' in dict_topK_model_acc_dev.keys():
+        dict_topK_model_acc_dev.pop('ridgeClassifier')
+
+    if 'ridgeClassifier' in dict_topK_model_acc_test.keys():
+        dict_topK_model_acc_test.pop('ridgeClassifier')
+
 
     pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_unif')
     evaluate(label_dev, pred_dev, model='topK_avg_unif')
