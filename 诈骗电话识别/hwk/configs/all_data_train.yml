@@ -44,9 +44,45 @@ features:
     - name: arpu_mean2
       para:
         months: &id001
-        - 2020-03
+        - 2019-12
     module: ./hwk/codes_feature/user_feature_hwk.py
     name: arpu_mean2
+- D23:
+  - columns:
+    - user:
+      - opposite_no_m
+      - arpu_201908
+      - arpu_201909
+      - arpu_201910
+      - arpu_201911
+      - arpu_201912
+      - arpu_202001
+      - arpu_202002
+      - arpu_202003
+    function:
+    - name: arpu_smallthan_8
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/user_feature_hwk.py
+    name: arpu_smallthan_8
+- D24:
+  - columns:
+    - user:
+      - opposite_no_m
+      - arpu_201908
+      - arpu_201909
+      - arpu_201910
+      - arpu_201911
+      - arpu_201912
+      - arpu_202001
+      - arpu_202002
+      - arpu_202003
+    function:
+    - name: arpu_stand
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/user_feature_hwk.py
+    name: arpu_stand
 - A1:
   - columns:
     - voc:
