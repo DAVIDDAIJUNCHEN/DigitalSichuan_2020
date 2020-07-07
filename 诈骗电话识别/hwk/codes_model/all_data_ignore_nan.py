@@ -66,7 +66,7 @@ label_test_temp = get_label(test_file)
 phone_no_m_blindtest = get_phone_no_m(test_user)
 
 
-#X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
+X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
 
 # X_blindtest_t=open('../../data/X_blindtest','wb')
 # pickle.dump(X_blindtest,X_blindtest_t)
@@ -79,8 +79,8 @@ user_train_csv = pd.read_csv('../../data/train/train_user.csv')
 
 # months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
 #                ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
-#months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],['2019-12'], ['2020-01'],['2020-02'],['2020-03']]
-months_lst = [['2020-03']]
+months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],['2019-12'], ['2020-01'],['2020-02'],['2020-03']]
+#months_lst = [['2020-03']]
 
 months_test=[['2019-12']]
 gradboost_blindAcc = {"2019-11_2019-12_2020-02_2020-03":0.9, '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,

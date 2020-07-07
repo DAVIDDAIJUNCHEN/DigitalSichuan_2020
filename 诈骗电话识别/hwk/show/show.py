@@ -74,8 +74,9 @@ X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_y
 
 X_all=X_train+X_dev+X_test
 label_all=label_train+label_dev+label_test
-
+#诈骗
 X_ZP=[]
+#非诈骗
 X_NZP=[]
 for ii in range(len(X_all)):
     if label_all[ii]==1:
@@ -93,4 +94,3 @@ plt.boxplot(zp)
 plt.figure(2)
 plt.boxplot(nzp)
 plt.show()
-print(88)
