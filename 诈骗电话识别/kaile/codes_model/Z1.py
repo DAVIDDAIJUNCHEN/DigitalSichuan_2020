@@ -55,13 +55,14 @@ label_test = get_label(test_file)
 phone_no_m_blindtest = get_phone_no_m(test_user)
 
 X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
-
+# sys.exit(0)
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
 months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
               ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
+months_lst = [['2019-08'], ['2019-09']]
 
 gradboost_blindAcc = {'2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
                  '2019-12': 0.78, '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
@@ -112,18 +113,18 @@ for months in months_lst:
     #pred_test = clf_perceptron.predict(X_test).tolist()
     #evaluate(label_test, pred_test, model='Perceptron')
 
-    ## Model IV: RidgeClassifier
-    from sklearn.linear_model import RidgeClassifier
-    clf_ridgeClassifier = RidgeClassifier().fit(X_train, label_train)
+    # ## Model IV: RidgeClassifier
+    # from sklearn.linear_model import RidgeClassifier
+    # clf_ridgeClassifier = RidgeClassifier().fit(X_train, label_train)
 
-    ### evaluate toy model on (X_dev, label_dev)
-    pred_dev = clf_ridgeClassifier.predict(X_dev).tolist()
+    # ### evaluate toy model on (X_dev, label_dev)
+    # pred_dev = clf_ridgeClassifier.predict(X_dev).tolist()
 
-    evaluate(label_dev, pred_dev, model='Ridge Classification')
+    # evaluate(label_dev, pred_dev, model='Ridge Classification')
 
-    ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_ridgeClassifier.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Ridge Classification')
+    # ### evaluate toy model on (X_test, label_test)
+    # pred_test = clf_ridgeClassifier.predict(X_test).tolist()
+    # evaluate(label_test, pred_test, model='Ridge Classification')
 
     ## Model V: AdaBoostClassifier
     from sklearn.ensemble import AdaBoostClassifier
@@ -138,32 +139,32 @@ for months in months_lst:
     pred_test = clf_AdaBoost.predict(X_test).tolist()
     evaluate(label_test, pred_test, model='Adaboost')
 
-    ## Model VI: BaggingClassifier
-    from sklearn.ensemble import BaggingClassifier
-    from sklearn.svm import SVC
-    clf_Bagging = BaggingClassifier(base_estimator=SVC(), n_estimators=10, random_state=0)
-    clf_Bagging.fit(X_train, label_train)
+    # ## Model VI: BaggingClassifier
+    # from sklearn.ensemble import BaggingClassifier
+    # from sklearn.svm import SVC
+    # clf_Bagging = BaggingClassifier(base_estimator=SVC(), n_estimators=10, random_state=0)
+    # clf_Bagging.fit(X_train, label_train)
 
-    ### evaluate toy model on (X_dev, label_dev)
-    pred_dev = clf_Bagging.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Bagging_SVC')
+    # ### evaluate toy model on (X_dev, label_dev)
+    # pred_dev = clf_Bagging.predict(X_dev).tolist()
+    # evaluate(label_dev, pred_dev, model='Bagging_SVC')
 
-    ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_Bagging.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Bagging_SVC')
+    # ### evaluate toy model on (X_test, label_test)
+    # pred_test = clf_Bagging.predict(X_test).tolist()
+    # evaluate(label_test, pred_test, model='Bagging_SVC')
 
-    ## Model VII: random forest
-    from sklearn.ensemble import RandomForestClassifier
-    clf_randforest = RandomForestClassifier(max_depth=2, random_state=0)
-    clf_randforest.fit(X_train, label_train)
+    # ## Model VII: random forest
+    # from sklearn.ensemble import RandomForestClassifier
+    # clf_randforest = RandomForestClassifier(max_depth=2, random_state=0)
+    # clf_randforest.fit(X_train, label_train)
 
-    ### evaluate toy model on (X_dev, label_dev)
-    pred_dev = clf_randforest.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='Random forest')
+    # ### evaluate toy model on (X_dev, label_dev)
+    # pred_dev = clf_randforest.predict(X_dev).tolist()
+    # evaluate(label_dev, pred_dev, model='Random forest')
 
-    ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_randforest.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='Random forest')
+    # ### evaluate toy model on (X_test, label_test)
+    # pred_test = clf_randforest.predict(X_test).tolist()
+    # evaluate(label_test, pred_test, model='Random forest')
 
     ## Model VIII: Gradientboosting
     from sklearn.ensemble import GradientBoostingClassifier
@@ -194,20 +195,20 @@ for months in months_lst:
     evaluate(label_test, pred_test, model='MLP')
 
     ## Model X: SVM
-    from sklearn.svm import LinearSVC
-    from sklearn.pipeline import make_pipeline
-    from sklearn.preprocessing import StandardScaler
+    # from sklearn.svm import LinearSVC
+    # from sklearn.pipeline import make_pipeline
+    # from sklearn.preprocessing import StandardScaler
 
-    clf_svm = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
-    clf_svm.fit(X_train, label_train)
+    # clf_svm = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
+    # clf_svm.fit(X_train, label_train)
 
-    ### evaluate toy model on (X_dev, label_dev)
-    pred_dev = clf_svm.predict(X_dev).tolist()
-    evaluate(label_dev, pred_dev, model='SVM')
+    # ### evaluate toy model on (X_dev, label_dev)
+    # pred_dev = clf_svm.predict(X_dev).tolist()
+    # evaluate(label_dev, pred_dev, model='SVM')
 
-    ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_svm.predict(X_test).tolist()
-    evaluate(label_test, pred_test, model='SVM')
+    # ### evaluate toy model on (X_test, label_test)
+    # pred_test = clf_svm.predict(X_test).tolist()
+    # evaluate(label_test, pred_test, model='SVM')
 
 
     # predict labels on blind test set and write to xlsx file for submitting
@@ -230,37 +231,37 @@ for months in months_lst:
 dict_model_acc = clf_gradboostAcc_months
 pred_vote_blindtest = ensemble(dict_model_acc, X_blindtest, method='vote')
 
-month_train = '201908-202003'    # month should be the same as in config_train.yml
+# month_train = '201908-202003'    # month should be the same as in config_train.yml
 
-with open('../test_results/' + features_name + '/' + 'vote_gradboost_' + month_train + '.csv',
-          'w', newline='', encoding='utf-8') as fout:
-    field_names = ['phone_no_m', 'label']
-    writer = csv.DictWriter(fout, fieldnames=field_names)
-    writer.writeheader()
+# with open('../test_results/' + features_name + '/' + 'vote_gradboost_' + month_train + '.csv',
+#           'w', newline='', encoding='utf-8') as fout:
+#     field_names = ['phone_no_m', 'label']
+#     writer = csv.DictWriter(fout, fieldnames=field_names)
+#     writer.writeheader()
 
-    for phone, pred in zip(phone_no_m_blindtest, pred_vote_blindtest):
-        writer.writerow({'phone_no_m': phone, 'label': pred})
+#     for phone, pred in zip(phone_no_m_blindtest, pred_vote_blindtest):
+#         writer.writerow({'phone_no_m': phone, 'label': pred})
 
-## avg_unif
-pred_avgunif_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_unif')
+# ## avg_unif
+# pred_avgunif_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_unif')
 
-with open('../test_results/' + features_name + '/' + 'avgunif_gradboost_' + month_train + '.csv',
-          'w', newline='', encoding='utf-8') as fout:
-    field_names = ['phone_no_m', 'label']
-    writer = csv.DictWriter(fout, fieldnames=field_names)
-    writer.writeheader()
+# with open('../test_results/' + features_name + '/' + 'avgunif_gradboost_' + month_train + '.csv',
+#           'w', newline='', encoding='utf-8') as fout:
+#     field_names = ['phone_no_m', 'label']
+#     writer = csv.DictWriter(fout, fieldnames=field_names)
+#     writer.writeheader()
 
-    for phone, pred in zip(phone_no_m_blindtest, pred_avgunif_blindtest):
-        writer.writerow({'phone_no_m': phone, 'label': pred})
+#     for phone, pred in zip(phone_no_m_blindtest, pred_avgunif_blindtest):
+#         writer.writerow({'phone_no_m': phone, 'label': pred})
 
-## avg_softmax
-pred_avgsoftmax_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_softmax')
+# ## avg_softmax
+# pred_avgsoftmax_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_softmax')
 
-with open('../test_results/' + features_name + '/' + 'avgsoftmax_gradboost_' + month_train + '.csv',
-          'w', newline='', encoding='utf-8') as fout:
-    field_names = ['phone_no_m', 'label']
-    writer = csv.DictWriter(fout, fieldnames=field_names)
-    writer.writeheader()
+# with open('../test_results/' + features_name + '/' + 'avgsoftmax_gradboost_' + month_train + '.csv',
+#           'w', newline='', encoding='utf-8') as fout:
+#     field_names = ['phone_no_m', 'label']
+#     writer = csv.DictWriter(fout, fieldnames=field_names)
+#     writer.writeheader()
 
-    for phone, pred in zip(phone_no_m_blindtest, pred_avgsoftmax_blindtest):
-        writer.writerow({'phone_no_m': phone, 'label': pred})
+#     for phone, pred in zip(phone_no_m_blindtest, pred_avgsoftmax_blindtest):
+#         writer.writerow({'phone_no_m': phone, 'label': pred})
