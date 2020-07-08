@@ -1,5 +1,6 @@
 import pickle
 import numpy as np
+import yaml
 import matplotlib.pyplot as plt
 #!/usr/bin/env python3
 
@@ -56,7 +57,14 @@ split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 ## define features in train_config_yml and test_config_yml
 train_config_yml = '../configs/show.yml'
-
+with open(train_config_yml) as file:
+    def_para = yaml.load(file)
+    def_para_columns = {}
+    def_para_features = {}
+    for item in def_para['features']:
+        def_para_features[list(item.keys())[0]] = list(item.values())[0]
+id=list(def_para_features.keys())[0]
+feature_name=def_para_features[id][0]['name']
 # get design matrix and label according to months
 label_train = get_label(train_file)
 label_dev = get_label(dev_file)
@@ -74,9 +82,8 @@ X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_y
 
 X_all=X_train+X_dev+X_test
 label_all=label_train+label_dev+label_test
-#诈骗
+
 X_ZP=[]
-#非诈骗
 X_NZP=[]
 for ii in range(len(X_all)):
     if label_all[ii]==1:
@@ -89,8 +96,26 @@ X_NZP_array=np.array(X_NZP)
 
 zp=X_ZP_array[:,0]
 nzp=X_NZP_array[:,0]
-plt.figure(1)
-plt.boxplot(zp)
-plt.figure(2)
-plt.boxplot(nzp)
+
+#数据过滤，不同的特征可能需要不同的过滤异常值（如nan）方法
+zp=zp[zp>=0]
+nzp=nzp[nzp>=0]
+
+bins=np.arange(-10,600,10)
+plt.figure(feature_name)
+
+ax1 = plt.subplot(221)
+plt.boxplot(zp,vert=False,showmeans=True)
+plt.title('zha pian')
+
+ax2 = plt.subplot(222,sharey=ax1,sharex=ax1)
+plt.title('not zha pian')
+plt.boxplot(nzp,vert=False,showmeans=True)
+
+ax3 = plt.subplot(223)
+plt.hist(zp,bins)
+
+ax4 = plt.subplot(224,sharey=ax3,sharex=ax3)
+plt.hist(nzp,bins)
+
 plt.show()
