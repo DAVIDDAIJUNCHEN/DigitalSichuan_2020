@@ -20,6 +20,8 @@ def call_in_time_avr(dataframe_phone_no, arguments):
     voc_df_months_callin = voc_df_months.loc[voc_df_months['calltype_id'] == 2]
     total_time = float(voc_df_months_callin['call_dur'].sum())
     call_in_num = len(voc_df_months_callin['call_dur'])
+    if call_in_num == 0:
+        call_in_num = 1
 
     return total_time/call_in_num
 
@@ -53,6 +55,8 @@ def call_out_time_avr(dataframe_phone_no, arguments):
     voc_df_months_callout = voc_df_months.loc[voc_df_months['calltype_id'] == 1]
     total_time = float(voc_df_months_callout['call_dur'].sum())
     call_out_num = len(voc_df_months_callout['call_dur'])
+    if call_out_num == 0:
+        call_out_num = 1
 
     return total_time/call_out_num
 
