@@ -1,10 +1,8 @@
 columns:
 - app: [busi_name, flow, month_id]
   sms: [opposite_no_m, calltype_id, request_datetime]
-  user: [city_name, county_name, idcard_cnt, arpu_201908, arpu_201909, arpu_201910,
-    arpu_201911, arpu_201912, arpu_202001, arpu_202002, arpu_202003]
-  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
-    imei_m]
+  user: [city_name, county_name, idcard_cnt, arpu_202004]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
 features:
 - A1:
   - columns:
@@ -12,7 +10,7 @@ features:
     function:
     - name: called_people
       para:
-        months: &id001 [2019-09]
+        months: &id001 [2020-04]
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
 - A2:
@@ -51,7 +49,7 @@ features:
     - name: long_call
       para:
         months: *id001
-        threshold_duration: 600
+        threshold_duration: 1000
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: num_long_call
 - A9:
@@ -133,7 +131,7 @@ features:
     - name: ratio_longcall
       para:
         months: *id001
-        threshold_duration: 1000
+        threshold_duration: 600
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: ratio_longcall
 - A19:
@@ -255,6 +253,60 @@ features:
         statistics: std
     module: ./yongling/codes_feature/voc_feature_yongling.py
     name: last_call_time_std
+- A25:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
+    function:
+    - name: call_in_total_time
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callin_total_time
+- A26:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
+    function:
+    - name: call_out_total_time
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_total_time
+- A27:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
+    function:
+    - name: call_in_time_avr
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_in_time_avr
+- A28:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
+    function:
+    - name: call_out_time_avr
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_time_avr
+- A29:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: call_in_people
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_in_people
+- A30:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: call_out_people
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_people
 - B1:
   - columns:
     - sms: [opposite_no_m, request_datetime]
@@ -347,8 +399,7 @@ features:
     name: idcard_count
 - D2:
   - columns:
-    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
-        arpu_202002, arpu_202003]
+    - user: [arpu_202004]
     function:
     - name: arpu_mean
       para: {}
@@ -356,8 +407,7 @@ features:
     name: arpu_mean
 - D3:
   - columns:
-    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
-        arpu_202002, arpu_202003]
+    - user: [arpu_202004]
     function:
     - name: arpu_std
       para: {}
