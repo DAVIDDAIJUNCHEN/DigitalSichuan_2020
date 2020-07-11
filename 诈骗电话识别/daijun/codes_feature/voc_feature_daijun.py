@@ -4,16 +4,17 @@ import pandas as pd
 from scipy.stats import entropy
 import time
 import math
-import copy
+
 
 def called_people(dataframe_phone_no, arguments):
-    """return number of called people  in given months"""
+    """return number of called people in given months"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     called_people = set(voc_df_months['opposite_no_m'])
     return len(called_people)
+
 
 def mean_call_dur(dataframe_phone_no, arguments):
     """return mean of call duration in given months"""
@@ -27,6 +28,7 @@ def mean_call_dur(dataframe_phone_no, arguments):
         return 0.0
     else:
         return float(call_dur_df.mean())
+
 
 def std_call_dur(dataframe_phone_no, arguments):
     """return mean of call duration in given months"""

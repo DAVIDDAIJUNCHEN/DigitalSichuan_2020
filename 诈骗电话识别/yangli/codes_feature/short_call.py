@@ -2,6 +2,7 @@
 
 import pandas as pd
 
+
 def num_shortcall(dataframe_phone_no, arguments):
     """return number of short calls in given months"""
     # convert to datetime format
@@ -24,7 +25,7 @@ def ratio_shortcall(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     num_short_call = len([1 for dur in voc_df_months['call_dur'] if dur < thres_calldur])
     if len(voc_df_months) == 0:
-        return 0.0
+        return arguments['represent_nan']
     return num_short_call / len(voc_df_months)
 
 # debug part: To be deleted

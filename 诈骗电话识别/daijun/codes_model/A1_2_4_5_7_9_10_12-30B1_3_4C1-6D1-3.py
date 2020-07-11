@@ -90,11 +90,11 @@ X_test = X_test
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
-months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'],
+months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2020-01', '2020-02', '2020-03'],
               ['2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'], ['2019-08'], ['2019-09'],
               ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
 
-gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2019-12_2020-01_2020-02_2020-03": 0.9,
+gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2020-01_2020-02_2020-03": 0.9,
                       "2019-10_2019-11_2019-12_2020-01_2020-02_2020-03": 0.9, '2019-08': 0.62,
                       '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75, '2019-12': 0.78,
                       '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
@@ -106,8 +106,7 @@ for months in months_lst:
     modify_months_config(train_config_yml, new_months=months)
 
     X_train = get_features(train_file, train_voc, train_sms, train_app, train_config_yml)
-    X_train = X_train.extend((np.array(X_train)[ind_train_positive]).tolist())
-    print(X_train)
+    X_train.extend((np.array(X_train)[ind_train_positive]).tolist())
 
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
     X_dev = X_dev
