@@ -56,7 +56,7 @@ num_test = num_total - num_train - num_dev
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
 ## define features in train_config_yml and test_config_yml
-train_config_yml = '../configs/show.yml'
+train_config_yml = '../configs/show_train.yml'
 with open(train_config_yml) as file:
     def_para = yaml.load(file)
     def_para_columns = {}

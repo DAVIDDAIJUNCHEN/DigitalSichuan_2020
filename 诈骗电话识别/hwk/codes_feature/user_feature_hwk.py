@@ -16,7 +16,7 @@ def arpu_mean(dataframe_phone_no, arguments):
     arpu_lst = list(user_dataframe[arpu_columns].values[0])
     mean_arpu = np.mean([float(arpu) for arpu in arpu_lst if arpu != ''])
     if math.isnan(mean_arpu):
-        return 45.
+        return arguments['represent_nan']
     return mean_arpu
 
 def arpu_mean2(dataframe_phone_no, arguments):
@@ -39,8 +39,8 @@ def arpu_mean2(dataframe_phone_no, arguments):
                 month_count+=1
                 arpu_sum+=float(month_arpu_dict[k])
 
-    if month_count==0:
-        return -1
+    if month_count == 0:
+        return -10
     else:
         if np.isnan(arpu_sum/month_count):
             print(vv)
@@ -53,7 +53,7 @@ def arpu_std(dataframe_phone_no, arguments):
     arpu_lst = list(user_dataframe[arpu_columns].values[0])
     std_arpu = np.std([float(arpu) for arpu in arpu_lst if arpu != ''])
     if math.isnan(std_arpu):
-        return 0.01
+        return arguments['represent_nan']
     return std_arpu
 
 def arpu_smallthan_8(dataframe_phone_no, arguments):
