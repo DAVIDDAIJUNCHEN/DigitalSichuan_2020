@@ -54,8 +54,8 @@ split_data(train_user, num_train, num_dev, num_test, replace=False)
 ## define features in train_config_yml and test_config_yml
 train_config_yml = '../configs/all_data_train.yml'
 test_config_yml  = '../configs/all_data_test.yml'
-# train_config_yml = '../configs/A1-2A4-5A7A9-10A12-24_config_train.yml'
-# test_config_yml  = '../configs/A1-2A4-5A7A9-10A12-24_config_test.yml'
+# train_config_yml = '../configs/A1_2_4_5_7_9_10_12-30B1_3_4C1-6D1-3_config_train.yml'
+# test_config_yml  = '../configs/A1_2_4_5_7_9_10_12-30B1_3_4C1-6D1-3_config_test.yml'
 features_name = 'MMA1-2A4-5A7A9-10A12-24'
 
 # get design matrix and label according to months
@@ -66,16 +66,16 @@ phone_no_m_blindtest = get_phone_no_m(test_user)
 
 
 X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
-# X_blindtest_t=open('../../data/X_blindtest','wb')
-# pickle.dump(X_blindtest,X_blindtest_t)
+X_blindtest_t=open('../../data/X_blindtest','wb')
+pickle.dump(X_blindtest,X_blindtest_t)
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
 # months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],
 #                ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
-#months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],['2019-12'], ['2020-01'],['2020-02'],['2020-03']]
-months_lst = [['2020-03']]
+#months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'],['2020-01'],['2020-02'],['2020-03']]
+months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11']]
 
 months_test=[['2019-12']]
 gradboost_blindAcc = {"2019-11_2019-12_2020-02_2020-03":0.9, '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75,
@@ -101,6 +101,10 @@ for months in months_lst:
 
     label_train +=label_train_temp
     label_dev +=label_dev_temp
+    if months!=['2019-12']:
+        X_test_temp = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
+        X_train += X_test_temp
+        label_train += label_test_temp
 
 for months in months_test:
     print(months)
@@ -175,6 +179,7 @@ evaluate(label_test, pred_test, model='Ridge Classification')
 ## Model V: AdaBoostClassifier
 from sklearn.ensemble import AdaBoostClassifier
 clf_AdaBoost = AdaBoostClassifier(n_estimators=100, random_state=0)
+
 clf_AdaBoost.fit(X_train, label_train)
 
 ### evaluate toy model on (X_dev, label_dev)
@@ -201,7 +206,9 @@ evaluate(label_test, pred_test, model='Adaboost')
 
 ## Model VII: random forest
 from sklearn.ensemble import RandomForestClassifier
-clf_randforest = RandomForestClassifier(max_depth=2, random_state=0)
+#clf_randforest = RandomForestClassifier(max_depth=2, random_state=0)
+clf_randforest = RandomForestClassifier(n_estimators=160, max_features=10, min_samples_leaf=10, max_depth=5,
+                                        min_samples_split=50, random_state=10)
 clf_randforest.fit(X_train, label_train)
 
 ### evaluate toy model on (X_dev, label_dev)
@@ -214,7 +221,9 @@ evaluate(label_test, pred_test, model='Random forest')
 
 ## Model VIII: Gradientboosting
 from sklearn.ensemble import GradientBoostingClassifier
-clf_gradboost = GradientBoostingClassifier(max_depth=2, random_state=0)
+#clf_gradboost = GradientBoostingClassifier(max_depth=2, random_state=0)
+clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=8, min_samples_leaf=20, max_depth=11,
+                                           min_samples_split=50, random_state=10)
 clf_gradboost.fit(X_train, label_train)
 
 ### evaluate toy model on (X_dev, label_dev)
