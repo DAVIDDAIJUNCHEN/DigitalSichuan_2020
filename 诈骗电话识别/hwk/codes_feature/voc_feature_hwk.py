@@ -2,6 +2,7 @@
 
 import pandas as pd
 import numpy as np
+import math
 
 def called_people(dataframe_phone_no, arguments):
     months = arguments['months']
@@ -20,8 +21,10 @@ def long_call(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     num_long_call = len([1 for dur in voc_df_months['call_dur'] if dur >= thres_dur])
-
-    return num_long_call
+    if math.isnan(num_long_call):
+        return arguments['represent_nan']
+    else:
+        return num_long_call
 
 def day_call_var(dataframe_phone_no, arguments):
     """return number of long call in given months"""

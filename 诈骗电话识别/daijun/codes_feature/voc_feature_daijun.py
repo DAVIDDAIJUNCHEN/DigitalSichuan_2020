@@ -13,7 +13,11 @@ def called_people(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     called_people = set(voc_df_months['opposite_no_m'])
-    return len(called_people)
+
+    if math.isnan(len(called_people)):
+        return arguments['represent_nan']
+    else:
+        return len(called_people)
 
 
 def mean_call_dur(dataframe_phone_no, arguments):
@@ -84,7 +88,7 @@ def ratio_nonzero_calldur(dataframe_phone_no, arguments):
     num_nonzerodur_months = len([1 for dur in voc_df_months['call_dur'] if dur > 0]) # len(voc_df_months[voc_df_months['call_dur']>0])
     num_call_months = len(voc_df_months)
     if num_call_months == 0:
-        return 1.0
+        return arguments['represent_nan']
     else:
         return num_nonzerodur_months / num_call_months
 
