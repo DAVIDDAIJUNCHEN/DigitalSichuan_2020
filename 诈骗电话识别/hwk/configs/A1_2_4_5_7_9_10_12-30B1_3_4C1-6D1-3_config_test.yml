@@ -4,68 +4,18 @@ columns:
   user: [city_name, county_name, idcard_cnt, arpu_202004]
   voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
 features:
-
-- D22:
-  - columns:
-    - user:
-      - opposite_no_m
-      - arpu_202004
-    function:
-    - name: arpu_mean2
-      para:
-        months: &id001
-        - 2020-04
-    module: ./hwk/codes_feature/user_feature_hwk.py
-    name: arpu_mean2
-- D23:
-  - columns:
-    - user:
-      - opposite_no_m
-      - arpu_202004
-    function:
-    - name: arpu_smallthan_8
-      para:
-        months: *id001
-    module: ./hwk/codes_feature/user_feature_hwk.py
-    name: arpu_smallthan_8
-- D24:
-  - columns:
-    - user:
-      - opposite_no_m
-      - arpu_202004
-    function:
-    - name: arpu_stand
-      para:
-        months: *id001
-    module: ./hwk/codes_feature/user_feature_hwk.py
-    name: arpu_stand
-- A52:
-  - columns:
-    - voc:
-      - opposite_no_m
-      - call_dur
-      - start_datetime
-    function:
-    - name: morning_call_time_rate
-      para:
-        months: *id001
-        threshold_duration: 1000
-    module: ./hwk/codes_feature/voc_feature_hwk.py
-    name: morning_call_time_rate
 - A1:
   - columns:
     - voc: [opposite_no_m, start_datetime]
     function:
     - name: called_people
       para:
-        months: *id001
+        months: &id001 [2020-04]
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
 - A2:
   - columns:
-    - voc:
-      - call_dur
-      - start_datetime
+    - voc: [call_dur, start_datetime]
     function:
     - name: num_shortcall
       para:
@@ -75,10 +25,7 @@ features:
     name: short_call
 - A4:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, call_dur]
     function:
     - name: ratio_friends
       para:
@@ -88,9 +35,7 @@ features:
     name: ratio_friends_incall
 - A5:
   - columns:
-    - voc:
-      - start_datetime
-      - call_dur
+    - voc: [start_datetime, call_dur]
     function:
     - name: ratio_nonzero_calldur
       para:
@@ -99,23 +44,17 @@ features:
     name: ratio_nonzero_call_duration
 - A7:
   - columns:
-    - voc:
-      - opposite_no_m
-      - call_dur
-      - start_datetime
+    - voc: [opposite_no_m, call_dur, start_datetime]
     function:
     - name: long_call
       para:
         months: *id001
-        threshold_duration: 600
+        threshold_duration: 1000
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: num_long_call
 - A9:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, call_dur]
     function:
     - name: mean_call_dur
       para:
@@ -124,10 +63,7 @@ features:
     name: mean_call_dur
 - A10:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, call_dur]
     function:
     - name: std_call_dur
       para:
@@ -136,10 +72,7 @@ features:
     name: std_call_dur
 - A12:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
+    - voc: [opposite_no_m, start_datetime, calltype_id]
     function:
     - name: entropy_called_people
       para:
@@ -148,9 +81,7 @@ features:
     name: entropy_called_people
 - A13:
   - columns:
-    - voc:
-      - start_datetime
-      - call_dur
+    - voc: [start_datetime, call_dur]
     function:
     - name: ratio_zero_calldur
       para:
@@ -159,10 +90,7 @@ features:
     name: ratio_zero_calldur
 - A14:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, call_dur]
     function:
     - name: total_call_time
       para:
@@ -171,9 +99,7 @@ features:
     name: total_call_time
 - A15:
   - columns:
-    - voc:
-      - start_datetime
-      - calltype_id
+    - voc: [start_datetime, calltype_id]
     function:
     - name: num_callout
       para:
@@ -182,9 +108,7 @@ features:
     name: num_callout
 - A16:
   - columns:
-    - voc:
-      - start_datetime
-      - calltype_id
+    - voc: [start_datetime, calltype_id]
     function:
     - name: num_callin
       para:
@@ -193,9 +117,7 @@ features:
     name: num_callin
 - A17:
   - columns:
-    - voc:
-      - start_datetime
-      - calltype_id
+    - voc: [start_datetime, calltype_id]
     function:
     - name: num_calltrans
       para:
@@ -204,9 +126,7 @@ features:
     name: num_calltrans
 - A18:
   - columns:
-    - voc:
-      - start_datetime
-      - call_dur
+    - voc: [start_datetime, call_dur]
     function:
     - name: ratio_longcall
       para:
@@ -216,9 +136,7 @@ features:
     name: ratio_longcall
 - A19:
   - columns:
-    - voc:
-      - start_datetime
-      - call_dur
+    - voc: [start_datetime, call_dur]
     function:
     - name: ratio_shortcall
       para:
@@ -228,10 +146,7 @@ features:
     name: ratio_shortcall
 - A21:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, call_dur]
     function:
     - name: call_interval_meantime
       para:
@@ -240,9 +155,7 @@ features:
     name: call_interval_meantime
 - A22_min:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: first_call_time
       para:
@@ -252,9 +165,7 @@ features:
     name: first_call_time_min
 - A22_max:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: first_call_time
       para:
@@ -264,9 +175,7 @@ features:
     name: first_call_time_max
 - A22_mean:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: first_call_time
       para:
@@ -276,9 +185,7 @@ features:
     name: first_call_time_mean
 - A22_median:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: first_call_time
       para:
@@ -288,9 +195,7 @@ features:
     name: first_call_time_median
 - A22_std:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: first_call_time
       para:
@@ -300,9 +205,7 @@ features:
     name: first_call_time_std
 - A24_min:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: last_call_time
       para:
@@ -312,9 +215,7 @@ features:
     name: last_call_time_min
 - A24_max:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: last_call_time
       para:
@@ -324,9 +225,7 @@ features:
     name: last_call_time_max
 - A24_mean:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: last_call_time
       para:
@@ -336,9 +235,7 @@ features:
     name: last_call_time_mean
 - A24_median:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: last_call_time
       para:
@@ -348,9 +245,7 @@ features:
     name: last_call_time_median
 - A24_std:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
+    - voc: [opposite_no_m, start_datetime]
     function:
     - name: last_call_time
       para:
@@ -360,11 +255,7 @@ features:
     name: last_call_time_std
 - A25:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
     function:
     - name: call_in_total_time
       para:
@@ -373,11 +264,7 @@ features:
     name: callin_total_time
 - A26:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
     function:
     - name: call_out_total_time
       para:
@@ -386,11 +273,7 @@ features:
     name: call_out_total_time
 - A27:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
     function:
     - name: call_in_time_avr
       para:
@@ -399,11 +282,7 @@ features:
     name: call_in_time_avr
 - A28:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
-      - call_dur
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
     function:
     - name: call_out_time_avr
       para:
@@ -412,10 +291,7 @@ features:
     name: call_out_time_avr
 - A29:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
+    - voc: [opposite_no_m, start_datetime, calltype_id]
     function:
     - name: call_in_people
       para:
@@ -424,10 +300,7 @@ features:
     name: call_in_people
 - A30:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - calltype_id
+    - voc: [opposite_no_m, start_datetime, calltype_id]
     function:
     - name: call_out_people
       para:
@@ -436,9 +309,7 @@ features:
     name: call_out_people
 - B1:
   - columns:
-    - sms:
-      - opposite_no_m
-      - request_datetime
+    - sms: [opposite_no_m, request_datetime]
     function:
     - name: sms_people
       para:
@@ -447,9 +318,7 @@ features:
     name: sms_people
 - B3:
   - columns:
-    - sms:
-      - opposite_no_m
-      - request_datetime
+    - sms: [opposite_no_m, request_datetime]
     function:
     - name: sms_interval_meantime
       para:
@@ -458,10 +327,7 @@ features:
     name: sms_interval_meantime
 - B4:
   - columns:
-    - sms:
-      - opposite_no_m
-      - calltype_id
-      - request_datetime
+    - sms: [opposite_no_m, calltype_id, request_datetime]
     function:
     - name: ratio_sms_friends
       para:
@@ -471,8 +337,7 @@ features:
     name: ratio_sms_friends
 - C1:
   - columns:
-    - app:
-      - app_busi_name
+    - app: [app_busi_name]
     function:
     - name: num_app
       para: {}
@@ -480,9 +345,7 @@ features:
     name: num_apps
 - C2:
   - columns:
-    - app:
-      - app_busi_name
-      - flow
+    - app: [app_busi_name, flow]
     function:
     - name: video_audio_flow
       para:
@@ -491,9 +354,7 @@ features:
     name: video_audio_flow
 - C3:
   - columns:
-    - app:
-      - app_busi_name
-      - flow
+    - app: [app_busi_name, flow]
     function:
     - name: social_flow
       para:
@@ -502,9 +363,7 @@ features:
     name: social_flow
 - C4:
   - columns:
-    - app:
-      - app_busi_name
-      - flow
+    - app: [app_busi_name, flow]
     function:
     - name: tool_flow
       para:
@@ -513,9 +372,7 @@ features:
     name: tool_flow
 - C5:
   - columns:
-    - app:
-      - app_busi_name
-      - flow
+    - app: [app_busi_name, flow]
     function:
     - name: surf_flow
       para:
@@ -524,9 +381,7 @@ features:
     name: surf_flow
 - C6:
   - columns:
-    - app:
-      - app_busi_name
-      - flow
+    - app: [app_busi_name, flow]
     function:
     - name: total_flow
       para:
@@ -535,35 +390,27 @@ features:
     name: total_flow
 - D1:
   - columns:
-    - user:
-      - idcard_cnt
+    - user: [idcard_cnt]
     function:
     - name: idcard_cnt
       para:
         months: *id001
     module: ./daijun/codes_feature/user_feature_daijun.py
     name: idcard_count
-- f4:
+- D2:
   - columns:
-    - voc:
-      - opposite_no_m
-      - start_datetime
-      - call_dur
+    - user: [arpu_202004]
     function:
-    - name: day_call_var
-      para:
-        months: *id001
-    module: ./hwk/codes_feature/voc_feature_hwk.py
-    name: day_call_var
-- A51:
+    - name: arpu_mean
+      para: {}
+    module: ./hwm/codes_feature/user_feature_hwk.py
+    name: arpu_mean
+- D3:
   - columns:
-    - voc:
-      - imei_m
+    - user: [arpu_202004]
     function:
-    - name: imei_num
-      para:
-        months: *id001
-        threshold_duration: 600
-    module: ./hwk/codes_feature/voc_feature_hwk.py
-    name: imei_num
+    - name: arpu_std
+      para: {}
+    module: ./hwm/codes_feature/user_feature_hwk.py
+    name: arpu_std
 name: all_features
