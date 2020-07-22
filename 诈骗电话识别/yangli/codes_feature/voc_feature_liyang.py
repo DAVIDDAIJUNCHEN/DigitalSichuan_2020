@@ -120,12 +120,13 @@ def active_interval (dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
     voc_df_months['day'] = voc_df_months['start_datetime'].dt.day
-    active_day = list(voc_df_months['day'])
-    the_last_day = max(active_day)
-    the_earlist_day = min(active_day)
-    return the_last_day - the_earlist_day
-
-
+    active_day = set(voc_df_months['day'])
+    if len(active_day) == 0:
+        return len(active_day)
+    else:
+        the_last_day = max(active_day)
+        the_earlist_day = min(active_day)
+        return the_last_day - the_earlist
 
 
 
