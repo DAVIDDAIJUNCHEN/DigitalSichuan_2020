@@ -118,7 +118,7 @@ def num_calltrans(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_calltrans = len([1 for type in voc_df_months['calltype_id'] if id==3])
+    num_calltrans = len([1 for id in voc_df_months['calltype_id'] if id==3])
     return num_calltrans
 
 def ratio_longcall(dataframe_phone_no, arguments):
