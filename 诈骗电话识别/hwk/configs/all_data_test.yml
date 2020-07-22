@@ -358,6 +358,82 @@ features:
         statistics: std
     module: ./yongling/codes_feature/voc_feature_yongling.py
     name: last_call_time_std
+- A25:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - calltype_id
+      - call_dur
+    function:
+    - name: call_in_total_time
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callin_total_time
+- A26:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - calltype_id
+      - call_dur
+    function:
+    - name: call_out_total_time
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_total_time
+- A27:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - calltype_id
+      - call_dur
+    function:
+    - name: call_in_time_avr
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_in_time_avr
+- A28:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - calltype_id
+      - call_dur
+    function:
+    - name: call_out_time_avr
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_time_avr
+- A29:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - calltype_id
+    function:
+    - name: call_in_people
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_in_people
+- A30:
+  - columns:
+    - voc:
+      - opposite_no_m
+      - start_datetime
+      - calltype_id
+    function:
+    - name: call_out_people
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_people
 - B1:
   - columns:
     - sms:

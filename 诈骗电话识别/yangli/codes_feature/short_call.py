@@ -1,7 +1,7 @@
 #/usr/bin/env python3
 
 import pandas as pd
-
+import math
 
 def num_shortcall(dataframe_phone_no, arguments):
     """return number of short calls in given months"""
@@ -12,8 +12,10 @@ def num_shortcall(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     short_call = [1 for each in voc_df_months['call_dur'] if each <= thres_calldur]
-
-    return len(short_call)
+    if math.isnan(len(short_call)):
+        return arguments['represent_nan']
+    else:
+        return len(short_call)
 
 def ratio_shortcall(dataframe_phone_no, arguments):
     """return ratio of short calls in given months"""

@@ -1,17 +1,15 @@
-import pickle
-import numpy as np
-import yaml
-import matplotlib.pyplot as plt
 #!/usr/bin/env python3
 
 # import global modules
 import sys
 import os
-import csv
-import numpy as np
 import warnings
+import yaml
+import numpy as np
+import matplotlib.pyplot as plt
 import pandas as pd
-import pickle
+import seaborn as sns
+
 warnings.filterwarnings('ignore')
 sys.path.append('../../')
 sys.path.append('../codes_feature/')
@@ -20,8 +18,6 @@ sys.path.append('../other')
 # import local modules
 from utils import evaluate, modify_months_config
 from data_process_new import split_data, get_features, get_label, get_phone_no_m
-
-#from get_imei_result import get_imei_result
 
 
 def get_design_months(name_months_dict, config_yml, user_file, voc_file, sms_file, app_file):
@@ -33,7 +29,6 @@ def get_design_months(name_months_dict, config_yml, user_file, voc_file, sms_fil
         months = name_months_dict[months_name]
         modify_months_config(config_yml, new_months=months)
         X_months = get_features(user_file, voc_file, sms_file, app_file, config_yml)
-
         name_design_dict[months_name] = X_months
 
     return name_design_dict
@@ -73,7 +68,7 @@ def test_design_months(name_months_dict, test_config_yml, user_test, voc_test, s
     return name_design_dict
 
 
-def plot_features(feature_tag, feature_name, col, train_design_months, test_design_months, out_dir):
+def plot_boxplot_hist(feature_tag, feature_name, col, train_design_months, test_design_months, out_dir):
     train_design_months_normal = train_design_months['normal']
     train_design_months_fraud = train_design_months['fraud']
 
@@ -136,11 +131,51 @@ def plot_features(feature_tag, feature_name, col, train_design_months, test_desi
         fig.set_figwidth(30)
         fig.savefig(out_dir+'/'+feature_tag+'_'+name+'.png')
 
-if __name__ == '__main__':
-    #imie_result = open('../other/imie_result', 'rb')
-    #result = pickle.load(imie_result)
+    return None
 
-    # prepare data and parameter
+
+def plot_pairplot(train_design_months, features_name, features_lst, out_dir, num_group=3):
+    """create pair plots"""
+    train_design_months_normal = train_design_months['normal']
+    train_design_months_fraud = train_design_months['fraud']
+
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
+
+    sns.set(style='ticks')
+
+    for name in train_design_months_normal.keys():
+        # plot pariplot
+        df_train_normal_name = pd.DataFrame(train_design_months_normal[name], columns=features_name)
+        df_train_fraud_name = pd.DataFrame(train_design_months_fraud[name], columns=features_name)
+
+        df_train_normal_name['label'] = ['normal']*len(df_train_normal_name)
+        df_train_fraud_name['label'] = ['fraud']*len(df_train_fraud_name)
+        df_train_name = df_train_normal_name.append(df_train_fraud_name)
+
+        features_name_lst = [features_name[i:(i+num_group)] for i in range(len(features_name)) if
+                             i%num_group==0]
+        features_tag_lst = [features_lst[i:(i+num_group)] for i in range(len(features_lst)) if
+                             i%num_group==0]
+
+        if len(features_name_lst[-1])==1:
+            features_name_lst[-2] = features_name_lst[-2] + features_name_lst[-1]
+            features_tag_lst[-2] = features_tag_lst[-2] + features_tag_lst[-1]
+            features_name_lst.pop()
+            features_tag_lst.pop()
+
+        for cnt, features_grp in enumerate(features_name_lst):
+            df_train_name_grp = df_train_name[features_grp + ['label']]
+            sns_pairplot_name = sns.pairplot(df_train_name_grp, hue='label')
+            sns_pairplot_name.fig.suptitle(name)
+            feature_combo = ''.join(features_tag_lst[cnt])
+            sns_pairplot_name.savefig(out_dir+'/'+feature_combo+'_'+name+'.png')
+
+    return None
+
+
+if __name__ == '__main__':
+    # prepare data and parameters
     train_user = '../../data/train/train_user.csv'
     train_voc = '../../data/train/train_voc.csv'
     train_sms = '../../data/train/train_sms.csv'
@@ -155,8 +190,8 @@ if __name__ == '__main__':
     test_file = '../../data/test/test.user.csv'
 
     ## define features in train_config_yml and test_config_yml
-    train_config_yml = '../configs/show_train.yml'
-    test_config_yml = '../configs/show_test.yml'
+    train_config_yml = '../configs/debug_train.yml'
+    test_config_yml = '../configs/debug_test.yml'
 
     with open(train_config_yml) as file:
         def_para = yaml.load(file)
@@ -173,10 +208,10 @@ if __name__ == '__main__':
 
     ## get testing design matrix
     train_name_months_dict = {'all_months': ['2019-08', '2019-09', '2019-10', '2019-11', '2019-12',
-                                             '2020-01', '2020-02', '2020-03']}#,
-                              #'2019-08': ['2019-08'], '2019-09': ['2019-09'], '2019-10': ['2019-10'],
-                              #'2019-11': ['2019-11'], '2019-12': ['2019-12'], '2020-01': ['2020-01'],
-                              #'2020-02': ['2020-02'], '2020-03': ['2020-03']}
+                                             '2020-01', '2020-02', '2020-03'],
+                              '2019-08': ['2019-08'], '2019-09': ['2019-09'], '2019-10': ['2019-10'],
+                              '2019-11': ['2019-11'], '2019-12': ['2019-12'], '2020-01': ['2020-01'],
+                              '2020-02': ['2020-02'], '2020-03': ['2020-03']}
 
     test_name_months_dict = {'all_months': ['2020-04']}
 
@@ -185,8 +220,14 @@ if __name__ == '__main__':
 
     test_design = test_design_months(test_name_months_dict, test_config_yml, test_user,
                                      test_voc, test_sms, test_app)
-    out_dir = './figures'
 
-    for col, feature in enumerate(features_name):
+    out_dir = './figures_exp'
 
-        plot_features(features_lst[col], feature, col, train_design, test_design, out_dir)
+    # plot box-plots and hist-gram
+    #for col, feature in enumerate(features_name):
+    #
+
+    plot_boxplot_hist(features_lst[col], feature, col, train_design, test_design, out_dir)
+
+    # plot pair-plot
+    plot_pairplot(train_design, features_name, features_lst, out_dir, num_group=3)

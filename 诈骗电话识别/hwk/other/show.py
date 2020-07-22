@@ -106,10 +106,10 @@ plt.figure(feature_name)
 
 ax1 = plt.subplot(221)
 plt.boxplot(zp,vert=False,showmeans=True)
-plt.title('zha pian')
+plt.title('zha pian',fontsize='large')
 
 ax2 = plt.subplot(222,sharey=ax1,sharex=ax1)
-plt.title('not zha pian')
+plt.title('not zha pian',fontsize='large')
 plt.boxplot(nzp,vert=False,showmeans=True)
 
 ax3 = plt.subplot(223)
@@ -117,5 +117,5 @@ plt.hist(zp,bins)
 
 ax4 = plt.subplot(224,sharey=ax3,sharex=ax3)
 plt.hist(nzp,bins)
-
+plt.suptitle(feature_name,fontsize='x-large')
 plt.show()
