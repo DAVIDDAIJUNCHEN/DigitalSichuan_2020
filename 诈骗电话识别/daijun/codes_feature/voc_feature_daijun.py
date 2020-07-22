@@ -99,7 +99,7 @@ def num_callout(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_callout = len([1 for type in voc_df_months['calltype_id'] if id==1])
+    num_callout = len([1 for id in voc_df_months['calltype_id'] if id==1])
 
     return num_callout
 
@@ -109,7 +109,7 @@ def num_callin(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_callin = len([1 for type in voc_df_months['calltype_id'] if id==2])
+    num_callin = len([1 for id in voc_df_months['calltype_id'] if id==2])
 
     return num_callin
 
@@ -119,7 +119,7 @@ def num_calltrans(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_calltrans = len([1 for type in voc_df_months['calltype_id'] if id==3])
+    num_calltrans = len([1 for id in voc_df_months['calltype_id'] if id==3])
     return num_calltrans
 
 def ratio_longcall(dataframe_phone_no, arguments):
@@ -186,7 +186,7 @@ def test():
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
     arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150}
-    print(num_callback(dataframe_phone_no, arguments))
+    print(num_callin(dataframe_phone_no, arguments))
 
 if __name__ == '__main__':
     test()
