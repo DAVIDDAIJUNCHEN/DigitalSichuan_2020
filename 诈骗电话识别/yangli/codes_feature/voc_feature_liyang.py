@@ -104,6 +104,27 @@ def segement_call_duration(dataframe_phone_no, arguments):
     segement_call_duration['call_duratiom_22_24'] = float(voc_df_months_22_24['call_dur'].sum())
     return segement_call_duration
 
+def active_day_num (dataframe_phone_no, arguments):
+    """return the number of active days in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    active_day = set(voc_df_months['start_datetime'])
+    return len(active_day)
+def active_interval (dataframe_phone_no, arguments):
+    """return the active interval"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['day'] = voc_df_months['start_datetime'].dt.day
+    active_day = list(voc_df_months['day'])
+    the_last_day = max(active_day)
+    the_earlist_day = min(active_day)
+    return the_last_day - the_earlist_day
+
 
 
 
