@@ -55,6 +55,7 @@ features:
       para:
         months: *id001
         threshold_duration: 600
+        represent_nan: -1
     module: ./hwk/codes_feature/voc_feature_hwk.py
     name: num_long_call
 - A9:
@@ -64,6 +65,7 @@ features:
     - name: mean_call_dur
       para:
         months: *id001
+        represent_nan: -1
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: mean_call_dur
 - A10:
@@ -73,6 +75,7 @@ features:
     - name: std_call_dur
       para:
         months: *id001
+        represent_nan: -1
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: std_call_dur
 - A12:
@@ -82,6 +85,7 @@ features:
     - name: entropy_called_people
       para:
         months: *id001
+        represent_nan: -1
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: entropy_called_people
 - A13:

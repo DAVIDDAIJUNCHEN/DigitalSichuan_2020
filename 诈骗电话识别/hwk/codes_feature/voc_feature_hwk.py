@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import math
 
+
 def called_people(dataframe_phone_no, arguments):
     months = arguments['months']
     months_regex = '|'.join(months)
@@ -11,6 +12,7 @@ def called_people(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     called_people = set(voc_df_months['opposite_no_m'])
     return len(called_people)
+
 
 def long_call(dataframe_phone_no, arguments):
     """return number of long call in given months"""
@@ -25,6 +27,7 @@ def long_call(dataframe_phone_no, arguments):
         return arguments['represent_nan']
     else:
         return num_long_call
+
 
 def day_call_var(dataframe_phone_no, arguments):
     """return number of long call in given months"""
@@ -53,6 +56,7 @@ def day_call_var(dataframe_phone_no, arguments):
         return -1
     return call_ed_var
 
+
 def total_call_time(dataframe_phone_no, arguments):
     """return total call time in given months"""
     # convert to datetime format
@@ -62,6 +66,7 @@ def total_call_time(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
 
     return float(voc_df_months['call_dur'].sum())
+
 
 def morning_call_time_rate(dataframe_phone_no, arguments):
     months = arguments['months']
