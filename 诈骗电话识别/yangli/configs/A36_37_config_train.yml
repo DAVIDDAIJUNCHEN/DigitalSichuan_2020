@@ -1,27 +1,65 @@
 columns:
-- app: [busi_name, flow, month_id]
-  sms: [opposite_no_m, calltype_id, request_datetime]
-  user: [city_name, county_name, idcard_cnt, arpu_201908, arpu_201909, arpu_201910,
-    arpu_201911, arpu_201912, arpu_202001, arpu_202002, arpu_202003]
-  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
-    imei_m]
+- app:
+  - busi_name
+  - flow
+  - month_id
+  sms:
+  - opposite_no_m
+  - calltype_id
+  - request_datetime
+  user:
+  - city_name
+  - county_name
+  - idcard_cnt
+  - arpu_201908
+  - arpu_201909
+  - arpu_201910
+  - arpu_201911
+  - arpu_201912
+  - arpu_202001
+  - arpu_202002
+  - arpu_202003
+  voc:
+  - opposite_no_m
+  - calltype_id
+  - start_datetime
+  - call_dur
+  - city_name
+  - county_name
+  - imei_m
 features:
 - A36:
   - columns:
-    - voc: [opposite_no_m, start_datetime]
+    - voc:
+      - opposite_no_m
+      - start_datetime
     function:
     - name: active_day_num
       para:
-        months: &id001 [2019-08, 2019-09, 2019-10, 2019-11, 2020-01, 2020-02, 2020-03]
+        months: &id001
+        - 2019-08
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: active_day_num
 - A37:
   - columns:
-    - voc: [opposite_no_m, start_datetime]
+    - voc:
+      - opposite_no_m
+      - start_datetime
     function:
     - name: active_interval
       para:
         months: *id001
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: active_interval
+- A38:
+  - columns:
+    - voc:
+      - calltype_id
+      - start_datetime
+    function:
+    - name: entropy_active_day
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: entropy_active_day
 name: all_feature
