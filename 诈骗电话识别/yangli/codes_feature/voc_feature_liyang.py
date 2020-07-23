@@ -105,29 +105,34 @@ def segement_call_duration(dataframe_phone_no, arguments):
     segement_call_duration['call_duratiom_22_24'] = float(voc_df_months_22_24['call_dur'].sum())
     return segement_call_duration
 
-def active_day_num (dataframe_phone_no, arguments):
+def active_day_num(dataframe_phone_no, arguments):
     """return the number of active days in given months"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    active_day = set(voc_df_months['start_datetime'])
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    active_day = set(voc_df_months['start_day'])
+
     return len(active_day)
-def active_interval (dataframe_phone_no, arguments):
+
+def active_interval(dataframe_phone_no, arguments):
     """return the active interval"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months['start_datetime'] = voc_df_months['start_datetime'].dt.day
-    active_day = set(voc_df_months['start_datetime'])
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    active_day = set(voc_df_months['start_day'])
+
     if len(active_day) == 0:
-        return len(active_day)-30
+        return arguments['represent_nan']
     else:
-        the_last_day = max(active_day)
-        the_earlist_day = min(active_day)
-        return the_last_day - the_earlist_day
+        last_day = max(active_day)
+        first_day = min(active_day)
+        return last_day - first_day
 
 def entropy_active_day(dataframe_phone_no, arguments):
     """return entropy of active day"""
@@ -135,30 +140,20 @@ def entropy_active_day(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months_callout = voc_df_months.loc[voc_df_months['calltype_id']==1]
+    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id']==1]
     voc_df_months_callout['start_datetime'] = pd.to_datetime(voc_df_months_callout['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months_callout['start_datetime'] = voc_df_months_callout['start_datetime'].dt.day
+    voc_df_months_callout['start_day'] = voc_df_months_callout['start_datetime'].dt.day
     call_day = []
-    for k in range(1,31):
-        voc_df_months_callout_k = voc_df_months_callout.loc[voc_df_months_callout['start_datetime'] == k]
-        call_k = list(voc_df_months_callout_k['start_datetime'])
+    for k in range(1, 31):
+        voc_df_months_callout_k = voc_df_months_callout[voc_df_months_callout['start_day'] == k]
+        call_k = list(voc_df_months_callout_k['start_day'])
         call_num_k = len(call_k)
         call_day.append(call_num_k)
-    return entropy(call_day)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    sum_call = sum(call_day)
+    if sum(call_day) == 0:
+        return arguments['represent_nan']
+    else:
+        return entropy([num_call/sum_call for num_call in call_day])
 
 # debug part: To be deleted
 def test():
