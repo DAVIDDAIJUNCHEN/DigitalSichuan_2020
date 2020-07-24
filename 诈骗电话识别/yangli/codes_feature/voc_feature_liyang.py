@@ -111,7 +111,9 @@ def active_day_num (dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    active_day = set(voc_df_months['start_datetime'])
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    active_day = set(voc_df_months['start_day'])
     return len(active_day)
 def active_interval (dataframe_phone_no, arguments):
     """return the active interval"""
@@ -120,14 +122,14 @@ def active_interval (dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months['start_datetime'] = voc_df_months['start_datetime'].dt.day
-    active_day = set(voc_df_months['start_datetime'])
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    active_day = set(voc_df_months['start_day'])
     if len(active_day) == 0:
-        return len(active_day)-30
+        return len(active_day)
     else:
-        the_last_day = max(active_day)
-        the_earlist_day = min(active_day)
-        return the_last_day - the_earlist_day
+        last_day = max(active_day)
+        first_day = min(active_day)
+        return last_day - first_day
 
 def entropy_active_day(dataframe_phone_no, arguments):
     """return entropy of active day"""
@@ -137,14 +139,30 @@ def entropy_active_day(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months_callout = voc_df_months.loc[voc_df_months['calltype_id']==1]
     voc_df_months_callout['start_datetime'] = pd.to_datetime(voc_df_months_callout['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months_callout['start_datetime'] = voc_df_months_callout['start_datetime'].dt.day
+    voc_df_months_callout['day_day'] = voc_df_months_callout['start_datetime'].dt.day
     call_day = []
     for k in range(1,31):
-        voc_df_months_callout_k = voc_df_months_callout.loc[voc_df_months_callout['start_datetime'] == k]
-        call_k = list(voc_df_months_callout_k['start_datetime'])
+        voc_df_months_callout_k = voc_df_months_callout.loc[voc_df_months_callout['start_day'] == k]
+        call_k = list(voc_df_months_callout_k['start_day'])
         call_num_k = len(call_k)
         call_day.append(call_num_k)
-    return entropy(call_day)
+    total_cll = sum(call_day)
+    return entropy([day_call / total_cll for day_call in call_day])
+
+def ratio_callout_callin(dataframe_phone_no, arguments):
+    """return the ratio of callout with callin"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
+    voc_df_months_callin = voc_df_months[voc_df_months['calltype_id'] == 2]
+    call_out = list(voc_df_months_callout['calltype_id'])
+    call_in = list(voc_df_months_callin['calltype_id'])
+    if len(call_in) == 0:
+        return 1000
+    else:
+        return len(call_out)/len(call_in)
 
 
 
