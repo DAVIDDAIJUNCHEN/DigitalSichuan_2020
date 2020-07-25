@@ -165,16 +165,6 @@ def active_interval(dataframe_phone_no, arguments):
 
         return float(interval.days)
 
-    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
-    active_day = set(voc_df_months['start_day'])
-    if len(active_day) == 0:
-        return len(active_day)
-    else:
-        last_day = max(active_day)
-        first_day = min(active_day)
-        return last_day - first_day
-
 
 def entropy_active_day(dataframe_phone_no, arguments):
     """return entropy of active day"""
@@ -198,16 +188,6 @@ def entropy_active_day(dataframe_phone_no, arguments):
     else:
         return entropy([num_call / sum_call for num_call in call_day])
 
-    voc_df_months_callout['day_day'] = voc_df_months_callout['start_datetime'].dt.day
-    call_day = []
-    for k in range(1, 31):
-        voc_df_months_callout_k = voc_df_months_callout.loc[voc_df_months_callout['start_day'] == k]
-        call_k = list(voc_df_months_callout_k['start_day'])
-        call_num_k = len(call_k)
-        call_day.append(call_num_k)
-    total_cll = sum(call_day)
-    return entropy([day_call / total_cll for day_call in call_day])
-
 
 def ratio_callout_callin(dataframe_phone_no, arguments):
     """return the ratio of callout with callin"""
@@ -223,6 +203,22 @@ def ratio_callout_callin(dataframe_phone_no, arguments):
         return 1000
     else:
         return len(call_out) / len(call_in)
+
+def active_avr(dataframe_phone_no, arguments):
+    """return the value of call number dicided bu active day"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    call_list = list(voc_df_months['start_datetime'])
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    active_day = set(voc_df_months['start_day'])
+    if len(active_day) == 0:
+        return arguments['represent_nan']
+    else:
+        return len(call_list)/len(active_day)
+
 
 
 # debug part: To be deleted

@@ -23,6 +23,7 @@ def sms_active_day_num (dataframe_phone_no, arguments):
     sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
     active_day = set(sms_df_months['request_day'])
     return len(active_day)
+
 def sms_active_interval (dataframe_phone_no, arguments):
     """return the active interval"""
     months = arguments['months']
@@ -33,7 +34,7 @@ def sms_active_interval (dataframe_phone_no, arguments):
     sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
     active_day = set(sms_df_months['request_day'])
     if len(active_day) == 0:
-        return len(active_day)
+        return arguments['represent_nan']
     else:
         last_day = max(active_day)
         first_day = min(active_day)
@@ -67,6 +68,6 @@ def sms_active_avr(dataframe_phone_no, arguments):
     sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
     active_day = set(sms_df_months['request_day'])
     if len(active_day) == 0:
-        return -1
+        return arguments['represent_nan']
     else:
         return len(sms_num)/len(active_day)
