@@ -29,7 +29,7 @@ def mean_call_dur(dataframe_phone_no, arguments):
     call_dur_df = voc_df_months['call_dur']
 
     if len(call_dur_df) == 0:
-        return 0.0
+        return arguments['represent_nan']
     else:
         return float(call_dur_df.mean())
 
@@ -42,12 +42,12 @@ def std_call_dur(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     call_dur_df = voc_df_months['call_dur']
     if len(call_dur_df) == 0:
-        return 0.0
+        return arguments['represent_nan']
     else:
         std_call_dur = call_dur_df.std()
         # if there is only one element, then assign std to 0.001
         if math.isnan(float(std_call_dur)):
-            std_call_dur = 0.001
+            std_call_dur = arguments['represent_nan']
         return float(std_call_dur)
 
 def entropy_called_people(dataframe_phone_no, arguments):
@@ -61,8 +61,9 @@ def entropy_called_people(dataframe_phone_no, arguments):
     opposite_lst_months = list(calltype1_df_months['opposite_no_m'])
     num_call = len(opposite_lst_months)
     prob_opposite = [opposite_lst_months.count(item)/num_call for item in set(opposite_lst_months)]
+
     if len(prob_opposite) in [0, 1]:
-        return 0.0
+        return arguments['represent_nan']
     else:
         return entropy(prob_opposite)
 
@@ -75,7 +76,7 @@ def ratio_zero_calldur(dataframe_phone_no, arguments):
     num_zerodur_months = len([1 for dur in voc_df_months['call_dur'] if dur==0])
     num_call_months = len(voc_df_months)
     if num_call_months == 0:
-        return 0.0
+        return arguments['represent_nan']
     else:
         return num_zerodur_months / num_call_months
 
@@ -98,8 +99,10 @@ def num_callout(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_callout = len([1 for id in voc_df_months['calltype_id'] if id==1])
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
 
+    num_callout = len([1 for id in voc_df_months['calltype_id'] if id==1])
     return num_callout
 
 def num_callin(dataframe_phone_no, arguments):
@@ -108,8 +111,10 @@ def num_callin(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_callin = len([1 for id in voc_df_months['calltype_id'] if id==2])
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
 
+    num_callin = len([1 for id in voc_df_months['calltype_id'] if id==2])
     return num_callin
 
 def num_calltrans(dataframe_phone_no, arguments):
@@ -118,6 +123,9 @@ def num_calltrans(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
+
     num_calltrans = len([1 for id in voc_df_months['calltype_id'] if id==3])
     return num_calltrans
 
@@ -128,9 +136,10 @@ def ratio_longcall(dataframe_phone_no, arguments):
     thres_dur = arguments['threshold_duration']
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
+
     num_long_call = len([1 for dur in voc_df_months['call_dur'] if dur>=thres_dur])
-    if len(voc_df_months['call_dur']) == 0:
-        return 1.0
     return num_long_call / len(voc_df_months['call_dur'])
 
 def num_callback(dataframe_phone_no, arguments):

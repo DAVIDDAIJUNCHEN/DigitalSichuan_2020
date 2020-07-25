@@ -5,6 +5,9 @@ import pandas as pd
 def idcard_cnt(dataframe_phone_no, arguments):
     """return number of idcards for given phone_no"""
     user_dataframe = dataframe_phone_no['user']
+    if len(user_dataframe) == 0:
+        return arguments['represent_nan']
+
     return float(user_dataframe['idcard_cnt'])
 
 # debug part: To be deleted

@@ -181,6 +181,8 @@ def get_features(file_user, file_voc, file_sms, file_app, config_yml):
     # get the output directory
     if 'train' in file_voc:
         output_dir = '../../data/features/train/'
+    elif 'test_04' in file_voc:
+        output_dir = '../../data/features/test_04/'
     elif 'test' in file_voc:
         output_dir = '../../data/features/test/'
 

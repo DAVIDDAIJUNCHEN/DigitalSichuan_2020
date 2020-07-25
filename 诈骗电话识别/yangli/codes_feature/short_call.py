@@ -25,9 +25,10 @@ def ratio_shortcall(dataframe_phone_no, arguments):
     thres_calldur = arguments['threshold_duration']
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    num_short_call = len([1 for dur in voc_df_months['call_dur'] if dur < thres_calldur])
     if len(voc_df_months) == 0:
         return arguments['represent_nan']
+
+    num_short_call = len([1 for dur in voc_df_months['call_dur'] if dur < thres_calldur])
     return num_short_call / len(voc_df_months)
 
 # debug part: To be deleted

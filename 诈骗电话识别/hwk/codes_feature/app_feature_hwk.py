@@ -17,17 +17,13 @@ def video_audio_flow(dataframe_phone_no,arguments):
     months = arguments['months']
     months_regex = '|'.join(months)
     app_dataframe = dataframe_phone_no['app']
-    # tt=app_dataframe['month_id'].str
-    # print(app_dataframe['month_id'].str)
-    # app_df_months = app_dataframe[app_dataframe['month_id'].str.contains(months_regex)]
+
     try:
         app_df_months = app_dataframe[app_dataframe['month_id'].str.contains(months_regex)]
     except:
-        #tt=app_dataframe['month_id']
-        #aa=app_dataframe['month_id'].str.contains(months_regex)
-        return -1
-    flow=0
+        return arguments['represent_nan']
 
+    flow = 0
     video_app_set=set(['哔哩哔哩动画','腾讯视频','优酷','爱奇艺视频','芒果TV','搜狐视频','土豆视频','咪咕视频','酷6视频','央视影音','YouTube视频','皮皮影视'])
     audio_app_set=set(['唱吧','全民K歌','QQ音乐','酷我音乐','虾米音乐','酷狗音乐','百度音乐','凤凰电台','蜻蜓FM','网易云音乐'])
     short_video_app_set=set(['快手','抖音','火山小视频','微视','斗鱼直播','虎牙直播','UC影音']);
@@ -36,7 +32,7 @@ def video_audio_flow(dataframe_phone_no,arguments):
     vv=app_df_months.values
     for v in vv:
         if v[0] in video_audio_app_set:
-            flow+=v[1]
+            flow += v[1]
     return flow
 
 def social_flow(dataframe_phone_no,arguments):
@@ -48,15 +44,14 @@ def social_flow(dataframe_phone_no,arguments):
     try:
         app_df_months = app_dataframe[app_dataframe['month_id'].str.contains(months_regex)]
     except:
-        return -1
-    flow=0
-
+        return arguments['represent_nan']
+    flow = 0
     social_app_set = set(['QQ','微信','旺信','陌陌','钉钉','探探']);
 
     vv=app_df_months.values
     for v in vv:
         if v[0] in social_app_set:
-            flow+=v[1]
+            flow += v[1]
     return flow
 
 def tool_flow(dataframe_phone_no,arguments):
@@ -68,12 +63,12 @@ def tool_flow(dataframe_phone_no,arguments):
     try:
         app_df_months = app_dataframe[app_dataframe['month_id'].str.contains(months_regex)]
     except:
-        return -1
+        return arguments['represent_nan']
     flow=0
 
     tool_app_set = set(['高德导航','苹果地图','腾讯地图','百度地图','360安全卫士','迅雷','支付宝',
                         '腾讯云','阿里云','华为云','滴滴出行','美团','百度网盘','微云','华为网盘',
-                        '金山云','有道词典']);
+                        '金山云','有道词典'])
 
     vv=app_df_months.values
     for v in vv:
@@ -90,19 +85,18 @@ def surf_flow(dataframe_phone_no,arguments):
     try:
         app_df_months = app_dataframe[app_dataframe['month_id'].str.contains(months_regex)]
     except:
-        return -1
+        return arguments['represent_nan']
     flow=0
 
     surf_app_set = set(['知乎','微博','百度贴吧','手机百度','腾讯网','网易网','百度搜索','腾讯新闻',
                         '搜狗搜索','今日头条','百度新闻','QQ浏览器','网页浏览','UC浏览器','神马搜索','新浪网',
-                        '新浪微博','百度百科','人民网','中华网']);
+                        '新浪微博','百度百科','人民网','中华网'])
 
     vv=app_df_months.values
     for v in vv:
         if v[0] in surf_app_set:
             flow+=v[1]
     return flow
-
 
 
 def total_flow(dataframe_phone_no,arguments):
@@ -114,7 +108,7 @@ def total_flow(dataframe_phone_no,arguments):
     try:
         app_df_months = app_dataframe[app_dataframe['month_id'].str.contains(months_regex)]
     except:
-        return -1
+        return arguments['represent_nan']
     flow=0
     vv=app_df_months.values
     for v in vv:

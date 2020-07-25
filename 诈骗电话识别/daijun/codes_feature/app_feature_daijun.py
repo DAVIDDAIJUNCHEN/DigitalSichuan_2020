@@ -6,8 +6,10 @@ def num_app(dataframe_phone_no, arguments):
     """return number of called people in given months"""
     # convert to datetime formatA
     app_dataframe = dataframe_phone_no['app']
-    num_apps = set(app_dataframe['busi_name'])
+    if len(app_dataframe) == 0:
+        return arguments['represent_nan']
 
+    num_apps = set(app_dataframe['busi_name'])
     return len(num_apps)
 
 # debug part: To be deleted
