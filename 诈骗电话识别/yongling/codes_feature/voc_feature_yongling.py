@@ -63,6 +63,8 @@ def first_call_time(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     # 对应该月份的数据
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
 
     timelist = list(voc_df_months['start_datetime'])
     datelist = {}
@@ -99,6 +101,8 @@ def last_call_time(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     # 对应该月份的数据
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
 
     timelist = list(voc_df_months['start_datetime'])
     datelist = {}

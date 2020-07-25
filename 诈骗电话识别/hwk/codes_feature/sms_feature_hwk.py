@@ -2,12 +2,16 @@
 
 import pandas as pd
 import numpy as np
+import math
 
 def sms_people(dataframe_phone_no, arguments):
     months = arguments['months']
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+    if len(sms_df_months) == 0:
+        return arguments['represent_nan']
+
     smsed_people = set(sms_df_months['opposite_no_m'])
     return len(smsed_people)
 
@@ -17,6 +21,7 @@ def sms_interval_meantime(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+
     day_startTimeList_dict={}
     interavl_list=[]
     vv=sms_df_months.values
@@ -35,8 +40,10 @@ def sms_interval_meantime(dataframe_phone_no, arguments):
             continue
         for ii in range(len(startTimeList)-1):
             interavl_list.append(startTimeList[ii]-startTimeList[ii+1])
-    if len(interavl_list)==0:
-        return -1
+
+    if math.isnan(np.mean(interavl_list)):
+        return arguments['represent_nan']
+
     return np.mean(interavl_list)
 
 # debug part: To be deleted

@@ -7,6 +7,9 @@ def sms_people(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+    if len(sms_df_months) == 0:
+        return arguments['represent_nan']
+
     smsed_people = set(sms_df_months['opposite_no_m'])
     return len(smsed_people)
 

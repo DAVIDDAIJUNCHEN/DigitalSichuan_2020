@@ -4,6 +4,7 @@
 from sklearn.metrics import f1_score
 import yaml
 
+
 def evaluate(golden_truth, pred, model=None):
     """wrap up evaluation methods and print information"""
     f1 = f1_score(golden_truth, pred, average='micro')
@@ -14,6 +15,7 @@ def evaluate(golden_truth, pred, model=None):
         assert type(model) == str
         print(model + ': F1 score is {}'.format(f1))
         return f1
+
 
 def modify_months_config(config_yml, new_months=['2020-01', '2020-02']):
     """modify date in the config yaml file"""
@@ -37,5 +39,35 @@ def modify_months_config(config_yml, new_months=['2020-01', '2020-02']):
 
     return None
 
+
+def insert_label(user_file_in, label_file, user_file_out):
+    """insert test label into test user file"""
+    dct_label = {}
+    with open(label_file, 'r', encoding='utf-8') as fin:
+        for line in fin:
+            line_splt = line.split(',')
+            phone_no_m = line_splt[0]
+            label = line_splt[-1]
+            dct_label[phone_no_m] = label
+
+    new_lines = []
+    with open(user_file_in, 'r', encoding='utf-8') as fin:
+        for line in fin:
+            line_splt = line.split(',')
+            phone_no_m = line_splt[0]
+            if phone_no_m in dct_label.keys():
+                line = line.strip('\n')
+                new_line = line + ',' + dct_label[phone_no_m]
+            new_lines.append(new_line)
+
+    with open(user_file_out, 'w', encoding='utf-8') as fout:
+        for line in new_lines:
+            fout.writelines(line)
+
+    return None
+
+
 if __name__ == '__main__':
-    modify_months_config('./daijun/configs/A1_B1_C1_config_train_backup.yml')
+    insert_label('./data/test_04/test_user.csv', './data/test_04/labels_AB.csv',
+                 './data/test_04/test_user_wLabel.csv')
+    #modify_months_config('./daijun/configs/A1_B1_C1_config_train_backup.yml')

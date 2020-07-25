@@ -19,21 +19,26 @@ from models.LogisticRegressionCV import LogisticRegressionCV
 from models.ensemble_model import ensemble
 
 # prepare data and parameter
-## original csv files
+## train/blind_test/external test user/voc/sms/app files
 train_user = '../../data/train/train_user.csv'
 train_voc = '../../data/train/train_voc.csv'
 train_sms = '../../data/train/train_sms.csv'
 train_app = '../../data/train/train_app.csv'
 
-test_user = '../../data/test/test_user.csv'
-test_voc = '../../data/test/test_voc.csv'
-test_sms = '../../data/test/test_sms.csv'
-test_app = '../../data/test/test_app.csv'
+blind_test_user = '../../data/test/test_user.csv'
+blind_test_voc = '../../data/test/test_voc.csv'
+blind_test_sms = '../../data/test/test_sms.csv'
+blind_test_app = '../../data/test/test_app.csv'
 
-## split train/dev/test csv files (with label)
+exter_test_user = '../../data/test_04/test_user_wLabel.csv'
+exter_test_voc = '../../data/test_04/test_voc.csv'
+exter_test_sms = '../../data/test_04/test_sms.csv'
+exter_test_app = '../../data/test_04/test_app.csv'
+
+## split train_user into train/dev/internal test csv files
 train_file = '../../data/train/split/train_user.csv'
 dev_file = '../../data/train/split/dev_user.csv'
-test_file = '../../data/train/split/test_user.csv'
+inter_test_file = '../../data/train/split/test_user.csv'
 
 ## set the data file parameters （in splitting）
 num_total = 6106
@@ -47,15 +52,16 @@ num_ensemble = 4
 ## split data to train/dev/test (only for train_user.csv)
 split_data(train_user, num_train, num_dev, num_test, replace=False)
 
-## define features in train_config_yml and test_config_yml
-train_config_yml = '../configs/A1_2_4_5_7_9_10_12-30B1_3_4C1-6D1-3_config_train.yml'
-test_config_yml  = '../configs/A1_2_4_5_7_9_10_12-30B1_3_4C1-6D1-3_config_test.yml'
+## define features in train_config_yml and blind/external test_config_yml
+train_config_yml = '../configs/A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3_config_train.yml'
+blindTest_config_yml = '../configs/A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3_config_blind_test.yml'
+extTest_config_yml = '../configs/A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3_config_ext_test.yml'
 
-# set months of test data
-test_months = ['2019-12']
-modify_months_config(train_config_yml, new_months=test_months)
+# set months of internal test data
+inter_test_months = ['2019-12']
+modify_months_config(train_config_yml, new_months=inter_test_months)
 
-features_name = 'A1_2_4_5_7_9_10_12-30B1_3_4C1-6D1-3'
+features_name = 'A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3'
 
 # get design matrix and label according to months
 label_train = get_label(train_file)
@@ -64,8 +70,10 @@ ind_train_positive = [i for i, n in enumerate(label_train) if n == 1]
 label_train.extend([1]*num_train_positive)
 
 label_dev = get_label(dev_file)
-label_test = get_label(test_file)
-phone_no_m_blindtest = get_phone_no_m(test_user)
+label_inter_test = get_label(inter_test_file)
+label_exter_test = get_label(exter_test_user)
+
+phone_no_m_blindtest = get_phone_no_m(blind_test_user)
 
 print('size of training data: ', len(label_train))
 print('1 in training data: ', len([1 for i in label_train if i==1]))
@@ -74,30 +82,27 @@ print('0 in training data: ', len([0 for i in label_train if i==0]))
 # all data in training
 label_train_all = label_train
 label_train_all.extend(label_dev)
-label_train_all.extend(label_test)
+label_train_all.extend(label_inter_test)
 
 print('size of all training data: ', len(label_train))
 print('1 in all training data: ', len([1 for i in label_train if i==1]))
 print('0 in all training data: ', len([0 for i in label_train if i==0]))
 
-X_blindtest = get_features(test_user, test_voc, test_sms, test_app, test_config_yml)
-X_blindtest = X_blindtest
-
-X_test = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
-X_test = X_test
+X_blindtest = get_features(blind_test_user, blind_test_voc, blind_test_sms, blind_test_app, blindTest_config_yml)
+X_inter_test = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
+X_exter_test = get_features(exter_test_user, exter_test_voc, exter_test_sms, exter_test_app, extTest_config_yml)
 
 ## create test_results dir
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
 months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2020-01', '2020-02', '2020-03'],
-              ['2019-10', '2019-11', '2019-12', '2020-01', '2020-02', '2020-03'], ['2019-08'], ['2019-09'],
-              ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
+              ['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], 
+              ['2020-02'], ['2020-03']]
 
 gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2020-01_2020-02_2020-03": 0.9,
-                      "2019-10_2019-11_2019-12_2020-01_2020-02_2020-03": 0.9, '2019-08': 0.62,
-                      '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75, '2019-12': 0.78,
-                      '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
+                      '2019-08': 0.62, '2019-09': 0.66, '2019-10': 0.73, '2019-11': 0.75, 
+                      '2019-12': 0.78, '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
 
 clf_gradboostAcc_months = {}
 
@@ -109,11 +114,9 @@ for months in months_lst:
     X_train.extend((np.array(X_train)[ind_train_positive]).tolist())
 
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
-    X_dev = X_dev
 
     # train final model on all data files
-    X_test_internal = get_features(test_file, train_voc, train_sms, train_app, train_config_yml)
-    X_test_internal = X_test_internal
+    X_test_internal = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
 
     X_train_all = X_train
     X_train_all.extend(X_dev)
@@ -125,85 +128,75 @@ for months in months_lst:
 
     # model training and inference
     ## Model I: Logistic regression
+
     clf_logistReg = LogisticRegression(random_state=0).fit(X_train, label_train)
 
-    y_predprob = clf_logistReg.predict_proba(X_test)[:, 1]
-    print('AUC score (Train) of logistic regression: %f' % metrics.roc_auc_score(label_test, y_predprob))
+    y_predprob = clf_logistReg.predict_proba(X_inter_test)[:, 1]
+    print('AUC score (Train) of logistic regression: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_logistReg.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_logistReg.predict(X_test).tolist()
+    pred_inter_test = clf_logistReg.predict(X_inter_test).tolist()
+    pred_exter_test = clf_logistReg.predict(X_exter_test).tolist()
 
     clf_logistReg = LogisticRegression(random_state=0).fit(X_train_all, label_train_all)
     dict_model_acc_dev['logistReg'] = (clf_logistReg, evaluate(label_dev, pred_dev, model='Logistic Regression'))
-    dict_model_acc_test['logistReg'] = (clf_logistReg, evaluate(label_test, pred_test, model='Logistic Regression'))
-
+    dict_model_acc_test['logistReg'] = (clf_logistReg, evaluate(label_inter_test, pred_inter_test, model='Logistic Regression'))
+    evaluate(label_exter_test, pred_exter_test, model='Logistic Regression')
+    
     ## Model II: Logistic regression CV
     clf_logistRegCV = LogisticRegressionCV(cv=5, random_state=0).fit(X_train, label_train)
 
-    y_predprob = clf_logistRegCV.predict_proba(X_test)[:, 1]
-    print('AUC score (Train) of logistic regression CV: %f' % metrics.roc_auc_score(label_test, y_predprob))
+    y_predprob = clf_logistRegCV.predict_proba(X_inter_test)[:, 1]
+    print('AUC score (Train) of logistic regression CV: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_logistRegCV.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_logistRegCV.predict(X_test).tolist()
+    pred_inter_test = clf_logistRegCV.predict(X_inter_test).tolist()
+    pred_exter_test = clf_logistRegCV.predict(X_exter_test).tolist()
 
     clf_logistRegCV = LogisticRegressionCV(cv=5, random_state=0).fit(X_train_all, label_train_all)
     dict_model_acc_dev['logistRegCV'] = (clf_logistRegCV, evaluate(label_dev, pred_dev, model='Logistic Regression CV=5'))
-    dict_model_acc_test['logistRegCV'] = (clf_logistRegCV, evaluate(label_test, pred_test, model='Logistic Regression CV=5'))
-
-    ## Model III: percepton
-    #from sklearn.linear_model import Perceptron
-    #clf_perceptron = Perceptron(tol=1e-3, random_state=0)
-    #clf_perceptron.fit(X_train, label_train)
-
-    # evaluate toy model on (X_dev, label_dev)
-    #pred_dev = clf_perceptron.predict(X_dev).tolist()
-    #evaluate(label_dev, pred_dev, model='Perceptron')
-
-    # evaluate toy model on (X_test, label_test)
-    #pred_test = clf_perceptron.predict(X_test).tolist()
-    #evaluate(label_test, pred_test, model='Perceptron')
+    dict_model_acc_test['logistRegCV'] = (clf_logistRegCV, evaluate(label_inter_test, pred_inter_test, model='Logistic Regression CV=5'))
+    evaluate(label_exter_test, pred_exter_test, model='Logistic Regression CV=5')
 
     ## Model IV: RidgeClassifier
     from sklearn.linear_model import RidgeClassifier
     clf_ridgeClassifier = RidgeClassifier().fit(X_train, label_train)
 
-    #y_predprob = clf_ridgeClassifier.predict_proba(X_test)[:, 1]
-    #print('AUC score (Train) of ridge classifier: %f' % metrics.roc_auc_score(label_test, y_predprob))
-
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_ridgeClassifier.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_ridgeClassifier.predict(X_test).tolist()
+    pred_inter_test = clf_ridgeClassifier.predict(X_inter_test).tolist()
+    pred_exter_test = clf_ridgeClassifier.predict(X_exter_test).tolist()
 
     clf_ridgeClassifier = RidgeClassifier().fit(X_train_all, label_train_all)
     dict_model_acc_dev['ridgeClassifier'] = (clf_ridgeClassifier, evaluate(label_dev, pred_dev, model='Ridge Classification'))
-    dict_model_acc_test['ridgeClassifier'] = (clf_ridgeClassifier, evaluate(label_test, pred_test, model='Ridge Classification'))
+    dict_model_acc_test['ridgeClassifier'] = (clf_ridgeClassifier, evaluate(label_inter_test, pred_inter_test, model='Ridge Classification'))
+    evaluate(label_exter_test, pred_exter_test, model='Ridge Classification')
 
     ## Model V: AdaBoostClassifier
     from sklearn.ensemble import AdaBoostClassifier
     clf_AdaBoost = AdaBoostClassifier(n_estimators=100, random_state=0)
     clf_AdaBoost.fit(X_train, label_train)
 
-    #y_predprob = clf_AdaBoost.predict_proba(X_test)[:, 1]
-    #print('AUC score (Train) of Adaboost: %f' % metrics.roc_auc_score(label_test, y_predprob))
-
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_AdaBoost.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_AdaBoost.predict(X_test).tolist()
+    pred_inter_test = clf_AdaBoost.predict(X_inter_test).tolist()
+    pred_exter_test = clf_AdaBoost.predict(X_exter_test).tolist()
 
     clf_AdaBoost = AdaBoostClassifier(n_estimators=100, random_state=0)
     clf_AdaBoost.fit(X_train_all, label_train_all)
     dict_model_acc_dev['Adaboost'] = (clf_AdaBoost, evaluate(label_dev, pred_dev, model='Adaboost'))
-    dict_model_acc_test['Adaboost'] = (clf_AdaBoost, evaluate(label_test, pred_test, model='Adaboost'))
+    dict_model_acc_test['Adaboost'] = (clf_AdaBoost, evaluate(label_inter_test, pred_inter_test, model='Adaboost'))
+    evaluate(label_exter_test, pred_exter_test, model='Adaboost')
 
     ## Model VI: BaggingClassifier
     from sklearn.ensemble import BaggingClassifier
@@ -215,12 +208,14 @@ for months in months_lst:
     pred_dev = clf_Bagging.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_Bagging.predict(X_test).tolist()
+    pred_inter_test = clf_Bagging.predict(X_inter_test).tolist()
+    pred_exter_test = clf_Bagging.predict(X_exter_test).tolist()
 
     clf_Bagging = BaggingClassifier(base_estimator=SVC(), n_estimators=10, random_state=0)
     clf_Bagging.fit(X_train_all, label_train_all)
     dict_model_acc_dev['Bagging_SVC'] = (clf_Bagging, evaluate(label_dev, pred_dev, model='Bagging_SVC'))
-    dict_model_acc_test['Bagging_SVC'] = (clf_Bagging, evaluate(label_test, pred_test, model='Bagging_SVC'))
+    dict_model_acc_test['Bagging_SVC'] = (clf_Bagging, evaluate(label_inter_test, pred_inter_test, model='Bagging_SVC'))
+    evaluate(label_exter_test, pred_exter_test, model='Bagging_SVC')
 
     ## Model VII: random forest
     from sklearn.ensemble import RandomForestClassifier
@@ -241,21 +236,23 @@ for months in months_lst:
 
     clf_randforest.fit(X_train, label_train)
 
-    y_predprob = clf_randforest.predict_proba(X_test)[:, 1]
-    print('AUC score (Train) of random forest: %f' % metrics.roc_auc_score(label_test, y_predprob))
+    y_predprob = clf_randforest.predict_proba(X_inter_test)[:, 1]
+    print('AUC score (Train) of random forest: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_randforest.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_randforest.predict(X_test).tolist()
+    pred_inter_test = clf_randforest.predict(X_inter_test).tolist()
+    pred_exter_test = clf_randforest.predict(X_exter_test).tolist()
 
     clf_randforest = RandomForestClassifier(n_estimators=160, max_features=10, min_samples_leaf=10, max_depth=5,
                                             min_samples_split=50, random_state=10)
 
     clf_randforest.fit(X_train_all, label_train_all)
     dict_model_acc_dev['Random_forest'] = (clf_randforest, evaluate(label_dev, pred_dev, model='Random forest'))
-    dict_model_acc_test['Random_forest'] = (clf_randforest, evaluate(label_test, pred_test, model='Random forest'))
+    dict_model_acc_test['Random_forest'] = (clf_randforest, evaluate(label_inter_test, pred_inter_test, model='Random forest'))
+    evaluate(label_exter_test, pred_exter_test, model='Random forest')
 
     ## Model VIII: Gradientboosting
     from sklearn.ensemble import GradientBoostingClassifier
@@ -273,20 +270,22 @@ for months in months_lst:
     clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=8, min_samples_leaf=20, max_depth=11,
                                                min_samples_split=50, random_state=10)
     clf_gradboost.fit(X_train, label_train)
-    y_predprob = clf_gradboost.predict_proba(X_test)[:, 1]
-    print('AUC score (Train) of gradient boosting: %f' % metrics.roc_auc_score(label_test, y_predprob))
+    y_predprob = clf_gradboost.predict_proba(X_inter_test)[:, 1]
+    print('AUC score (Train) of gradient boosting: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_gradboost.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_gradboost.predict(X_test).tolist()
+    pred_inter_test = clf_gradboost.predict(X_inter_test).tolist()
+    pred_exter_test = clf_gradboost.predict(X_exter_test).tolist()
 
     clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=8, min_samples_leaf=20, max_depth=11,
                                                min_samples_split=50, random_state=10)
     clf_gradboost.fit(X_train_all, label_train_all)
     dict_model_acc_dev['Gradient_boosting'] = (clf_gradboost, evaluate(label_dev, pred_dev, model='Gradient boosting'))
-    dict_model_acc_test['Gradient_boosting'] = (clf_gradboost, evaluate(label_test, pred_test, model='Gradient boosting'))
+    dict_model_acc_test['Gradient_boosting'] = (clf_gradboost, evaluate(label_inter_test, pred_inter_test, model='Gradient boosting'))
+    evaluate(label_exter_test, pred_exter_test, model='Gradient boosting')
 
     ### collect models in months
     clf_gradboostAcc_months['_'.join(months)] = (clf_gradboost, gradboost_blindAcc['_'.join(months)])
@@ -295,18 +294,20 @@ for months in months_lst:
     from sklearn.neural_network import MLPClassifier
     clf_mlp = MLPClassifier(random_state=1, max_iter=300).fit(X_train, label_train)
 
-    y_predprob = clf_mlp.predict_proba(X_test)[:, 1]
-    print('AUC score (Train) of mlp: %f' % metrics.roc_auc_score(label_test, y_predprob))
+    y_predprob = clf_mlp.predict_proba(X_inter_test)[:, 1]
+    print('AUC score (Train) of mlp: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
 
     ### evaluate toy model on (X_dev, label_dev)
     pred_dev = clf_mlp.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_mlp.predict(X_test).tolist()
+    pred_inter_test = clf_mlp.predict(X_inter_test).tolist()
+    pred_exter_test = clf_mlp.predict(X_exter_test).tolist()
 
     clf_mlp = MLPClassifier(random_state=1, max_iter=300).fit(X_train_all, label_train_all)
     dict_model_acc_dev['MLP'] = (clf_mlp, evaluate(label_dev, pred_dev, model='MLP'))
-    dict_model_acc_test['MLP'] = (clf_mlp, evaluate(label_test, pred_test, model='MLP'))
+    dict_model_acc_test['MLP'] = (clf_mlp, evaluate(label_inter_test, pred_inter_test, model='MLP'))
+    evaluate(label_exter_test, pred_exter_test, model='MLP')
 
     ## Model X: SVM
     from sklearn.svm import LinearSVC
@@ -320,12 +321,14 @@ for months in months_lst:
     pred_dev = clf_svm.predict(X_dev).tolist()
 
     ### evaluate toy model on (X_test, label_test)
-    pred_test = clf_svm.predict(X_test).tolist()
+    pred_inter_test = clf_svm.predict(X_inter_test).tolist()
+    pred_exter_test = clf_svm.predict(X_exter_test).tolist()
 
     clf_svm = make_pipeline(StandardScaler(), LinearSVC(random_state=0, tol=1e-5))
     clf_svm.fit(X_train_all, label_train_all)
     dict_model_acc_dev['SVM'] = (clf_svm, evaluate(label_dev, pred_dev, model='SVM'))
-    dict_model_acc_test['SVM'] = (clf_svm, evaluate(label_test, pred_test, model='SVM'))
+    dict_model_acc_test['SVM'] = (clf_svm, evaluate(label_inter_test, pred_inter_test, model='SVM'))
+    evaluate(label_exter_test, pred_exter_test, model='SVM')
 
     ## model ensemble (top K accuracy models ensemble)
     ### construct dictionary with topK models: {'model1': accuracy1, ... , 'modelK': accuracyK}
@@ -337,8 +340,10 @@ for months in months_lst:
     evaluate(label_dev, pred_dev, model='topK_vote')
 
     ### evaluate ensemble model on (X_test, label_test)
-    pred_test = ensemble(dict_topK_model_acc_test, X_test, method='vote')
-    evaluate(label_test, pred_test, model='topK_vote')
+    pred_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='vote')
+    evaluate(label_inter_test, pred_inter_test, model='topK_vote')
+    pred_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='vote')
+    evaluate(label_exter_test, pred_exter_test, model='topK_vote')
 
     ### evaluate ensemble model on (X_dev, label_dev)
     if 'Bagging_SVC' in dict_topK_model_acc_dev.keys():
@@ -364,16 +369,20 @@ for months in months_lst:
     evaluate(label_dev, pred_dev, model='topK_avg_unif')
 
     ### evaluate ensemble model on (X_test, label_test)
-    pred_test = ensemble(dict_topK_model_acc_test, X_test, method='avg_unif')
-    evaluate(label_test, pred_test, model='topK_avg_unif')
+    pred_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='avg_unif')
+    evaluate(label_inter_test, pred_inter_test, model='topK_avg_unif')
+    pred_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='avg_unif')
+    evaluate(label_exter_test, pred_exter_test, model='topK_avg_unif')
 
     ### evaluate ensemble model on (X_dev, label_dev)
     pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_softmax')
     evaluate(label_dev, pred_dev, model='topK_avg_softmax')
 
     ### evaluate ensemble model on (X_test, label_test)
-    pred_test = ensemble(dict_topK_model_acc_test, X_test, method='avg_softmax')
-    evaluate(label_test, pred_test, model='topK_avg_softmax')
+    pred_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='avg_softmax')
+    evaluate(label_inter_test, pred_inter_test, model='topK_avg_softmax')
+    pred_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='avg_softmax')
+    evaluate(label_exter_test, pred_exter_test, model='topK_avg_softmax')
 
     # predict labels on blind test set and write to xlsx file for submitting
     ## ensemble classifier (topK_avg_softmax)

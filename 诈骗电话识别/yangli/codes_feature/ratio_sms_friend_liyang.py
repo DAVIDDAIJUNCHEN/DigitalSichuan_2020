@@ -9,16 +9,16 @@ def ratio_sms_friends(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+
     smsed_people = list(sms_df_months['opposite_no_m'])
     smsed_people_dict = dict(Counter(smsed_people))
-    sms_friend = 0
+    if len(smsed_people_dict) == 0:
+        return arguments['represent_nan']
 
+    sms_friend = 0
     for opposite_phone, times in smsed_people_dict.items():
         if times >= thres_friend:
             sms_friend += 1
-    # if no smsed people in these months, assign 100%
-    if len(smsed_people) == 0:
-        return 1.0
 
     return sms_friend / len(smsed_people_dict)
 

@@ -12,7 +12,7 @@ features:
     function:
     - name: active_day_num
       para:
-        months: &id001 [2019-08]
+        months: &id001 [2020-03]
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: active_day_num
 - A37:

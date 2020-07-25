@@ -11,6 +11,7 @@ def called_people(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     called_people = set(voc_df_months['opposite_no_m'])
+
     return len(called_people)
 
 
@@ -23,6 +24,7 @@ def long_call(dataframe_phone_no, arguments):
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     num_long_call = len([1 for dur in voc_df_months['call_dur'] if dur >= thres_dur])
+
     if math.isnan(num_long_call):
         return arguments['represent_nan']
     else:
@@ -64,8 +66,10 @@ def total_call_time(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-
-    return float(voc_df_months['call_dur'].sum())
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
+    else:
+        return float(voc_df_months['call_dur'].sum())
 
 
 def morning_call_time_rate(dataframe_phone_no, arguments):
@@ -117,7 +121,7 @@ def call_interval_meantime(dataframe_phone_no, arguments):
         for ii in range(len(startTimeList) - 1):
             interavl_list.append(startTimeList[ii] - startTimeList[ii+1])
     if len(interavl_list) == 0:
-        return -1
+        return arguments['represent_nan']
     return np.mean(interavl_list)
 
 def imei_num(dataframe_phone_no, arguments):
