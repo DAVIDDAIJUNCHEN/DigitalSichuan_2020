@@ -164,6 +164,22 @@ def ratio_callout_callin(dataframe_phone_no, arguments):
     else:
         return len(call_out)/len(call_in)
 
+def active_avr(dataframe_phone_no, arguments):
+    """return the value of call number divided by active day"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    call_list = list(voc_df_months['start_datetime'])
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    active_day = set(voc_df_months['start_day'])
+    if len(active_day) == 0:
+        return -1
+    else:
+        return len(call_list)/len(active_day)
+
+
 
 
 

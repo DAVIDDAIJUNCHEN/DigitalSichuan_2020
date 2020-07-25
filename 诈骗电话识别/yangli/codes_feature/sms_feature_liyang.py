@@ -55,3 +55,18 @@ def sms_entropy_active_day(dataframe_phone_no, arguments):
         sms_day.append(sms_num_k)
     total_sms = sum(sms_day)
     return entropy([day_sms / total_sms for day_sms in sms_day])
+
+def sms_active_avr(dataframe_phone_no, arguments):
+    """return the value of sms number divided by active day"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    sms_dataframe = dataframe_phone_no['sms']
+    sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+    sms_num = list(sms_df_months['request_datetime'])
+    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
+    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
+    active_day = set(sms_df_months['request_day'])
+    if len(active_day) == 0:
+        return -1
+    else:
+        return len(sms_num)/len(active_day)
