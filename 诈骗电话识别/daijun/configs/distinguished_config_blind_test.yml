@@ -449,6 +449,26 @@ features:
         represent_nan: -10
     module: ./hwk/codes_feature/app_feature_hwk.py
     name: total_flow
+- C7:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: payapp_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_payapp
+- C8:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: suspect_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_suspected_app
 - D1:
   - columns:
     - user: [idcard_cnt]
@@ -466,7 +486,7 @@ features:
     function:
     - name: arpu_mean
       para: {represent_nan: -20}
-    module: ./hwm/codes_feature/user_feature_hwk.py
+    module: ./hwk/codes_feature/user_feature_hwk.py
     name: arpu_mean
 - D3:
   - columns:
@@ -475,6 +495,15 @@ features:
     function:
     - name: arpu_std
       para: {represent_nan: -10}
-    module: ./hwm/codes_feature/user_feature_hwk.py
+    module: ./hwk/codes_feature/user_feature_hwk.py
     name: arpu_std
+- D4:
+  - columns:
+    - user: [opposite_no_m, city_name]
+    function:
+    - name: city_name
+      para: {represent_nan: -10}
+    module: ./yangli/codes_feature/user_feature_liyang.py
+    name: city_name
+
 name: all_features

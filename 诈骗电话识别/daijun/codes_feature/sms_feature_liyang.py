@@ -5,6 +5,7 @@ import datetime
 from scipy.stats import entropy
 from collections import Counter
 
+
 def smsin_num(dataframe_phone_no, arguments):
     """return the number of smsout in given month"""
     months = arguments['months']

@@ -122,26 +122,27 @@ def segement_call_duration(dataframe_phone_no, arguments):
     return segement_call_duration
 
 
-def active_day_num(dataframe_phone_no, arguments):
+def voc_active_day_num(dataframe_phone_no, arguments):
     """return the number of active days in given months"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     lst_split_datetime = list(voc_df_months['start_datetime'].str.split())
-    voc_df_months['start_date'] = [date[0] for date in lst_split_datetime]
-    active_days = set(voc_df_months['start_date'])
+    active_days = set([date[0] for date in lst_split_datetime])
+
     return len(active_days)
 
-def active_interval(dataframe_phone_no, arguments):
+
+def voc_active_interval(dataframe_phone_no, arguments):
     """return the active interval"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+
     lst_split_datetime = list(voc_df_months['start_datetime'].str.split())
-    voc_df_months['start_date'] = [date[0] for date in lst_split_datetime]
-    active_days = set(voc_df_months['start_date'])
+    active_days = set([date[0] for date in lst_split_datetime])
 
     if len(active_days) == 0:
         return arguments['represent_nan']
@@ -152,30 +153,58 @@ def active_interval(dataframe_phone_no, arguments):
         first_day = datetime.date(int(first_day_lst[0]), int(first_day_lst[1]), int(first_day_lst[2]))
         interval = last_day - first_day
 
-        return float(interval.days)
+    return float(interval.days)
 
 
-def entropy_active_day(dataframe_phone_no, arguments):
-    """return entropy of active day"""
+def voc_active_avr(dataframe_phone_no, arguments):
+    """return the active interval"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
-    voc_df_months_callout['start_datetime'] = pd.to_datetime(voc_df_months_callout['start_datetime'],
-                                                             format='%Y-%m-%d %H:%M:%S')
-    voc_df_months_callout['start_day'] = voc_df_months_callout['start_datetime'].dt.day
-    call_day = []
-    for k in range(1, 31):
-        voc_df_months_callout_k = voc_df_months_callout[voc_df_months_callout['start_day'] == k]
-        call_k = list(voc_df_months_callout_k['start_day'])
-        call_num_k = len(call_k)
-        call_day.append(call_num_k)
-    sum_call = sum(call_day)
-    if sum(call_day) == 0:
+
+    lst_split_datetime = list(voc_df_months['start_datetime'].str.split())
+    active_days = set([date[0] for date in lst_split_datetime])
+    num_call = len(voc_df_months)
+
+    if len(active_days) == 0:
         return arguments['represent_nan']
     else:
-        return entropy([num_call / sum_call for num_call in call_day])
+        return num_call / len(active_days)
+
+
+def vocin_active_avr(dataframe_phone_no, arguments):
+    """return the active interval"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+
+    lst_split_datetime = list(voc_df_months['start_datetime'].str.split())
+    active_days = set([date[0] for date in lst_split_datetime])
+    num_callin = len(voc_df_months['calltype_id']==2)
+
+    if len(active_days) == 0:
+        return arguments['represent_nan']
+    else:
+        return num_callin / len(active_days)
+
+
+def vocout_active_avr(dataframe_phone_no, arguments):
+    """return the active interval"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+
+    lst_split_datetime = list(voc_df_months['start_datetime'].str.split())
+    active_days = set([date[0] for date in lst_split_datetime])
+    num_callout = len(voc_df_months['calltype_id']==1)
+
+    if len(active_days) == 0:
+        return arguments['represent_nan']
+    else:
+        return num_callout / len(active_days)
 
 
 def ratio_callout_callin(dataframe_phone_no, arguments):
@@ -184,30 +213,37 @@ def ratio_callout_callin(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
-    voc_df_months_callin = voc_df_months[voc_df_months['calltype_id'] == 2]
-    call_out = list(voc_df_months_callout['calltype_id'])
-    call_in = list(voc_df_months_callin['calltype_id'])
-    if len(call_in) == 0:
+    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id']==1]
+    voc_df_months_callin = voc_df_months[voc_df_months['calltype_id']==2]
+
+    if len(voc_df_months_callin) == 0:
         return arguments['represent_nan']
     else:
-        return len(call_out) / len(call_in)
+        return len(voc_df_months_callout) / len(voc_df_months_callin)
 
-def active_avr(dataframe_phone_no, arguments):
-    """return the value of call number divided bu active day"""
+
+def voc_entropy_active_day(dataframe_phone_no, arguments):
+    """return entropy of active day"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    call_list = list(voc_df_months['start_datetime'])
-    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
-    active_day = set(voc_df_months['start_day'])
-    if len(active_day) == 0:
-        return arguments['represent_nan']
-    else:
-        return len(call_list)/len(active_day)
+    sum_call = len(voc_df_months)
 
+    if sum_call == 0:
+        return arguments['represent_nan']
+
+    lst_split_datetime = list(voc_df_months['start_datetime'].str.split())
+    num_days = len(months)*30
+    num_active = len(set([date[0] for date in lst_split_datetime]))
+    lst_nonactive = [0]*(num_days - num_active)
+    lst_nonactive.extend(list(Counter([date[0] for date in lst_split_datetime]).values()))
+    lst_day_call_prob = [cnt/sum_call for cnt in lst_nonactive]
+
+    return entropy(lst_day_call_prob)
+
+
+#######################################################################################################################
 def callout_range(dataframe_phone_no, arguments):
     """return the range of callout in given month"""
     months = arguments['months']
@@ -596,15 +632,6 @@ def callin_active_interval(dataframe_phone_no, arguments):
         interval = last_day - first_day
 
         return float(interval.days)
-
-
-
-
-
-
-
-
-
 
 
 # debug part: To be deleted

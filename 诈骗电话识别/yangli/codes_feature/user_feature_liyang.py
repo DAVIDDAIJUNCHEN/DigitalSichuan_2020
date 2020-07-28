@@ -1,15 +1,16 @@
 import pandas as pd
+import math
 
-def city(dataframe_phone_no, arguments):
+def city_name(dataframe_phone_no, arguments):
     """return the city of user"""
+
     user_dataframe = dataframe_phone_no['user']
     city = list(user_dataframe['city_name'])
-    if len(city) == 0:
-        return arguments['represent_nan']
-    elif '成都' in city:
-        return 100
+
+    if '成都' in city:
+        return -1
     elif '天府新区' in city:
-        return 200
+        return -2
     elif '乐山' in city:
         return 1
     elif '内江' in city:
@@ -50,4 +51,5 @@ def city(dataframe_phone_no, arguments):
         return 19
     elif '雅安' in city:
         return 20
-
+    else:
+        return arguments['represent_nan']

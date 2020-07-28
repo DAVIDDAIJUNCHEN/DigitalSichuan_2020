@@ -1,20 +1,33 @@
 import pandas as pd
 
+
 def payapp_num(dataframe_phone_no, arguments):
     """return the number of app about pay"""
+
     app_dataframe = dataframe_phone_no['app']
-    payapp = set('支付宝', '中国建设银行', '和包', '招商银行', '财付通', '农行掌上银行', '翼支付', '银联网上银行', 'ShouQianBa',
+    if len(app_dataframe) == 0:
+        return arguments['represent_nan']
+
+    payapp = {'支付宝', '中国建设银行', '和包', '招商银行', '财付通', '农行掌上银行', '翼支付', '银联网上银行', 'ShouQianBa',
                   '360JieTiao', 'WeiXin_Pay_Action', '1Qianbao', '喔噻', 'Ppdai', 'Scrcu', '交通银行', '民生银行',
                  '百度钱包', '哆啦宝', 'ICBCRongELian', '凤凰金融', '京东金融', 'WangShangYinHang', '中国银行手机银行',
                  '中国工商银行', '农行掌上银行', '兴业银行', '平安口袋银行', '网银在线', '易宝支付', '联动优势', 'Qingsongchou',
                  '51信用卡', '融360', '光大银行', '财付通', '中国银联', 'JingDongQianBao', 'Paypal', '2DFire', '挖财记账',
-                 'QuanMinShengHuo', '华夏银行', '银联钱包', 'CITIC_DongKaKongJian', 'XiaoYingKaDai')
+                 'QuanMinShengHuo', '华夏银行', '银联钱包', 'CITIC_DongKaKongJian', 'XiaoYingKaDai'}
+
     num_payapp = [1 for each in app_dataframe['busi_name'] if each in payapp]
+
     return len(num_payapp)
+
+
 def suspect_app_num(dataframe_phone_no, arguments):
-    """return the number of suspect app"""
+    """return the number of suspected app"""
+
     app_dataframe = dataframe_phone_no['app']
-    suspect_app = set('信析宝', '友盟+', 'MySpace', '领英', '七牛', 'JPush', 'AdMaster精硕科技', '个推', '聚胜万合', 'ShareSDK',
+    if len(app_dataframe) == 0:
+        return arguments['represent_nan']
+
+    suspect_app = {'信析宝', '友盟+', 'MySpace', '领英', '七牛', 'JPush', 'AdMaster精硕科技', '个推', '聚胜万合', 'ShareSDK',
                     'ShareSDK', '兔展', 'MmStat', '武汉安天信息技术有限责任公司', 'Leancloud', '53Kf', '华扬联众官方网站',
                       '玩咖欢聚', '国双', 'Shuzilm', 'Teddymobile', '艾客信息咨询', 'appjiagu网', 'Growingio', '非凡时代传媒科技网',
                       'CNZZ统计', 'DoubleClick广告', 'NetBios', 'NTP', 'HTTP2', 'DNS', 'STUN', 'Crashlytics网络协议',
@@ -33,6 +46,8 @@ def suspect_app_num(dataframe_phone_no, arguments):
                       '钞针系统', 'Demdex', 'Ptvyun', 'Tealiumiq', 'Holla', 'Usertrust', 'Maxjia', 'Zoosnet', 'Lenzmx',
                       'Siftscience', 'IOS PushMessage', '钞针系统', 'XYCDN_Other', 'FengKongCloud', 'NeiXin', 'FXLTSBL',
                       'TongDun', 'TianYiCloudService', 'RTMP', '720Static', 'VERYYS', '77CDN', '720Yun', ',appjiagu网',
-                      'InMobi广告', 'Appsflyer', 'Exelator', 'Taboola', 'Crwdcntrl', 'Pimg')
+                      'InMobi广告', 'Appsflyer', 'Exelator', 'Taboola', 'Crwdcntrl', 'Pimg'}
+
     num_suspect_app = [1 for each in app_dataframe['busi_name'] if each in suspect_app]
+
     return len(num_suspect_app)
