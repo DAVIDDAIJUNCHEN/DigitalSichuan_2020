@@ -190,8 +190,8 @@ if __name__ == '__main__':
     test_file = '../../data/test/test.user.csv'
 
     ## define features in train_config_yml and test_config_yml
-    train_config_yml = '../configs/show_train.yml'
-    test_config_yml = '../configs/show_test.yml'
+    train_config_yml = '../configs/debug_train.yml'
+    test_config_yml = '../configs/debug_test.yml'
 
     with open(train_config_yml) as file:
         def_para = yaml.load(file)
@@ -221,11 +221,11 @@ if __name__ == '__main__':
     test_design = test_design_months(test_name_months_dict, test_config_yml, test_user,
                                      test_voc, test_sms, test_app)
 
-    out_dir = './figures_exp'
+    out_dir = './figures_NewFeatures'
 
     # plot box-plots and hist-gram
-    #for col, feature in enumerate(features_name):
-    #    plot_boxplot_hist(features_lst[col], feature, col, train_design, test_design, out_dir)
+    for col, feature in enumerate(features_name):
+        plot_boxplot_hist(features_lst[col], feature, col, train_design, test_design, out_dir)
 
     # plot pair-plot
-    plot_pairplot(train_design, features_name, features_lst, out_dir, num_group=3)
+    plot_pairplot(train_design, features_name, features_lst, out_dir, num_group=4)

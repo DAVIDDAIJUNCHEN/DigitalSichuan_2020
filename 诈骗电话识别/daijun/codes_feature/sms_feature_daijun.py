@@ -25,5 +25,6 @@ def test():
     print('input sms dataframe for given phone number:\n ', sms_df, '\n')
     print('number of sms people:\n ', num_smsed_people)
 
+
 if __name__ == '__main__':
     test()

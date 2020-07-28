@@ -1,0 +1,150 @@
+columns:
+- app: [busi_name, flow, month_id]
+  sms: [opposite_no_m, calltype_id, request_datetime]
+  user: [city_name, county_name, idcard_cnt, arpu_202004]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
+    imei_m]
+features:
+- f1:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: called_people
+      para:
+        months: &id001 [2020-04]
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: called_people
+- f2:
+  - columns:
+    - voc: [call_dur, start_datetime]
+    function:
+    - name: called_people
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/short_call.py
+    name: short_call
+- f3:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: friends_n
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/friend_n.py
+    name: frequent_called_people
+- f4:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: long_call
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: long_call
+- f5:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_people
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/sms_feature_daijun.py
+    name: sms_people
+- f6:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: num_app
+      para: {}
+    module: ./daijun/codes_feature/app_feature_daijun.py
+    name: num_apps
+- f7:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: video_audio_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: video_audio_flow
+- f8:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: social_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: social_flow
+- f9:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: tool_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: tool_flow
+- f10:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: surf_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: surf_flow
+- f11:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: total_flow
+      para:
+        months: *id001
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: total_flow
+- f12:
+  - columns:
+    - user: [idcard_cnt]
+    function:
+    - name: idcard_cnt
+      para: {}
+    module: ./daijun/codes_feature/user_feature_daijun.py
+    name: idcard_cnt
+- f13:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: mean_call_dur
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: avg_call_dur
+- f14:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: std_call_dur
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: std_call_dur
+- f15:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: entropy_called_people
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: entropy_called_people
+- f16:
+  - columns:
+    - voc: [call_dur]
+    function:
+    - name: ratio_zero_calldur
+      para:
+        months: *id001
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: ratio_zero_calldur
+name: call_dur

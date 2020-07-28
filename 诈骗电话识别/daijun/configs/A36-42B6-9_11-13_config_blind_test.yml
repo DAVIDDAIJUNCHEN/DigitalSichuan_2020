@@ -1,0 +1,145 @@
+columns:
+- app: [busi_name, flow, month_id]
+  sms: [opposite_no_m, calltype_id, request_datetime]
+  user: [city_name, county_name, idcard_cnt, arpu_202005]
+  voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
+features:
+- A36:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_active_day_num
+      para:
+        months: &id001 [2020-05]
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_active_day_num
+- B6:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_day_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_day_num
+- A37:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_active_interval
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_active_interval
+- B7:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_interval
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_interval
+- A38:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_active_avr
+- B9:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_avr
+- A39:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: vocin_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: vocin_active_avr
+- B11:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsin_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsin_active_avr
+- A40:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: vocout_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: vocout_active_avr
+- B12:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsout_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsout_active_avr
+- A41:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: ratio_callout_callin
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: ratio_callout_callin
+- B13:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: ratio_smsout_smsin
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: ratio_smsmout_smsin
+- A42:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_entropy_active_day
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_entropy_active_day
+- B8:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_entropy_active_day
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_entropy_active_day
+name: new_features

@@ -68,6 +68,6 @@ def insert_label(user_file_in, label_file, user_file_out):
 
 
 if __name__ == '__main__':
-    insert_label('./data/test_04/test_user.csv', './data/test_04/labels_AB.csv',
+    insert_label('./data/test_04/test_user.csv', './data/test_04/labelsAB.csv',
                  './data/test_04/test_user_wLabel.csv')
     #modify_months_config('./daijun/configs/A1_B1_C1_config_train_backup.yml')
