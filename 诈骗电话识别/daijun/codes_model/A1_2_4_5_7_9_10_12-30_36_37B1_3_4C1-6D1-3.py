@@ -58,7 +58,7 @@ blindTest_config_yml = '../configs/A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3_con
 extTest_config_yml = '../configs/A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3_config_ext_test.yml'
 
 # set months of internal test data
-inter_test_months = ['2019-12']
+inter_test_months = ['2019-11']
 modify_months_config(train_config_yml, new_months=inter_test_months)
 
 features_name = 'A1_2_4_5_7_9_10_12-30_36_37B1_3_4C1-6D1-3'
@@ -84,9 +84,9 @@ label_train_all = label_train
 label_train_all.extend(label_dev)
 label_train_all.extend(label_inter_test)
 
-print('size of all training data: ', len(label_train))
-print('1 in all training data: ', len([1 for i in label_train if i==1]))
-print('0 in all training data: ', len([0 for i in label_train if i==0]))
+print('size of all training data: ', len(label_train_all))
+print('1 in all training data: ', len([1 for i in label_train_all if i==1]))
+print('0 in all training data: ', len([0 for i in label_train_all if i==0]))
 
 X_blindtest = get_features(blind_test_user, blind_test_voc, blind_test_sms, blind_test_app, blindTest_config_yml)
 X_inter_test = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)

@@ -389,6 +389,25 @@ features:
         represent_nan: -10
     module: ./yangli/codes_feature/ratio_sms_friend_liyang.py
     name: ratio_sms_friends
+- B5:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_day_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_day_num
+- B6:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_interval
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_interval
 - C1:
   - columns:
     - app: [app_busi_name]

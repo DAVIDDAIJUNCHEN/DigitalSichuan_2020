@@ -12,7 +12,7 @@ features:
     function:
     - name: called_people
       para:
-        months: &id001 [2019-09]
+        months: &id001 [2020-03]
         represent_nan: 0
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: called_people
@@ -391,6 +391,25 @@ features:
         threshold_friend: 2
     module: ./yangli/codes_feature/ratio_sms_friend_liyang.py
     name: ratio_sms_friends
+- B5:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_day_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_day_num
+- B6:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_interval
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_interval
 - C1:
   - columns:
     - app: [app_busi_name]
