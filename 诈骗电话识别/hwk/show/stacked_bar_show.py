@@ -23,8 +23,14 @@ def test():
 if __name__ == '__main__':
     user_list= pd.read_csv('../../data/test_04/test_user_wLabel.csv').values
     id_lable_dict={}
+    total_fraud_num=0
+    total_normal_num=0
     for v in user_list:
         id_lable_dict[v[0]]=v[-1]
+        if v[-1]==0:
+            total_normal_num+=1
+        else:
+            total_fraud_num+=1
 
     app_list = pd.read_csv('../../data/test_04/test_app.csv').values
     id_apps_dict={}
@@ -51,7 +57,8 @@ if __name__ == '__main__':
     app_show=[]
     fraud=[]
     normal=[]
-    for app in app_list[:25]:
+    ii=1
+    for app in app_list:
         num_fraud=0
         num_normal=0
         for id in app_ids_dict[app]:
@@ -59,29 +66,31 @@ if __name__ == '__main__':
                 num_fraud+=1
             else:
                 num_normal+=1
+
+        # if num_fraud!=0 and 5>(num_normal/num_fraud)>2:
+        #     continue
         fraud.append(num_fraud)
         normal.append(num_normal)
         app_show.append(app)
-        print(app)
-        print(num_fraud)
-        print(num_normal)
-
-    width = 0.35  # the width of the bars: can also be len(x) sequence
-    #plt.figure(figsize=(12, 4))
-    fig, ax = plt.subplots(figsize=(36, 4))
-    ax.bar(app_show, normal, width, label='normal')
-    ax.bar(app_show, fraud, width,  bottom=normal,label='fraud')
-    # ax.set_ylabel('Scores')
-    # ax.set_title('Scores by group and gender')
-    ax.legend()
-    plt.show()
-
-
-
-
-
-
-
+        if len(fraud)==5:
+            width = 0.35
+            fig, ax = plt.subplots(figsize=(12, 4))
+            ax.bar(app_show, normal, width, label='normal')
+            ax.bar(app_show, fraud, width, bottom=normal, label='fraud')
+            # ax.set_ylabel('Scores')
+            # ax.set_title('Scores by group and gender')
+            ax.legend()
+            #plt.show()
+            fig.savefig('bar_fig/' + str(ii)+ '.png')
+            ii+=1
+            print(app)
+            print(num_fraud)
+            print(num_normal)
+            num_fraud = 0
+            num_normal = 0
+            app_show = []
+            fraud = []
+            normal = []
 
     print(9999)
 
