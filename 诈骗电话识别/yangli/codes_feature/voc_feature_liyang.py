@@ -4,6 +4,7 @@ import time
 import datetime
 from scipy.stats import entropy
 from collections import Counter
+import statistics
 
 
 def call_in_total_time(dataframe_phone_no, arguments):
@@ -632,6 +633,67 @@ def callin_active_interval(dataframe_phone_no, arguments):
         interval = last_day - first_day
 
         return float(interval.days)
+
+def call_var(dataframe_phone_no, arguments):
+    """return the variance of call number in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    call_num = []
+    for k in range(1, 31):
+        voc_df_months_k = voc_df_months[voc_df_months['start_day'] == k]
+        call_k = list(voc_df_months_k['start_day'])
+        call_num_k = len(call_k)
+        call_num.append(call_num_k)
+    if max(call_num) == 0:
+        return arguments['represent_nan']
+    else:
+        return statistics.variance(call_num)
+
+def callout_var(dataframe_phone_no, arguments):
+    """return the variance of callout number in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    voc_df_months_callout = voc_df_months[voc_df_months['calltapy_id'] == 1]
+    callout_num = []
+    for k in range(1, 31):
+        voc_df_months_k = voc_df_months_callout[voc_df_months_callout['start_day'] == k]
+        callout_k = list(voc_df_months_k['start_day'])
+        callout_num_k = len(callout_k)
+        callout_num.append(callout_num_k)
+    if max(callout_num) == 0:
+        return arguments['represent_nan']
+    else:
+        return statistics.variance(callout_num)
+
+def callin_var(dataframe_phone_no, arguments):
+    """return the variance of callout number in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
+    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
+    voc_df_months_callin = voc_df_months[voc_df_months['calltapy_id'] == 2]
+    callin_num = []
+    for k in range(1, 31):
+        voc_df_months_k = voc_df_months_callin[voc_df_months_callin['start_day'] == k]
+        callin_k = list(voc_df_months_k['start_day'])
+        callin_num_k = len(callin_k)
+        callin_num.append(callin_num_k)
+    if max(callin_num) == 0:
+        return arguments['represent_nan']
+    else:
+        return statistics.variance(callin_num)
+
+
 
 
 # debug part: To be deleted
