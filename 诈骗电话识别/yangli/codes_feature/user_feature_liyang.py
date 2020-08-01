@@ -53,3 +53,17 @@ def city_name(dataframe_phone_no, arguments):
         return 20
     else:
         return arguments['represent_nan']
+
+def arpu_nan(dataframe_phone_no, arguments):
+    """check whether arpu is Nan"""
+    user_dataframe = dataframe_phone_no['user']
+    months = arguments('arpu_201908', 'arpu_201909', 'arpu_201910', 'arpu_201910', 'arpu_201911',
+                       'arpu_201912', 'arpu_202001', 'arpu_202002', 'arpu_202003', 'arpu_202004',
+                       'arpu_202005')
+    arpu = user_dataframe[months]
+    if len(arpu) == 0:
+        return 0
+    else:
+        return 1
+
+
