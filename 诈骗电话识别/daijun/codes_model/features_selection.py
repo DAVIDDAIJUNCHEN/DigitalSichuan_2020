@@ -92,11 +92,12 @@ for months in months_lst:
     modify_months_config(train_config_yml, new_months=months)
 
     X_train = get_features(train_file, train_voc, train_sms, train_app, train_config_yml)
-
+    X_train = normalize(X_train)
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
     X_dev = normalize(X_dev)
     # train final model on all data files
     X_test_internal = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
+    X_test_internal = normalize(X_test_internal)
 
     X_train_all = X_train.copy()
     X_train_all.extend(X_dev)
@@ -105,7 +106,7 @@ for months in months_lst:
     # Create the RFE object and rank each pixel
     svc = SVC(kernel="linear", C=1)
     rfe = RFE(estimator=svc, n_features_to_select=1, step=1)
-    rfe.fit(X_dev, label_dev)
+    rfe.fit(X_train_all, label_train_all)
     ranking = rfe.ranking_#.reshape([8, 8])
     print(ranking)
     # Plot pixel ranking
@@ -117,7 +118,7 @@ for months in months_lst:
     # The "accuracy" scoring is proportional to the number of correct
     # classifications
     rfecv = RFECV(estimator=svc, step=1, cv=StratifiedKFold(2), scoring='accuracy')
-    rfecv.fit(X_dev, label_dev)
+    rfecv.fit(X_train_all, label_train_all)
 
     print("Optimal number of features : %d" % rfecv.n_features_)
 

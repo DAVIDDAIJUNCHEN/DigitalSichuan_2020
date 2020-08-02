@@ -198,6 +198,7 @@ def imei_num(dataframe_phone_no, arguments):
         imei = set(voc_df_months['imei_m'])
         return len(imei)
 
+
 # debug part: To be deleted
 def test():
     data_voc = [['f0ebee98809cb1a9', 1, '2020-01-02 20:14:33', 9, '成都', '武侯区', '0a0a319fdb33f9538'],
@@ -208,6 +209,7 @@ def test():
     dataframe_phone_no = {'voc': voc_df}
     arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150., 'represent_nan': -10}
     print(std_call_dur(dataframe_phone_no, arguments))
+
 
 if __name__ == '__main__':
     test()

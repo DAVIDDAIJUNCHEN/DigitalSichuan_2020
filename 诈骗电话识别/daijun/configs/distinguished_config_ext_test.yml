@@ -4,16 +4,171 @@ columns:
   user: [city_name, county_name, idcard_cnt, arpu_202004]
   voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name, imei_m]
 features:
+- A1:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: called_people
+      para:
+        months: &id001 [2020-04]
+        represent_nan: 0
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: called_people
+- A2:
+  - columns:
+    - voc: [call_dur, start_datetime]
+    function:
+    - name: num_shortcall
+      para:
+        months: *id001
+        represent_nan: -100
+        threshold_duration: 5
+    module: ./yangli/codes_feature/short_call.py
+    name: short_call
+- A4:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: ratio_friends
+      para:
+        months: *id001
+        represent_nan: -1
+        threshold_friend: 3
+    module: ./yangli/codes_feature/friend_n.py
+    name: ratio_friends_incall
+- A5:
+  - columns:
+    - voc: [start_datetime, call_dur]
+    function:
+    - name: ratio_nonzero_calldur
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: ratio_nonzero_call_duration
+- A7:
+  - columns:
+    - voc: [opposite_no_m, call_dur, start_datetime]
+    function:
+    - name: long_call
+      para:
+        months: *id001
+        represent_nan: -100
+        threshold_duration: 600
+    module: ./hwk/codes_feature/voc_feature_hwk.py
+    name: num_long_call
+- A9:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: mean_call_dur
+      para:
+        months: *id001
+        represent_nan: -100
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: mean_call_dur
+- A10:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: std_call_dur
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: std_call_dur
+- A12:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: entropy_called_people
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: entropy_called_people
+- A13:
+  - columns:
+    - voc: [start_datetime, call_dur]
+    function:
+    - name: ratio_zero_calldur
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: ratio_zero_calldur
 - A14:
   - columns:
     - voc: [opposite_no_m, start_datetime, call_dur]
     function:
     - name: total_call_time
       para:
-        months: &id001 [2020-04]
+        months: *id001
+        represent_nan: -100
+    module: ./daijun/codes_feature/voc_feature_hwk.py
+    name: total_call_time
+- A15:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: num_callout
+      para:
+        months: *id001
+        represent_nan: 0
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: num_callout
+- A16:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: num_callin
+      para:
+        months: *id001
+        represent_nan: 0
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: num_callin
+- A17:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: num_calltrans
+      para:
+        months: *id001
+        represent_nan: 0
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: num_calltrans
+- A18:
+  - columns:
+    - voc: [start_datetime, call_dur]
+    function:
+    - name: ratio_longcall
+      para:
+        months: *id001
+        represent_nan: -1
+        threshold_duration: 1000
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: ratio_longcall
+- A19:
+  - columns:
+    - voc: [start_datetime, call_dur]
+    function:
+    - name: ratio_shortcall
+      para:
+        months: *id001
+        represent_nan: -1
+        threshold_duration: 5
+    module: ./yangli/codes_feature/short_call.py
+    name: ratio_shortcall
+- A21:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, call_dur]
+    function:
+    - name: call_interval_meantime
+      para:
+        months: *id001
         represent_nan: -100
     module: ./hwk/codes_feature/voc_feature_hwk.py
-    name: total_call_time
+    name: call_interval_meantime
 - A22_min:
   - columns:
     - voc: [opposite_no_m, start_datetime]
@@ -144,6 +299,16 @@ features:
         represent_nan: -100
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: call_out_total_time
+- A27:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
+    function:
+    - name: call_in_time_avr
+      para:
+        months: *id001
+        represent_nan: -100
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_in_time_avr
 - A28:
   - columns:
     - voc: [opposite_no_m, start_datetime, calltype_id, call_dur]
@@ -154,6 +319,180 @@ features:
         represent_nan: -100
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: call_out_time_avr
+- A29:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: call_in_people
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_in_people
+- A30:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: call_out_people
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_out_people
+- A36:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_active_day_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_active_day_num
+- A37:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_active_interval
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_active_interval
+- A38:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_active_avr
+- A39:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: vocin_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: vocin_active_avr
+- A40:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: vocout_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: vocout_active_avr
+- A41:
+  - columns:
+    - voc: [opposite_no_m, start_datetime, calltype_id]
+    function:
+    - name: ratio_callout_callin
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: ratio_callout_callin
+- A42:
+  - columns:
+    - voc: [opposite_no_m, start_datetime]
+    function:
+    - name: voc_entropy_active_day
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: voc_entropy_active_day
+- A43:
+  - columns:
+    - voc: [imei]
+    function:
+    - name: imei_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: number_imei
+- A44:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: callout_range
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callout_range
+- A45:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: callin_range
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callin_range
+- A46:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: short_callout_num
+      para:
+        months: *id001
+        represent_nan: -10
+        threshold_duration: 5
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: short_callout_num
+- A47:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: short_callin_num
+      para:
+        months: *id001
+        represent_nan: -10
+        threshold_duration: 5
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: short_callin_num
+- A50:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: ratio_friends_callout
+      para:
+        months: *id001
+        represent_nan: -1
+        threshold_friend: 3
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: ratio_friends_callout
+- A51:
+  - columns:
+    - voc: [start_datetime, calltype_id]
+    function:
+    - name: ratio_friends_callin
+      para:
+        months: *id001
+        represent_nan: -1
+        threshold_friend: 3
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: ratio_friends_callin
+- A52:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: long_callout
+      para:
+        months: *id001
+        represent_nan: -10
+        threshold_duration: 600
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: long_callout
 - A53:
   - columns:
     - voc: [start_datetime, calltype_id, call_dur]
@@ -165,6 +504,26 @@ features:
         threshold_duration: 600
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: long_callin
+- A61:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: callout_active_day_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callout_active_day_num
+- A62:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: callin_active_day_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callin_active_day_num
 - A63:
   - columns:
     - voc: [start_datetime, calltype_id, call_dur]
@@ -185,6 +544,192 @@ features:
         represent_nan: -30
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: callin_active_interval
+- B1:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_people
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./daijun/codes_feature/sms_feature_daijun.py
+    name: sms_people
+- B3:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_interval_meantime
+      para:
+        months: *id001
+        represent_nan: -100
+    module: ./hwk/codes_feature/sms_feature_hwk.py
+    name: sms_interval_meantime
+- B4:
+  - columns:
+    - sms: [opposite_no_m, calltype_id, request_datetime]
+    function:
+    - name: ratio_sms_friends
+      para:
+        months: *id001
+        represent_nan: -10
+        threshold_friend: 2
+    module: ./yangli/codes_feature/ratio_sms_friend_liyang.py
+    name: ratio_sms_friends
+- B5:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsout_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsout_num
+- B6:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_day_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_day_num
+- B7:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_interval
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_interval
+- B8:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_entropy_active_day
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_entropy_active_day
+- B9:
+  - columns:
+    - sms: [opposite_no_m, request_datetime]
+    function:
+    - name: sms_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_active_avr
+- B10:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsin_num
+      para:
+        months: *id001
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsin_num
+- B11:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsin_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsin_active_avr
+- B12:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsout_active_avr
+      para:
+        months: *id001
+        represent_nan: -30
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsout_active_avr
+- B13:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: ratio_smsout_smsin
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: ratio_smsmout_smsin
+- C1:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: num_app
+      para: {represent_nan: 0}
+    module: ./daijun/codes_feature/app_feature_daijun.py
+    name: num_apps
+- C2:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: video_audio_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: video_audio_flow
+- C3:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: social_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: social_flow
+- C4:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: tool_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: tool_flow
+- C5:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: surf_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: surf_flow
+- C6:
+  - columns:
+    - app: [app_busi_name, flow]
+    function:
+    - name: total_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./hwk/codes_feature/app_feature_hwk.py
+    name: total_flow
+- C7:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: payapp_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_payapp
 - C8:
   - columns:
     - app: [app_busi_name]
@@ -195,6 +740,35 @@ features:
         represent_nan: -10
     module: ./yangli/codes_feature/app_feature_liyang.py
     name: number_suspected_app
+- C9:
+  - columns:
+    - app: [busi_name]
+    function:
+    - name: appstore_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./daijun/codes_feature/app_feature_daijun.py
+    name: number_appstore
+- D1:
+  - columns:
+    - user: [idcard_cnt]
+    function:
+    - name: idcard_cnt
+      para:
+        months: *id001
+        represent_nan: -2
+    module: ./daijun/codes_feature/user_feature_daijun.py
+    name: idcard_count
+- D2:
+  - columns:
+    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
+        arpu_202002, arpu_202003]
+    function:
+    - name: arpu_mean
+      para: {represent_nan: -20}
+    module: ./hwk/codes_feature/user_feature_hwk.py
+    name: arpu_mean
 - D3:
   - columns:
     - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
@@ -204,4 +778,12 @@ features:
       para: {represent_nan: -10}
     module: ./hwk/codes_feature/user_feature_hwk.py
     name: arpu_std
+- D4:
+  - columns:
+    - user: [opposite_no_m, city_name]
+    function:
+    - name: city_name
+      para: {represent_nan: -10}
+    module: ./yangli/codes_feature/user_feature_liyang.py
+    name: city_name
 name: all_features
