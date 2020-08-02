@@ -4,6 +4,7 @@ import time
 from collections import Counter
 import datetime
 from scipy.stats import entropy
+import statistics
 
 
 def smsin_num(dataframe_phone_no, arguments):
@@ -146,6 +147,65 @@ def sms_entropy_active_day(dataframe_phone_no, arguments):
     lst_day_sms_prob = [cnt/sum_sms for cnt in lst_nonactive]
 
     return entropy(lst_day_sms_prob)
+
+def sms_var(dataframe_phone_no, arguments):
+    """return the variance of sms number in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    sms_dataframe = dataframe_phone_no['sms']
+    sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
+    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
+    sms_num = []
+    for k in range(1, 31):
+        sms_df_months_k = sms_df_months[sms_df_months['request_day'] == k]
+        sms_k = list(sms_df_months_k['request_day'])
+        sms_num_k = len(sms_k)
+        sms_num.append(sms_num_k)
+    if max(sms_num) == 0:
+        return arguments['represent_nan']
+    else:
+        return statistics.variance(sms_num)
+
+def smsout_var(dataframe_phone_no, arguments):
+    """return the variance of smsout number in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    sms_dataframe = dataframe_phone_no['sms']
+    sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
+    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
+    sms_df_months_smsout = sms_df_months[sms_df_months['calltapy_id'] == 1]
+    smsout_num = []
+    for k in range(1, 31):
+        sms_df_months_k = sms_df_months_smsout[sms_df_months_smsout['request_day'] == k]
+        smsout_k = list(sms_df_months_k['request_day'])
+        smsout_num_k = len(smsout_k)
+        smsout_num.append(smsout_num_k)
+    if max(smsout_num) == 0:
+        return arguments['represent_nan']
+    else:
+        return statistics.variance(smsout_num)
+
+def smsin_var(dataframe_phone_no, arguments):
+    """return the variance of smsin number in given months"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    sms_dataframe = dataframe_phone_no['sms']
+    sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
+    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
+    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
+    sms_df_months_smsin = sms_df_months[sms_df_months['calltapy_id'] == 2]
+    smsin_num = []
+    for k in range(1, 31):
+        sms_df_months_k = sms_df_months_smsin[sms_df_months_smsin['request_day'] == k]
+        smsin_k = list(sms_df_months_k['request_day'])
+        smsin_num_k = len(smsin_k)
+        smsin_num.append(smsin_num_k)
+    if max(smsin_num) == 0:
+        return arguments['represent_nan']
+    else:
+        return statistics.variance(smsin_num)
 
 
 # debug part: To be deleted
