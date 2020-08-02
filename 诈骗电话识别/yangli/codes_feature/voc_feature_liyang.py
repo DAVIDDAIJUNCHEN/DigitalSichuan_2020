@@ -243,26 +243,26 @@ def voc_entropy_active_day(dataframe_phone_no, arguments):
     return entropy(lst_day_call_prob)
 
 
-#######################################################################################################################
 def callout_range(dataframe_phone_no, arguments):
     """return the range of callout in given month"""
     months = arguments['months']
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
-    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
-    callout_num = []
-    for k in range(1, 31):
-        voc_df_months_callout_k = voc_df_months_callout[voc_df_months_callout['start_day'] == k]
-        callout_K = list(voc_df_months_callout_k['start_day'])
-        callout_num_k = len(callout_K)
-        callout_num.append(callout_num_k)
-    if len(callout_num) == 0:
+    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id']==1]
+    sum_callout = len(voc_df_months_callout)
+
+    if sum_callout == 0:
         return arguments['represent_nan']
-    else:
-        return max(callout_num) - min(callout_num)
+
+    lst_split_datetime = list(voc_df_months_callout['start_datetime'].str.split())
+    num_days = len(months)*30
+    num_active = len(set([date[0] for date in lst_split_datetime]))
+    lst_nonactive = [0]*(num_days - num_active)
+    lst_nonactive.extend(list(Counter([date[0] for date in lst_split_datetime]).values()))
+
+    return max(lst_nonactive) - min(lst_nonactive)
+
 
 def callin_range(dataframe_phone_no, arguments):
     """return the range of callin in given month"""
@@ -270,19 +270,20 @@ def callin_range(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months['start_datetime'] = pd.to_datetime(voc_df_months['start_datetime'], format='%Y-%m-%d %H:%M:%S')
-    voc_df_months['start_day'] = voc_df_months['start_datetime'].dt.day
-    voc_df_months_callin = voc_df_months[voc_df_months['calltype_id'] == 2]
-    callin_num = []
-    for k in range(1, 31):
-        voc_df_months_callin_k = voc_df_months_callin[voc_df_months_callin['start_day'] == k]
-        callin_K = list(voc_df_months_callin_k['start_day'])
-        callin_num_k = len(callin_K)
-        callin_num.append(callin_num_k)
-    if len(callin_num) == 0:
+    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id']==2]
+    sum_callout = len(voc_df_months_callout)
+
+    if sum_callout == 0:
         return arguments['represent_nan']
-    else:
-        return max(callin_num) - min(callin_num)
+
+    lst_split_datetime = list(voc_df_months_callout['start_datetime'].str.split())
+    num_days = len(months)*30
+    num_active = len(set([date[0] for date in lst_split_datetime]))
+    lst_nonactive = [0]*(num_days - num_active)
+    lst_nonactive.extend(list(Counter([date[0] for date in lst_split_datetime]).values()))
+
+    return max(lst_nonactive) - min(lst_nonactive)
+
 
 def short_callout_num(dataframe_phone_no, arguments):
     """return the number of short callout in given month"""
@@ -291,12 +292,14 @@ def short_callout_num(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
+    voc_df_months_callout = voc_df_months[voc_df_months['calltype_id']==1]
     short_callout = [1 for each in voc_df_months_callout['call_dur'] if each <= thres_dur]
+
     if len(short_callout) == 0:
         return arguments['represent_nan']
     else:
         return len(short_callout)
+
 
 def short_callin_num(dataframe_phone_no, arguments):
     """return the number of short callin in given month"""
@@ -305,12 +308,14 @@ def short_callin_num(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     voc_dataframe = dataframe_phone_no['voc']
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
-    voc_df_months_callin = voc_df_months[voc_df_months['calltype_id'] == 2]
+    voc_df_months_callin = voc_df_months[voc_df_months['calltype_id']==2]
     short_callin = [1 for each in voc_df_months_callin['call_dur'] if each <= thres_dur]
+
     if len(short_callin) == 0:
         return arguments['represent_nan']
     else:
         return len(short_callin)
+
 
 def short_callout_range(dataframe_phone_no, arguments):
     """return the range of short callout in given month"""
@@ -333,6 +338,7 @@ def short_callout_range(dataframe_phone_no, arguments):
         return arguments['represent_nan']
     else:
         return max(short_callout_num) - min(short_callout_num)
+
 
 def short_callin_range(dataframe_phone_no, arguments):
     """return the range of short callout in given month"""
@@ -398,6 +404,7 @@ def ratio_friends_callin(dataframe_phone_no, arguments):
     else:
         return len(friends_callin)/len(callin)
 
+
 def long_callout(dataframe_phone_no, arguments):
     """return the number of long callout in given month"""
     months = arguments['months']
@@ -413,6 +420,7 @@ def long_callout(dataframe_phone_no, arguments):
     else:
         return len(long_callout)
 
+
 def long_callin(dataframe_phone_no, arguments):
     """return the number of long callout in given month"""
     months = arguments['months']
@@ -427,6 +435,7 @@ def long_callin(dataframe_phone_no, arguments):
         return arguments['represent_nan']
     else:
         return len(long_callin)
+
 
 def range_long_callout(dataframe_phone_no, arguments):
     """return the range of long callout in given month"""
@@ -450,6 +459,7 @@ def range_long_callout(dataframe_phone_no, arguments):
     else:
         return max(long_callout_num) - min(long_callout_num)
 
+
 def range_long_callin(dataframe_phone_no, arguments):
     """return the range of long callin in given month"""
     months = arguments['months']
@@ -472,6 +482,7 @@ def range_long_callin(dataframe_phone_no, arguments):
     else:
         return max(long_callin_num) - min(long_callin_num)
 
+
 def range_call_dur(dataframe_phone_no, arguments):
     """return the range of call duration of everyday in given month"""
     months = arguments['months']
@@ -490,6 +501,7 @@ def range_call_dur(dataframe_phone_no, arguments):
         return arguments['represent_nan']
     else:
         return max(call_dur) - min(call_dur)
+
 
 def range_callout_dur(dataframe_phone_no, arguments):
     """return the range of callout duration of everyday in given month"""
@@ -511,6 +523,7 @@ def range_callout_dur(dataframe_phone_no, arguments):
     else:
         return max(callout_dur) - min(callout_dur)
 
+
 def range_callin_dur(dataframe_phone_no, arguments):
     """return the range of callin duration of everyday in given month"""
     months = arguments['months']
@@ -531,6 +544,7 @@ def range_callin_dur(dataframe_phone_no, arguments):
     else:
         return max(callin_dur) - min(callin_dur)
 
+
 def callout_active_avr(dataframe_phone_no, arguments):
     """return the value of callout number divided by active day"""
     months = arguments['months']
@@ -547,6 +561,7 @@ def callout_active_avr(dataframe_phone_no, arguments):
         return arguments['represent_nan']
     else:
         return len(callout_list)/len(active_day)
+
 
 def callin_active_avr(dataframe_phone_no, arguments):
     """return the value of callin number divided by active day"""
@@ -565,6 +580,7 @@ def callin_active_avr(dataframe_phone_no, arguments):
     else:
         return len(callin_list)/len(active_day)
 
+
 def callout_active_day_num(dataframe_phone_no, arguments):
     """return the number of callout active days in given months"""
     months = arguments['months']
@@ -573,9 +589,9 @@ def callout_active_day_num(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
     lst_split_datetime = list(voc_df_months_callout['start_datetime'].str.split())
-    voc_df_months_callout['start_date'] = [date[0] for date in lst_split_datetime]
-    callout_active_days = set(voc_df_months_callout['start_date'])
+    callout_active_days = set([date[0] for date in lst_split_datetime])
     return len(callout_active_days)
+
 
 def callin_active_day_num(dataframe_phone_no, arguments):
     """return the number of callin active days in given months"""
@@ -585,9 +601,9 @@ def callin_active_day_num(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months_callin = voc_df_months[voc_df_months['calltype_id'] == 2]
     lst_split_datetime = list(voc_df_months_callin['start_datetime'].str.split())
-    voc_df_months_callin['start_date'] = [date[0] for date in lst_split_datetime]
-    callin_active_days = set(voc_df_months_callin['start_date'])
+    callin_active_days = set([date[0] for date in lst_split_datetime])
     return len(callin_active_days)
+
 
 def callout_active_interval(dataframe_phone_no, arguments):
     """return the active interval"""
@@ -597,8 +613,7 @@ def callout_active_interval(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months_callout = voc_df_months[voc_df_months['calltype_id'] == 1]
     lst_split_datetime = list(voc_df_months_callout['start_datetime'].str.split())
-    voc_df_months_callout['start_date'] = [date[0] for date in lst_split_datetime]
-    callout_active_days = set(voc_df_months_callout['start_date'])
+    callout_active_days = set(date[0] for date in lst_split_datetime)
 
     if len(callout_active_days) == 0:
         return arguments['represent_nan']
@@ -611,6 +626,7 @@ def callout_active_interval(dataframe_phone_no, arguments):
 
         return float(interval.days)
 
+
 def callin_active_interval(dataframe_phone_no, arguments):
     """return the active interval"""
     months = arguments['months']
@@ -619,8 +635,7 @@ def callin_active_interval(dataframe_phone_no, arguments):
     voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
     voc_df_months_callin = voc_df_months[voc_df_months['calltype_id'] == 2]
     lst_split_datetime = list(voc_df_months_callin['start_datetime'].str.split())
-    voc_df_months_callin['start_date'] = [date[0] for date in lst_split_datetime]
-    callin_active_days = set(voc_df_months_callin['start_date'])
+    callin_active_days = set([date[0] for date in lst_split_datetime])
 
     if len(callin_active_days) == 0:
         return arguments['represent_nan']
@@ -637,8 +652,14 @@ def callin_active_interval(dataframe_phone_no, arguments):
 # debug part: To be deleted
 def test():
     data_voc = [['f0ebee98809cb1a9', 1, '2020-01-25 21:26:40', 742, '成都', '武侯区', '0a0a319fdb33f9538'],
-                ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538'],
-                ['dedd4a48c3a8f', 1, '2020-01-02 21:14:33', 11, '成都', '锦江区', '0a0a319fdb33f9538']]
+                ['dedd4a48c3a8f', 1, '2020-02-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538'],
+                ['dedd4a48c3a8f', 1, '2020-02-02 21:14:33', 11, '成都', '锦江区', '0a0a319fdb33f9538']]
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                              'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
+    arguments = {'months': ['2020-02'], 'represent_nan': -1, 'threshold_duration': 300}
+    print(short_callout_num(dataframe_phone_no, arguments))
+
+
+if __name__ == '__main__':
+    test()

@@ -185,16 +185,29 @@ def ratio_callback(dataframe_phone_no, arguments):
         return 1.0
     return num_callback / len(phone_no_callout_df)
 
+
+def imei_num(dataframe_phone_no, arguments):
+    """return the number of IMEI"""
+    months = arguments['months']
+    months_regex = '|'.join(months)
+    voc_dataframe = dataframe_phone_no['voc']
+    voc_df_months = voc_dataframe[voc_dataframe['start_datetime'].str.contains(months_regex)]
+    if len(voc_df_months) == 0:
+        return arguments['represent_nan']
+    else:
+        imei = set(voc_df_months['imei_m'])
+        return len(imei)
+
 # debug part: To be deleted
 def test():
     data_voc = [['f0ebee98809cb1a9', 1, '2020-01-02 20:14:33', 9, '成都', '武侯区', '0a0a319fdb33f9538'],
                 ['dedd4a48c3a8f', 2, '2020-01-02 20:14:33', 111, '成都', '锦江区', '0a0a319fdb33f9538'],
-                ['f0ebee98809cb1a9', 2, '2020-01-02 20:14:38', 0, '成都', '锦江区', '0a0a319fdb33f9538']]
+                ['f0ebee98809cb1a9', 2, '2020-02-02 20:14:38', 0, '成都', '锦江区', '0a0a319fdb33f958']]
     voc_df = pd.DataFrame(data_voc, columns=['opposite_no_m', 'calltype_id', 'start_datetime',
                                      'call_dur', 'city_name', 'county_name', 'imei_m'])
     dataframe_phone_no = {'voc': voc_df}
-    arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150}
-    print(num_callin(dataframe_phone_no, arguments))
+    arguments = {"months": ['2019-12', '2020-01'], "threshold_duration": 150., 'represent_nan': -10}
+    print(std_call_dur(dataframe_phone_no, arguments))
 
 if __name__ == '__main__':
     test()

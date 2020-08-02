@@ -5,16 +5,16 @@ columns:
   voc: [opposite_no_m, calltype_id, start_datetime, call_dur, city_name, county_name,
     imei_m]
 features:
-- C7:
+- A43:
   - columns:
-    - app: [app_busi_name]
+    - voc: [imei_m]
     function:
-    - name: payapp_num
+    - name: imei_num
       para:
         months: &id001 [2020-05]
         represent_nan: -10
-    module: ./yangli/codes_feature/app_feature_liyang.py
-    name: number_payapp
+    module: ./daijun/codes_feature/voc_feature_daijun.py
+    name: number_imei
 - C8:
   - columns:
     - app: [app_busi_name]
@@ -25,12 +25,4 @@ features:
         represent_nan: -10
     module: ./yangli/codes_feature/app_feature_liyang.py
     name: number_suspected_app
-- D4:
-  - columns:
-    - user: [opposite_no_m, city_name]
-    function:
-    - name: city_name
-      para: {represent_nan: -10}
-    module: ./yangli/codes_feature/user_feature_liyang.py
-    name: city_name
-name: all_features
+name: new_features

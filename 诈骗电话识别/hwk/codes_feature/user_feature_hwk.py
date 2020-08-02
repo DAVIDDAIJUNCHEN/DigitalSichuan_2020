@@ -4,10 +4,12 @@ import pandas as pd
 import numpy as np
 import math
 
+
 def idcard_cnt(dataframe_phone_no, arguments):
     """return number of idcards for given phone_no"""
     user_dataframe = dataframe_phone_no['user']
     return float(user_dataframe['idcard_cnt'])
+
 
 def arpu_mean(dataframe_phone_no, arguments):
     user_dataframe = dataframe_phone_no['user']
@@ -18,6 +20,7 @@ def arpu_mean(dataframe_phone_no, arguments):
     if math.isnan(mean_arpu):
         return arguments['represent_nan']
     return mean_arpu
+
 
 def arpu_mean2(dataframe_phone_no, arguments):
     user_dataframe = dataframe_phone_no['user']

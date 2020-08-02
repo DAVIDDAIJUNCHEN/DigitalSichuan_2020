@@ -95,13 +95,13 @@ X_exter_test = get_features(exter_test_user, exter_test_voc, exter_test_sms, ext
 if not os.path.exists('../test_results/'+features_name+'/'):
     os.mkdir('../test_results/'+features_name+'/')
 
-months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2020-01', '2020-02', '2020-03'],
-              ['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], 
-              ['2020-02'], ['2020-03']]
+#months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2020-01', '2020-02', '2020-03'],
 
-gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2020-01_2020-02_2020-03": 0.01,
-                      '2019-08': 0.62, '2019-09': 0.8, '2019-10': 0.8, '2019-11': 0.75,
-                      '2019-12': 0.78, '2020-01': 0.72, '2020-02': 0.76, '2020-03': 0.77}
+months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
+
+#gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2020-01_2020-02_2020-03": 0.001,
+gradboost_blindAcc = {'2019-08': 0.87, '2019-09': 0.8, '2019-10': 0.87, '2019-11': 0.89,
+                      '2019-12': 0.88756, '2020-01': 0.88, '2020-02': 0.87, '2020-03': 0.86}
 
 clf_gradboostAcc_months = {}
 
@@ -265,15 +265,15 @@ for months in months_lst:
     #para_test1 = {'min_samples_leaf': list(range(10, 60, 10)), 'max_features': list(range(2, 20, 2))}
     #para_test1 = {'n_estimators': list(range(20, 200, 10))}
     #para_test1 = {'max_depth': list(range(3, 14, 2)), 'min_samples_split': list(range(50, 201, 20))}
-    #gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(n_estimators=90, max_features=8, min_samples_leaf=20,
-    #                                                             max_depth=11, min_samples_split=50, random_state=10),
-    #                        param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
+    #gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(max_features=4, min_samples_leaf=40, n_estimators=90,
+                                                                 #random_state=10, max_depth=3, min_samples_split=170),
+                                                                 #param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
 
-    #gsearch1.fit(X_test, label_test)
+    #gsearch1.fit(X_inter_test, label_inter_test)
     #print(gsearch1.grid_scores_, gsearch1.best_params_, gsearch1.best_score_)
 
-    clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=8, min_samples_leaf=20, max_depth=11,
-                                               min_samples_split=50, random_state=10)
+    clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=4, min_samples_leaf=40, max_depth=3,
+                                               min_samples_split=170, random_state=10)
     clf_gradboost.fit(X_train, label_train)
     y_predprob = clf_gradboost.predict_proba(X_inter_test)[:, 1]
     print('AUC score (Train) of gradient boosting: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
@@ -284,8 +284,8 @@ for months in months_lst:
     ### evaluate toy model on (X_test, label_test)
     pred_inter_test = clf_gradboost.predict(X_inter_test).tolist()
 
-    clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=8, min_samples_leaf=20, max_depth=11,
-                                               min_samples_split=50, random_state=10)
+    clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=4, min_samples_leaf=40, max_depth=3,
+                                               min_samples_split=170, random_state=10)
     clf_gradboost.fit(X_train_all, label_train_all)
     pred_exter_test = clf_gradboost.predict(X_exter_test).tolist()
 
