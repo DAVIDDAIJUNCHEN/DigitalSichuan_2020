@@ -7,8 +7,11 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.feature_selection import RFECV
 from sklearn.feature_selection import RFE
 import matplotlib.pyplot as plt
+from scipy.stats import chi2_contingency
+from sklearn import metrics as mr
 from sklearn.preprocessing import normalize
-from sklearn.feature_selection import VarianceThreshold
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import f_classif
 import warnings
 import pickle
 warnings.filterwarnings('ignore')
@@ -80,7 +83,7 @@ label_exter_test = get_label(exter_test_user)
 label_train_all = label_train.copy()
 label_train_all.extend(label_dev)
 label_train_all.extend(label_inter_test)
-
+#label_train_all=label_inter_test
 print('size of training data: ', len(label_train))
 print('1 in training data: ', len([1 for i in label_train if i==1]))
 print('0 in training data: ', len([0 for i in label_train if i==0]))
@@ -94,11 +97,14 @@ print('0 in all training data: ', len([0 for i in label_train_all if i==0]))
 #X_exter_test = get_features(exter_test_user, exter_test_voc, exter_test_sms, exter_test_app, extTest_config_yml)
 
 months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
-#months_lst = [['2019-08']]
+#months_lst = [['2019-08'], ['2019-09']]
 
 var_lists=[]
+kf_lists=[]
 for ii in range(len(months_lst)):
     var_lists.append([])
+for ii in range(len(months_lst)):
+    kf_lists.append([])
 tt=-1
 for months in months_lst:
     tt+=1
@@ -109,14 +115,13 @@ for months in months_lst:
     X_train = normalize(X_train).tolist()
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
     X_dev = normalize(X_dev).tolist()
+    X_train_all = X_train.copy()
+    X_train_all.extend(X_dev)
 
+    #X_train_all=[]
     # train final model on all data files
     X_test_internal = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
     X_test_internal = normalize(X_test_internal).tolist()
-
-    X_train_all = X_train.copy()
-    X_train_all.extend(X_dev)
-    #X_train_all=[]
     X_train_all.extend(X_test_internal)
     X_train_all_array=np.array(X_train_all)
     # sel = VarianceThreshold(threshold=(.8 * (1 - .8)))
@@ -125,21 +130,29 @@ for months in months_lst:
 
     feature_num=len(X_train_all[0])
     id_var_dict={}
-    for ii in range(feature_num):
-        t=X_train_all_array[:,ii]
-        id_var_dict[ii]=np.var(t)
-        var_lists[tt].append(np.var(t))
+    id_kf_dict={}
+    # for ii in range(feature_num):
+    #     t=X_train_all_array[:,ii]
+    #     # id_var_dict[ii]=np.var(t)
+    #     # var_lists[tt].append(np.var(t))
+    #     # d = np.array([t, label_train_all])
+    #     # kf=chi2_contingency(d)
+
+    sk1 = SelectKBest(f_classif,k='all')
+    sk1.fit(X_train_all_array,label_train_all)
+    m=sk1.scores_
+
+    kf_lists[tt]=m
 
 
-    id_var_list = sorted(id_var_dict.items(), key=lambda x: x[1], reverse=True)
 
 import pandas as pd
 pp={}
 pp['feature_name']=feature_names
 for ii in range(len(months_lst)):
-    pp[months_lst[ii][0]]=var_lists[ii]
+    pp[months_lst[ii][0]]=kf_lists[ii]
 data = pd.DataFrame(pp)
-data.to_csv('特征方差.csv', encoding='utf_8_sig')
+data.to_csv('特征f_classif.csv', encoding='utf_8_sig')
 print(999)
 
 
