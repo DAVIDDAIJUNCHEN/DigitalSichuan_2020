@@ -61,9 +61,32 @@ def arpu_nan(dataframe_phone_no, arguments):
                        'arpu_201912', 'arpu_202001', 'arpu_202002', 'arpu_202003', 'arpu_202004',
                        'arpu_202005')
     arpu = user_dataframe[months]
+
     if len(arpu) == 0:
         return 0
     else:
         return 1
 
+def city_isnan(dataframe_phone_no, arguments):
+    """return 1 if city is nan"""
+
+    user_dataframe = dataframe_phone_no['user']
+    city = user_dataframe['city_name']
+
+    if city.isnull().values.any():
+        return 1
+    else:
+        return 0
+
+
+def county_isnan(dataframe_phone_no, arguments):
+    """return 1 if county is nan"""
+
+    user_dataframe = dataframe_phone_no['user']
+    city = user_dataframe['county_name']
+
+    if city.isnull().values.any():
+        return 1
+    else:
+        return 0
 

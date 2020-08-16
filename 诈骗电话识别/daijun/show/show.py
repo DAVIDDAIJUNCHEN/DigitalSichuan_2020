@@ -12,8 +12,6 @@ import seaborn as sns
 
 warnings.filterwarnings('ignore')
 sys.path.append('../../')
-sys.path.append('../codes_feature/')
-sys.path.append('../other')
 
 # import local modules
 from utils import evaluate, modify_months_config
@@ -208,10 +206,10 @@ if __name__ == '__main__':
 
     ## get testing design matrix
     train_name_months_dict = {'all_months': ['2019-08', '2019-09', '2019-10', '2019-11', '2019-12',
-                                             '2020-01', '2020-02', '2020-03'],
-                              '2019-08': ['2019-08'], '2019-09': ['2019-09'], '2019-10': ['2019-10'],
-                              '2019-11': ['2019-11'], '2019-12': ['2019-12'], '2020-01': ['2020-01'],
-                              '2020-02': ['2020-02'], '2020-03': ['2020-03']}
+                                             '2020-01', '2020-02', '2020-03']}#,
+                              #'2019-08': ['2019-08'], '2019-09': ['2019-09'], '2019-10': ['2019-10'],
+                              #'2019-11': ['2019-11'], '2019-12': ['2019-12'], '2020-01': ['2020-01'],
+                              #'2020-02': ['2020-02'], '2020-03': ['2020-03']}
 
     test_name_months_dict = {'all_months': ['2020-05']}
 
@@ -228,4 +226,4 @@ if __name__ == '__main__':
         plot_boxplot_hist(features_lst[col], feature, col, train_design, test_design, out_dir)
 
     # plot pair-plot
-    plot_pairplot(train_design, features_name, features_lst, out_dir, num_group=4)
+    plot_pairplot(train_design, features_name, features_lst, out_dir, num_group=3)

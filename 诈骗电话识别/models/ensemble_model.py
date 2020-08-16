@@ -16,6 +16,7 @@ def ensemble(dict_model_acc, test_design, method='vote'):
     prob_models_lst = []
     prob1_models_lst = []
     acc_lst = []
+    test_design = np.array(test_design)
 
     for name_model, (model, acc) in dict_model_acc.items():
         pred_model = model.predict(test_design).tolist()
@@ -52,7 +53,7 @@ def ensemble(dict_model_acc, test_design, method='vote'):
         prob1_avgunif_lst = list(prob1_models_df.mean())
         pred_avgunif_lst = [int(score > 0.5) for score in prob1_avgunif_lst]
 
-        return pred_avgunif_lst
+        return pred_avgunif_lst, prob1_avgunif_lst
     elif method == 'avg_softmax':
         sum_exp_acc = sum(np.exp(acc_lst))
         acc_softmax = [np.exp(item) / sum_exp_acc for item in acc_lst]
@@ -60,6 +61,6 @@ def ensemble(dict_model_acc, test_design, method='vote'):
         prob1_softmax_lst = list(prob1_weighted_df.sum())
         pred_softmax_lst = [int(score > 0.5) for score in prob1_softmax_lst]
 
-        return pred_softmax_lst
+        return pred_softmax_lst, prob1_softmax_lst
 
     #elif method == 'grid_search':

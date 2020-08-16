@@ -105,7 +105,7 @@ features:
       para:
         months: *id001
         represent_nan: -100
-    module: ./daijun/codes_feature/voc_feature_hwk.py
+    module: ./hwk/codes_feature/voc_feature_hwk.py
     name: total_call_time
 - A15:
   - columns:
@@ -544,6 +544,46 @@ features:
         represent_nan: -30
     module: ./yangli/codes_feature/voc_feature_liyang.py
     name: callin_active_interval
+- A65:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: call_var
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: call_var
+- A66:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: callout_var
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callout_var
+- A67:
+  - columns:
+    - voc: [start_datetime, calltype_id, call_dur]
+    function:
+    - name: callin_var
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: callin_var
+- A68:
+  - columns:
+    - voc: [start_datetime, imei_m]
+    function:
+    - name: large12_imei
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/voc_feature_liyang.py
+    name: large12_imei
 - B1:
   - columns:
     - sms: [opposite_no_m, request_datetime]
@@ -662,6 +702,36 @@ features:
         represent_nan: -1
     module: ./yangli/codes_feature/sms_feature_liyang.py
     name: ratio_smsmout_smsin
+- B14:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: sms_var
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: sms_variance
+- B15:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsout_var
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsout_variance
+- B16:
+  - columns:
+    - sms: [opposite_no_m, request_datetime, calltype_id]
+    function:
+    - name: smsin_var
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/sms_feature_liyang.py
+    name: smsin_variance
 - C1:
   - columns:
     - app: [app_busi_name]
@@ -730,16 +800,6 @@ features:
         represent_nan: -10
     module: ./yangli/codes_feature/app_feature_liyang.py
     name: number_payapp
-- C8:
-  - columns:
-    - app: [app_busi_name]
-    function:
-    - name: suspect_app_num
-      para:
-        months: *id001
-        represent_nan: -10
-    module: ./yangli/codes_feature/app_feature_liyang.py
-    name: number_suspected_app
 - C9:
   - columns:
     - app: [busi_name]
@@ -750,6 +810,86 @@ features:
         represent_nan: -10
     module: ./daijun/codes_feature/app_feature_daijun.py
     name: number_appstore
+- C10:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal90_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_normal90_app
+- C11:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal100_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_normal100_app
+- C12:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud90_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_fraud90_app
+- C13:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud100_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_fraud100_app
+- C14:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal90_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_normal90_app
+- C15:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal100_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_normal100_app
+- C16:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud90_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_fraud90_app
+- C17:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud100_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_fraud100_app
 - D1:
   - columns:
     - user: [idcard_cnt]
@@ -786,4 +926,31 @@ features:
       para: {represent_nan: -10}
     module: ./yangli/codes_feature/user_feature_liyang.py
     name: city_name
+- D5:
+  - columns:
+    - user: [arpu_201908, arpu_201909, arpu_201910, arpu_201911, arpu_201912, arpu_202001,
+             arpu_202002, arpu_202003]
+    function:
+    - name: isempty_last_arpu
+      para:
+        months: *id001
+        represent_nan: -2
+    module: ./daijun/codes_feature/user_feature_daijun.py
+    name: isempty_last_arpu
+- D6:
+  - columns:
+    - user: [opposite_no_m, city_name]
+    function:
+    - name: city_isnan
+      para: {represent_nan: -10}
+    module: ./yangli/codes_feature/user_feature_liyang.py
+    name: city_isnan
+- D7:
+  - columns:
+    - user: [opposite_no_m, county_name]
+    function:
+    - name: county_isnan
+      para: {represent_nan: -10}
+    module: ./yangli/codes_feature/user_feature_liyang.py
+    name: county_isnan
 name: all_features

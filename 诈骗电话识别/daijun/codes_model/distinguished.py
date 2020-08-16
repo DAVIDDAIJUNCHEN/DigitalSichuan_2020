@@ -17,6 +17,7 @@ from data_process_new import split_data, get_features, get_label, get_phone_no_m
 from models.LogisticRegression import LogisticRegression
 from models.LogisticRegressionCV import LogisticRegressionCV
 from models.ensemble_model import ensemble
+from sklearn.preprocessing import OneHotEncoder
 
 # prepare data and parameter
 ## train/blind_test/external test user/voc/sms/app files
@@ -97,13 +98,21 @@ if not os.path.exists('../test_results/'+features_name+'/'):
 
 #months_lst = [['2019-08', '2019-09', '2019-10', '2019-11', '2020-01', '2020-02', '2020-03'],
 
-months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
+months_lst = [['2019-12'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
 
 #gradboost_blindAcc = {"2019-08_2019-09_2019-10_2019-11_2020-01_2020-02_2020-03": 0.001,
-gradboost_blindAcc = {'2019-08': 0.87, '2019-09': 0.8, '2019-10': 0.87, '2019-11': 0.89,
-                      '2019-12': 0.88756, '2020-01': 0.88, '2020-02': 0.87, '2020-03': 0.86}
+gradboost_blindAcc = {'2019-12': 0.89, '2019-09': 0.87, '2019-10': 0.88, '2019-11': 0.87,
+                      '2019-12': 0.89, '2020-01': 0.8, '2020-02': 0.87, '2020-03': 0.86}
+
+GBDTLR_blindAcc = {'2019-12': 0.89, '2019-09': 0.87, '2019-10': 0.88, '2019-11': 0.87,
+                      '2019-12': 0.89, '2020-01': 0.8, '2020-02': 0.87, '2020-03': 0.86}
+
+XGBoost_blindAcc = {'2019-12': 0.89, '2019-09': 0.87, '2019-10': 0.88, '2019-11': 0.87,
+                      '2019-12': 0.89, '2020-01': 0.8, '2020-02': 0.87, '2020-03': 0.86}
 
 clf_gradboostAcc_months = {}
+clf_GBDTLRACC_months = {}
+clf_XGBoostACC_months = {}
 
 for months in months_lst:
     # update the months in config_yaml file
@@ -227,17 +236,18 @@ for months in months_lst:
     #para_test1 = {'min_samples_leaf': list(range(10, 60, 10)), 'max_features': list(range(2, 20, 2))}
     #para_test1 = {'n_estimators': list(range(20, 200, 10))}
     #para_test1 = {'max_depth': list(range(3, 14, 2)), 'min_samples_split': list(range(50, 201, 20))}
-    #gsearch1 = GridSearchCV(estimator=RandomForestClassifier(n_estimators=160, min_samples_leaf=10, max_features=10,
-    #                                                         max_depth=5, min_samples_split=50, random_state=10),
+    #gsearch1 = GridSearchCV(estimator=RandomForestClassifier(min_samples_leaf=10, max_features=18,
+    #                                                         random_state=10, n_estimators=70,
+    #                                                         max_depth=5, min_samples_split=50),
     #                        param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
 
-    #gsearch1.fit(X_test, label_test)
+    #gsearch1.fit(X_inter_test, label_inter_test)
     #print(gsearch1.grid_scores_, gsearch1.best_params_, gsearch1.best_score_)
 
     # fit random forest model
-    clf_randforest = RandomForestClassifier(n_estimators=160, max_features=10, min_samples_leaf=10, max_depth=5,
+    clf_randforest = RandomForestClassifier(n_estimators=70, max_features=18, min_samples_leaf=10, max_depth=5,
                                             min_samples_split=50, random_state=10)
-
+    # max_features = 18
     clf_randforest.fit(X_train, label_train)
 
     y_predprob = clf_randforest.predict_proba(X_inter_test)[:, 1]
@@ -249,7 +259,7 @@ for months in months_lst:
     ### evaluate toy model on (X_test, label_test)
     pred_inter_test = clf_randforest.predict(X_inter_test).tolist()
 
-    clf_randforest = RandomForestClassifier(n_estimators=160, max_features=10, min_samples_leaf=10, max_depth=5,
+    clf_randforest = RandomForestClassifier(n_estimators=70, max_features=18, min_samples_leaf=10, max_depth=5,
                                             min_samples_split=50, random_state=10)
 
     clf_randforest.fit(X_train_all, label_train_all)
@@ -265,15 +275,17 @@ for months in months_lst:
     #para_test1 = {'min_samples_leaf': list(range(10, 60, 10)), 'max_features': list(range(2, 20, 2))}
     #para_test1 = {'n_estimators': list(range(20, 200, 10))}
     #para_test1 = {'max_depth': list(range(3, 14, 2)), 'min_samples_split': list(range(50, 201, 20))}
-    #gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(max_features=4, min_samples_leaf=40, n_estimators=90,
-                                                                 #random_state=10, max_depth=3, min_samples_split=170),
-                                                                 #param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
+    #gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(max_features=14, min_samples_leaf=10,
+    #                                                             random_state=10, n_estimators=70,),
+    #                                                             max_depth=11, min_samples_split=150),
+    #                                                             param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
 
     #gsearch1.fit(X_inter_test, label_inter_test)
     #print(gsearch1.grid_scores_, gsearch1.best_params_, gsearch1.best_score_)
 
-    clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=4, min_samples_leaf=40, max_depth=3,
-                                               min_samples_split=170, random_state=10)
+    # max_features = 14
+    clf_gradboost = GradientBoostingClassifier(n_estimators=70, max_features=14, min_samples_leaf=10, max_depth=11,
+                                               min_samples_split=150, random_state=10)
     clf_gradboost.fit(X_train, label_train)
     y_predprob = clf_gradboost.predict_proba(X_inter_test)[:, 1]
     print('AUC score (Train) of gradient boosting: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
@@ -284,8 +296,8 @@ for months in months_lst:
     ### evaluate toy model on (X_test, label_test)
     pred_inter_test = clf_gradboost.predict(X_inter_test).tolist()
 
-    clf_gradboost = GradientBoostingClassifier(n_estimators=90, max_features=4, min_samples_leaf=40, max_depth=3,
-                                               min_samples_split=170, random_state=10)
+    clf_gradboost = GradientBoostingClassifier(n_estimators=70, max_features=14, min_samples_leaf=10, max_depth=11,
+                                               min_samples_split=150, random_state=10)
     clf_gradboost.fit(X_train_all, label_train_all)
     pred_exter_test = clf_gradboost.predict(X_exter_test).tolist()
 
@@ -296,7 +308,82 @@ for months in months_lst:
     ### collect models in months
     clf_gradboostAcc_months['_'.join(months)] = (clf_gradboost, gradboost_blindAcc['_'.join(months)])
 
-    ## Model IX: MLP Classifier
+    ## Model IX: GradientBoosting + LogisticRegression
+    GBDT = GradientBoostingClassifier(n_estimators=70, max_features=14, min_samples_leaf=10, max_depth=11,
+                                      min_samples_split=150, random_state=10)
+    GBDT.fit(X_train, label_train)
+    OHE = OneHotEncoder()
+    OHE.fit(GBDT.apply(X_train)[:, :, 0])
+    LR = LogisticRegression()
+    LR.fit(OHE.transform(GBDT.apply(X_train)[:, :, 0]), label_train)
+    y_predprob = LR.predict_proba(OHE.transform(GBDT.apply(X_inter_test)[:, :, 0]))[:, 1]
+    print('AUC score (Train) of GBDT+LR: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
+
+    ### evaluate toy model on (X_dev, label_dev)
+    pred_dev = LR.predict(OHE.transform(GBDT.apply(X_dev)[:, :, 0])).tolist()
+
+    ### evaluate toy model on (X_test, label_test)
+    pred_inter_test = LR.predict(OHE.transform(GBDT.apply(X_inter_test)[:, :, 0])).tolist()
+
+    GBDT = GradientBoostingClassifier(n_estimators=70, max_features=14, min_samples_leaf=10, max_depth=11,
+                                      min_samples_split=150, random_state=10)
+    GBDT.fit(X_train_all, label_train_all)
+    OHE = OneHotEncoder()
+    OHE.fit(GBDT.apply(X_train_all)[:, :, 0])
+    LR = LogisticRegression()
+    LR.fit(OHE.transform(GBDT.apply(X_train_all)[:, :, 0]), label_train_all)
+    pred_exter_test = LR.predict(OHE.transform(GBDT.apply(X_exter_test)[:,:,0])).tolist()
+    #dict_model_acc_dev['GBDT_LR'] = (LR, evaluate(label_dev, pred_dev, model='GBDT_LR'))
+    evaluate(label_dev, pred_dev, model='GBDT_LR')
+    evaluate(label_inter_test, pred_inter_test, model='GBDT_LR')
+    #dict_model_acc_test['GBDT_LR'] = (LR, evaluate(label_inter_test, pred_inter_test, model='GBDT_LR'))
+    evaluate(label_exter_test, pred_exter_test, model='GBDT_LR')
+
+    ### collect models in months
+    #clf_GBDTLRACC_months['_'.join(months)] = (LR, GBDTLR_blindAcc['-'.join(months)])
+
+
+    ## Model IX: XGBoost
+    import xgboost as xgb
+    #tune parameters for xgboost
+    # para_test1 = {'min_samples_leaf': list(range(10, 60, 10)), 'max_features': list(range(2, 20, 2))}
+    # para_test1 = {'n_estimators': list(range(20, 200, 10))}
+    # para_test1 = {'max_depth': list(range(3, 14, 2)), 'min_samples_split': list(range(50, 201, 20))}
+    # gsearch1 = GridSearchCV(estimator=GradientBoostingClassifier(max_features=14, min_samples_leaf=10,
+    #                                                             random_state=10, n_estimators=70,),
+    #                                                             max_depth=11, min_samples_split=150),
+    #                                                             param_grid=para_test1, scoring='roc_auc', iid=False, cv=5)
+
+    # gsearch1.fit(X_inter_test, label_inter_test)
+    # print(gsearch1.grid_scores_, gsearch1.best_params_, gsearch1.best_score_)
+
+    # define xgboost model
+    clf_xgboost = xgb.XGBClassifier(nthread=4, learning_rate=0.08, n_estimators=100, colsample_bytree=0.5)
+
+    clf_xgboost.fit(np.array(X_train), np.array(label_train))
+
+    y_predprob = clf_xgboost.predict_proba(np.array(X_inter_test))[:, 1]
+    print('AUC score (Train) of XG boost: %f' % metrics.roc_auc_score(label_inter_test, y_predprob))
+
+    ### evaluate toy model on (X_dev, label_dev)
+    pred_dev = clf_xgboost.predict(np.array(X_dev)).tolist()
+
+    ### evaluate toy model on (X_test, label_test)
+    pred_inter_test = clf_xgboost.predict(np.array(X_inter_test)).tolist()
+
+    clf_xgboost = xgb.XGBClassifier(nthread=4, learning_rate=0.08, n_estimators=100, colsample_bytree=0.5)
+
+    clf_xgboost.fit(np.array(X_train_all), np.array(label_train_all))
+    pred_exter_test = clf_xgboost.predict(np.array(X_exter_test)).tolist()
+
+    dict_model_acc_dev['XGB_boosting'] = (clf_xgboost, evaluate(label_dev, pred_dev, model='XG boost'))
+    dict_model_acc_test['XGB_boosting'] = (clf_xgboost, evaluate(label_inter_test, pred_inter_test, model='XG boost'))
+    evaluate(label_exter_test, pred_exter_test, model='XG boost')
+
+    ### collect models in months
+    clf_XGBoostACC_months['_'.join(months)] = (clf_xgboost, XGBoost_blindAcc['_'.join(months)])
+
+    ## Model X: MLP Classifier
     from sklearn.neural_network import MLPClassifier
     clf_mlp = MLPClassifier(random_state=1, max_iter=300).fit(X_train, label_train)
 
@@ -316,7 +403,7 @@ for months in months_lst:
     dict_model_acc_test['MLP'] = (clf_mlp, evaluate(label_inter_test, pred_inter_test, model='MLP'))
     evaluate(label_exter_test, pred_exter_test, model='MLP')
 
-    ## Model X: SVM
+    ## Model XI: SVM
     from sklearn.svm import LinearSVC
     from sklearn.pipeline import make_pipeline
     from sklearn.preprocessing import StandardScaler
@@ -373,37 +460,38 @@ for months in months_lst:
         dict_topK_model_acc_test.pop('ridgeClassifier')
 
 
-    pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_unif')
+    pred_dev, predprob_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_unif')
     evaluate(label_dev, pred_dev, model='topK_avg_unif')
 
     ### evaluate ensemble model on (X_test, label_test)
-    pred_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='avg_unif')
+    pred_inter_test, predprob_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='avg_unif')
     evaluate(label_inter_test, pred_inter_test, model='topK_avg_unif')
-    pred_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='avg_unif')
+
+    pred_exter_test, predprob_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='avg_unif')
     evaluate(label_exter_test, pred_exter_test, model='topK_avg_unif')
 
     ### evaluate ensemble model on (X_dev, label_dev)
-    pred_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_softmax')
+    pred_dev, predprob_dev = ensemble(dict_topK_model_acc_dev, X_dev, method='avg_softmax')
     evaluate(label_dev, pred_dev, model='topK_avg_softmax')
 
     ### evaluate ensemble model on (X_test, label_test)
-    pred_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='avg_softmax')
+    pred_inter_test, predprob_inter_test = ensemble(dict_topK_model_acc_test, X_inter_test, method='avg_softmax')
     evaluate(label_inter_test, pred_inter_test, model='topK_avg_softmax')
-    pred_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='avg_softmax')
+    pred_exter_test, predprob_exter_test = ensemble(dict_topK_model_acc_test, X_exter_test, method='avg_softmax')
     evaluate(label_exter_test, pred_exter_test, model='topK_avg_softmax')
 
     # predict labels on blind test set and write to xlsx file for submitting
     ## ensemble classifier (topK_avg_softmax)
-    pred_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='avg_softmax')
+    pred_blindtest, predprob_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='avg_softmax')
     month_train = '_'.join(months)
     with open('../test_results/' + features_name + '/' + 'topK_avg_softmax_' + month_train + '.csv',
               'w', newline='', encoding='utf-8') as fout:
-        field_names = ['phone_no_m', 'label']
+        field_names = ['phone_no_m', 'label', 'probability']
         writer = csv.DictWriter(fout, fieldnames=field_names)
         writer.writeheader()
 
-        for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
-            writer.writerow({'phone_no_m': phone, 'label': pred})
+        for phone, pred, probability in zip(phone_no_m_blindtest, pred_blindtest, predprob_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})
 
     ## ensemble classifier (topK_vote)
     pred_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='vote')
@@ -418,30 +506,60 @@ for months in months_lst:
             writer.writerow({'phone_no_m': phone, 'label': pred})
 
     ## ensemble classifier (topK_avg_unif)
-    pred_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='avg_unif')
+    pred_blindtest, predprob_blindtest = ensemble(dict_topK_model_acc_test, X_blindtest, method='avg_unif')
     month_train = '_'.join(months)
     with open('../test_results/' + features_name + '/' + 'topK_avg_unif_' + month_train + '.csv',
               'w', newline='', encoding='utf-8') as fout:
-        field_names = ['phone_no_m', 'label']
+        field_names = ['phone_no_m', 'label', 'probability']
         writer = csv.DictWriter(fout, fieldnames=field_names)
         writer.writeheader()
 
-        for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
-            writer.writerow({'phone_no_m': phone, 'label': pred})
+        for phone, pred, probability in zip(phone_no_m_blindtest, pred_blindtest, predprob_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})
 
     ## gradboost classifier
     pred_blindtest = clf_gradboost.predict(X_blindtest).tolist()
+    predprob_blindtest = clf_gradboost.predict_proba(X_blindtest).tolist()
 
     month_train = '_'.join(months)    # month_train should be the same as in config_train.yml
 
     with open('../test_results/' + features_name + '/' + 'GradientBoosting_' + month_train + '.csv',
               'w', newline='', encoding='utf-8') as fout:
-        field_names = ['phone_no_m', 'label']
+        field_names = ['phone_no_m', 'label', 'probability']
         writer = csv.DictWriter(fout, fieldnames=field_names)
         writer.writeheader()
 
-        for phone, pred in zip(phone_no_m_blindtest, pred_blindtest):
-            writer.writerow({'phone_no_m': phone, 'label': pred})
+        for phone, pred, probability in zip(phone_no_m_blindtest, pred_blindtest, np.array(predprob_blindtest)[:, 1].tolist()):
+            writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})
+
+    ## GBDTLR classifier
+    pred_blindtest = LR.predict(OHE.transform(GBDT.apply(X_blindtest)[:,:,0])).tolist()
+    predprob_blindtest = LR.predict_proba(OHE.transform(GBDT.apply(X_blindtest)[:, :, 0]))[:, 1].tolist()
+    month_train = '_'.join(months)    # month_train should be the same as in config_train.yml
+
+    with open('../test_results/' + features_name + '/' + 'GBDTLR_' + month_train + '.csv',
+              'w', newline='', encoding='utf-8') as fout:
+        field_names = ['phone_no_m', 'label', 'probability']
+        writer = csv.DictWriter(fout, fieldnames=field_names)
+        writer.writeheader()
+
+        for phone, pred, probability in zip(phone_no_m_blindtest, pred_blindtest, predprob_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})
+
+    ## XGBoost classifier
+    pred_blindtest = clf_xgboost.predict(np.array(X_blindtest)).tolist()
+    predprob_blindtest = clf_xgboost.predict_proba(np.array(X_blindtest))[:, 1].tolist()
+    month_train = '_'.join(months)    # month_train should be the same as in config_train.yml
+
+    with open('../test_results/' + features_name + '/' + 'XGBoost_' + month_train + '.csv',
+              'w', newline='', encoding='utf-8') as fout:
+        field_names = ['phone_no_m', 'label', 'probability']
+        writer = csv.DictWriter(fout, fieldnames=field_names)
+        writer.writeheader()
+
+        for phone, pred, probability in zip(phone_no_m_blindtest, pred_blindtest, predprob_blindtest):
+            writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})
+
 
 # ensemble model (vote/avg_unif/avg_softmax)
 ## vote
@@ -460,25 +578,25 @@ with open('../test_results/' + features_name + '/' + 'vote_gradboost_' + month_t
         writer.writerow({'phone_no_m': phone, 'label': pred})
 
 ## avg_unif
-pred_avgunif_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_unif')
+pred_avgunif_blindtest, predprob_avgunif_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_unif')
 
 with open('../test_results/' + features_name + '/' + 'avgunif_gradboost_' + month_train + '.csv',
           'w', newline='', encoding='utf-8') as fout:
-    field_names = ['phone_no_m', 'label']
+    field_names = ['phone_no_m', 'label', 'probability']
     writer = csv.DictWriter(fout, fieldnames=field_names)
     writer.writeheader()
 
-    for phone, pred in zip(phone_no_m_blindtest, pred_avgunif_blindtest):
-        writer.writerow({'phone_no_m': phone, 'label': pred})
+    for phone, pred, probability in zip(phone_no_m_blindtest, pred_avgunif_blindtest, predprob_avgunif_blindtest):
+        writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})
 
 ## avg_softmax
-pred_avgsoftmax_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_softmax')
+pred_avgsoftmax_blindtest, predprob_avgsoftmax_blindtest = ensemble(dict_model_acc, X_blindtest, method='avg_softmax')
 
 with open('../test_results/' + features_name + '/' + 'avgsoftmax_gradboost_' + month_train + '.csv',
           'w', newline='', encoding='utf-8') as fout:
-    field_names = ['phone_no_m', 'label']
+    field_names = ['phone_no_m', 'label', 'probability']
     writer = csv.DictWriter(fout, fieldnames=field_names)
     writer.writeheader()
 
-    for phone, pred in zip(phone_no_m_blindtest, pred_avgsoftmax_blindtest):
-        writer.writerow({'phone_no_m': phone, 'label': pred})
+    for phone, pred, probability in zip(phone_no_m_blindtest, pred_avgsoftmax_blindtest, predprob_avgsoftmax_blindtest):
+        writer.writerow({'phone_no_m': phone, 'label': pred, 'probability': probability})

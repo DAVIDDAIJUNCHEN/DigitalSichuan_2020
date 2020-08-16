@@ -154,14 +154,14 @@ def sms_var(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
-    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
-    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
-    sms_num = []
-    for k in range(1, 31):
-        sms_df_months_k = sms_df_months[sms_df_months['request_day'] == k]
-        sms_k = list(sms_df_months_k['request_day'])
-        sms_num_k = len(sms_k)
-        sms_num.append(sms_num_k)
+
+    lst_split_datetime = list(sms_df_months['request_datetime'].str.split())
+    num_days = len(months)*30
+    num_active = len(set([date[0] for date in lst_split_datetime]))
+    lst_nonactive = [0]*(num_days - num_active)
+    lst_nonactive.extend(list(Counter([date[0] for date in lst_split_datetime]).values()))
+
+    sms_num = lst_nonactive
     if max(sms_num) == 0:
         return arguments['represent_nan']
     else:
@@ -173,15 +173,16 @@ def smsout_var(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
-    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
-    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
-    sms_df_months_smsout = sms_df_months[sms_df_months['calltapy_id'] == 1]
-    smsout_num = []
-    for k in range(1, 31):
-        sms_df_months_k = sms_df_months_smsout[sms_df_months_smsout['request_day'] == k]
-        smsout_k = list(sms_df_months_k['request_day'])
-        smsout_num_k = len(smsout_k)
-        smsout_num.append(smsout_num_k)
+    sms_df_months_smsout = sms_df_months[sms_df_months['calltype_id'] == 1]
+
+    lst_split_datetime = list(sms_df_months_smsout['request_datetime'].str.split())
+    num_days = len(months)*30
+    num_active = len(set([date[0] for date in lst_split_datetime]))
+    lst_nonactive = [0]*(num_days - num_active)
+    lst_nonactive.extend(list(Counter([date[0] for date in lst_split_datetime]).values()))
+
+    smsout_num = lst_nonactive
+
     if max(smsout_num) == 0:
         return arguments['represent_nan']
     else:
@@ -193,15 +194,16 @@ def smsin_var(dataframe_phone_no, arguments):
     months_regex = '|'.join(months)
     sms_dataframe = dataframe_phone_no['sms']
     sms_df_months = sms_dataframe[sms_dataframe['request_datetime'].str.contains(months_regex)]
-    sms_df_months['request_datetime'] = pd.to_datetime(sms_df_months['request_datetime'], format='%Y-%m-%d %H:%M:%S')
-    sms_df_months['request_day'] = sms_df_months['request_datetime'].dt.day
-    sms_df_months_smsin = sms_df_months[sms_df_months['calltapy_id'] == 2]
-    smsin_num = []
-    for k in range(1, 31):
-        sms_df_months_k = sms_df_months_smsin[sms_df_months_smsin['request_day'] == k]
-        smsin_k = list(sms_df_months_k['request_day'])
-        smsin_num_k = len(smsin_k)
-        smsin_num.append(smsin_num_k)
+    sms_df_months_smsin = sms_df_months[sms_df_months['calltype_id'] == 2]
+
+    lst_split_datetime = list(sms_df_months_smsin['request_datetime'].str.split())
+    num_days = len(months)*30
+    num_active = len(set([date[0] for date in lst_split_datetime]))
+    lst_nonactive = [0]*(num_days - num_active)
+    lst_nonactive.extend(list(Counter([date[0] for date in lst_split_datetime]).values()))
+
+    smsin_num = lst_nonactive
+
     if max(smsin_num) == 0:
         return arguments['represent_nan']
     else:
@@ -210,14 +212,14 @@ def smsin_var(dataframe_phone_no, arguments):
 
 # debug part: To be deleted
 def test():
-    data_sms = [['f0ebee98809cb1a9', 1, '2020-01-01 21:26:40'],
-                ['dedd4a48c3a8f', 1, '2020-01-03 20:14:33'],
-                ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33'],
-                ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33']]
+    data_sms =  [['f0ebee98809cb1a9', 1, '2020-01-01 21:26:40'],
+                 ['dedd4a48c3a8f', 1, '2020-01-03 20:14:33'],
+                 ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33'],
+                 ['dedd4a48c3a8f', 1, '2020-01-02 20:14:33']]
     sms_df = pd.DataFrame(data_sms, columns=['opposite_no_m', 'calltype_id', 'request_datetime'])
     dataframe_phone_no = {"sms": sms_df}
     arguments = {"months": ['2019-12', '2020-01'], 'represent_nan': -10}
-    print(sms_entropy_active_day(dataframe_phone_no, arguments))
+    print(smsin_var(dataframe_phone_no, arguments))
 
 
 if __name__ == '__main__':

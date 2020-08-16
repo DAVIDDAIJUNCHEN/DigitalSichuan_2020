@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 # import modules
 import sys
-from sklearn.svm import SVC
+from sklearn.svm import SVC, LinearSVC
 from sklearn.model_selection import StratifiedKFold
-from sklearn.feature_selection import RFECV
-from sklearn.feature_selection import RFE
+from sklearn.feature_selection import RFE, RFECV, SelectFromModel
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import normalize
 
@@ -13,6 +12,7 @@ sys.path.append('../../')
 # import local modules
 from utils import evaluate, modify_months_config
 from data_process_new import split_data, get_features, get_label, get_phone_no_m
+
 
 # prepare data and parameter
 ## train/blind_test/external test user/voc/sms/app files
@@ -61,9 +61,6 @@ features_name = 'distinguished'
 
 # get design matrix and label according to months
 label_train = get_label(train_file)
-num_train_positive = len([1 for i in label_train if i==1])
-ind_train_positive = [i for i, n in enumerate(label_train) if n == 1]
-
 label_dev = get_label(dev_file)
 label_inter_test = get_label(inter_test_file)
 label_exter_test = get_label(exter_test_user)
@@ -73,17 +70,10 @@ label_train_all = label_train.copy()
 label_train_all.extend(label_dev)
 label_train_all.extend(label_inter_test)
 
-print('size of training data: ', len(label_train))
-print('1 in training data: ', len([1 for i in label_train if i==1]))
-print('0 in training data: ', len([0 for i in label_train if i==0]))
 
-print('size of all training data: ', len(label_train_all))
-print('1 in all training data: ', len([1 for i in label_train_all if i==1]))
-print('0 in all training data: ', len([0 for i in label_train_all if i==0]))
-
-#X_blindtest = get_features(blind_test_user, blind_test_voc, blind_test_sms, blind_test_app, blindTest_config_yml)
-#X_inter_test = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
-#X_exter_test = get_features(exter_test_user, exter_test_voc, exter_test_sms, exter_test_app, extTest_config_yml)
+X_blindtest = get_features(blind_test_user, blind_test_voc, blind_test_sms, blind_test_app, blindTest_config_yml)
+X_inter_test = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
+X_exter_test = get_features(exter_test_user, exter_test_voc, exter_test_sms, exter_test_app, extTest_config_yml)
 
 months_lst = [['2019-08'], ['2019-09'], ['2019-10'], ['2019-11'], ['2019-12'], ['2020-01'], ['2020-02'], ['2020-03']]
 
@@ -92,12 +82,12 @@ for months in months_lst:
     modify_months_config(train_config_yml, new_months=months)
 
     X_train = get_features(train_file, train_voc, train_sms, train_app, train_config_yml)
-    X_train = normalize(X_train)
+    X_train = normalize(X_train).tolist()
     X_dev = get_features(dev_file, train_voc, train_sms, train_app, train_config_yml)
-    X_dev = normalize(X_dev)
+    X_dev = normalize(X_dev).tolist()
     # train final model on all data files
     X_test_internal = get_features(inter_test_file, train_voc, train_sms, train_app, train_config_yml)
-    X_test_internal = normalize(X_test_internal)
+    X_test_internal = normalize(X_test_internal).tolist()
 
     X_train_all = X_train.copy()
     X_train_all.extend(X_dev)
@@ -109,11 +99,6 @@ for months in months_lst:
     rfe.fit(X_train_all, label_train_all)
     ranking = rfe.ranking_#.reshape([8, 8])
     print(ranking)
-    # Plot pixel ranking
-    # plt.matshow(ranking, cmap=plt.cm.Blues)
-    # plt.colorbar()
-    # plt.title("Ranking of pixels with RFE")
-    # plt.show()
 
     # The "accuracy" scoring is proportional to the number of correct
     # classifications
@@ -129,5 +114,10 @@ for months in months_lst:
     plt.plot(range(1, len(rfecv.grid_scores_) + 1), rfecv.grid_scores_)
     plt.show()
 
+    ## Tree-based feature selection
+    from sklearn.ensemble import ExtraTreesClassifier
+    from sklearn.feature_selection import SelectFromModel
 
-
+    clf = ExtraTreesClassifier(n_estimators=50)
+    clf = clf.fit(X_train_all, label_train_all)
+    print(clf.feature_importances_)

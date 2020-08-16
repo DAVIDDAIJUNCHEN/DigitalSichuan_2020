@@ -15,14 +15,124 @@ features:
         represent_nan: -10
     module: ./daijun/codes_feature/voc_feature_daijun.py
     name: number_imei
-- C8:
+- C10:
   - columns:
     - app: [app_busi_name]
     function:
-    - name: suspect_app_num
+    - name: normal90_app_num
       para:
         months: *id001
         represent_nan: -10
     module: ./yangli/codes_feature/app_feature_liyang.py
-    name: number_suspected_app
+    name: number_normal90_app
+- C11:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal100_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_normal100_app
+- C12:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud90_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_fraud90_app
+- C13:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud100_app_num
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: number_fraud100_app
+- C14:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal90_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_normal90_app
+- C15:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: normal100_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_normal100_app
+- C16:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud90_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_fraud90_app
+- C17:
+  - columns:
+    - app: [app_busi_name]
+    function:
+    - name: fraud100_app_contain
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: contain_fraud100_app
+- C18:
+  - columns:
+    - app: [busi_name, flow, month_id]
+    function:
+    - name: normal90_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: flow_normal90_app
+- C19:
+  - columns:
+    - app: [busi_name, flow, month_id]
+    function:
+    - name: fraud90_flow
+      para:
+        months: *id001
+        represent_nan: -10
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: flow_fraud90_app
+- C20:
+  - columns:
+    - app: [busi_name, flow, month_id]
+    function:
+    - name: normal90_flow_normalization
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: flow_normal90_normalization
+- C21:
+  - columns:
+    - app: [busi_name, flow, month_id]
+    function:
+    - name: fraud90_flow_normalization
+      para:
+        months: *id001
+        represent_nan: -1
+    module: ./yangli/codes_feature/app_feature_liyang.py
+    name: flow_fraud90_normalization
 name: new_features
